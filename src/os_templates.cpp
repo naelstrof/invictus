@@ -10,12 +10,17 @@ int is::OS::printf( const char* s, T value, Args... args ) {
             if (*(s + 1) == '%') {
                 ++s;
             } else {
-                std::cout << value;
+                boost::nowide::cout << value;
                 parses += 1+printf(s + 1, args...); // call even when *s == 0 to detect extra arguments
                 return parses;
             }
         }
-        std::cout << *s++;
+        boost::nowide::cout << *s++;
+
+        // Simulate printf's flushing on newline.
+        if ( *(s - 1) == '\n' ) {
+            boost::nowide::cout.flush();
+        }
     }
     throw std::logic_error("extra arguments provided to printf");
 }

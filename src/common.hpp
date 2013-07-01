@@ -5,6 +5,8 @@
 #include "os.hpp"
 #include "window.hpp"
 #include "keyboard.hpp"
+#include "filesystem.hpp"
+#include "lua.hpp"
 
 namespace is {
 

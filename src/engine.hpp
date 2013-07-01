@@ -4,6 +4,10 @@
 #include "os.hpp"
 #include "common.hpp"
 
+namespace is {
+
 void cleanUp();
+
+};
 
 #endif // IS_ENGINE_H_

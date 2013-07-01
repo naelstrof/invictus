@@ -4,10 +4,9 @@
 #define IS_WINDOW_H_
 
 #include <SFML/Window.hpp>
-// Required to convert utf-32 into utf-8.
-#include <boost/nowide/args.hpp>
 
 #include "keyboard.hpp"
+#include "lua.hpp"
 
 namespace is {
 

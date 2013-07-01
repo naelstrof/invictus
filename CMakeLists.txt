@@ -58,28 +58,27 @@ set( source
      src/common.cpp
      src/window.cpp
      src/keyboard.cpp
+     src/filesystem.cpp
+     src/filesystem_read.cpp
+     src/lua.cpp
      src/main.cpp )
 
 # Obtain library paths and make sure they exist.
 set( CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmakemodules" )
-# find_package( OpenGL    REQUIRED )
-# find_package( X11       REQUIRED )
-# find_package( GLEW      REQUIRED )
-# find_package( GLM       REQUIRED )
-find_package( SFML        REQUIRED )
+find_package( SFML      REQUIRED )
+find_package( PHYSFS    REQUIRED )
+find_package( Lua51     REQUIRED )
 
 # Includes
-include_directories( ${SFML_INCLUDE_DIR} )
-                     #${GLEW_INCLUDE_PATH}
-                     #${GLM_INCLUDE_DIR}
-                     #${X11_INCLUDE_DIR} )
+include_directories( ${SFML_INCLUDE_DIR}
+                     ${LUA_INCLUDE_DIR}
+                     ${PHYSFS_INCLUDE_DIR} )
 
 # Executable
 add_executable( ${BIN_TARGET} ${source} )
 
 # Libraries
 target_link_libraries( ${BIN_TARGET}
-                       ${SFML_LIBRARY} )
-                       #${OPENGL_LIBRARIES}
-                       #${GLEW_LIBRARY}
-                       #${X11_LIBRARIES} )
+                       ${SFML_LIBRARY}
+                       ${LUA_LIBRARIES}
+                       ${PHYSFS_LIBRARY} )

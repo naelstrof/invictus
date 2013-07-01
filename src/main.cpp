@@ -11,7 +11,7 @@ int main( int argc, char** argv ) {
         common->tick();
     }
 
-    cleanUp();
+    is::cleanUp();
 
     return 0;
 }

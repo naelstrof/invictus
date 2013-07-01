@@ -16,7 +16,10 @@ is::Window::~Window() {
 }
 
 int is::Window::init() {
-    m_window = new sf::Window( sf::VideoMode( 512, 512 ), "Invictus" );
+    int width = int( lua->getFloat( "Width" ) );
+    int height = int( lua->getFloat( "Height" ) );
+    std::string name = lua->getString( "WindowName" );
+    m_window = new sf::Window( sf::VideoMode( width, height ), name );
     return 0;
 }
 

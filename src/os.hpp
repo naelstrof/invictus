@@ -6,6 +6,7 @@
 #include <stdexcept>
 #include <iostream>
 #include <boost/nowide/args.hpp>
+#include <boost/nowide/iostream.hpp>
 
 namespace is {
 
