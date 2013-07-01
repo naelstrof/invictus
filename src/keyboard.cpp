@@ -14,15 +14,15 @@ void is::Keyboard::clearInput() {
     m_input.clear();
 }
 
-std::string is::Keyboard::getInput() {
-    std::string copy = m_input;
+sf::String is::Keyboard::getInput() {
+    sf::String copy = m_input;
     clearInput();
     return m_input;
 }
 
-void is::Keyboard::addInput( std::string input ) {
+void is::Keyboard::addInput( sf::String input ) {
     // We don't want to use too much memory tracking generated characters, once we overflow we just stop accepting characters.
-    if ( m_input.length() > 512 ) {
+    if ( m_input.getSize() > 512 ) {
         return;
     }
     m_input += input;

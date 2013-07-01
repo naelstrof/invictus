@@ -10,7 +10,9 @@ is::Common::~Common() {
 
 is::Common* common = new is::Common();
 
-int is::Common::init( int argc, const char** argv ) {
+int is::Common::init( int argc, char** argv ) {
+    boost::nowide::args( argc, argv );
+
     int err = window->init();
     if ( err ) {
         os->printf( "ERR Failed to open window, shutting down...\n" );

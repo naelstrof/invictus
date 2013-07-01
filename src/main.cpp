@@ -1,6 +1,6 @@
 #include "engine.hpp"
 
-int main( int argc, const char** argv ) {
+int main( int argc, char** argv ) {
     // Here we check if we just need to simply print a help message and exit.
     os->init( argc, argv );
 

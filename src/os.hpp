@@ -5,14 +5,13 @@
 
 #include <stdexcept>
 #include <iostream>
+#include <boost/nowide/args.hpp>
 
 namespace is {
 
 class OS {
 public:
-    OS();
-    ~OS();
-    int             init( int argc, const char** argv );
+    int             init( int argc, char** argv );
     void            exit( std::string message );
     int             printf( const char* s );
 template<typename T, typename... Args>

@@ -3,8 +3,6 @@
 #ifndef IS_KEYBOARD_H_
 #define IS_KEYBOARD_H_
 
-#include <string>
-
 #include "window.hpp"
 
 namespace is {
@@ -14,12 +12,12 @@ namespace is {
 
 class Keyboard {
 private:
-    std::string     m_input;
+    sf::String      m_input;
 public:
     bool            isDown( is::Key key );
     void            clearInput();
-    std::string     getInput();
-    void            addInput( std::string input );
+    sf::String      getInput();
+    void            addInput( sf::String input );
 };
 
 };

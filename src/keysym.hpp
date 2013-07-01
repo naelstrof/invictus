@@ -1,3 +1,7 @@
+// Keysyms are placed here because they're HUGE.
+
+// Used by keyboard.hpp
+
 enum Key {
     Unknown = -1,
     A = 0,

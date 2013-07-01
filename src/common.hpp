@@ -12,7 +12,7 @@ class Common {
 public:
     Common();
     ~Common();
-    int             init( int argc, const char** argv );
+    int             init( int argc, char** argv );
     void            tick();
     bool            m_running;
 };

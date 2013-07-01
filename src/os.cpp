@@ -2,13 +2,8 @@
 
 is::OS* os = new is::OS();
 
-is::OS::OS() {
-}
-
-is::OS::~OS() {
-}
-
-int is::OS::init( int argc, const char** argv ) {
+int is::OS::init( int argc, char** argv ) {
+    boost::nowide::args( argc, argv );
     return 0;
 }
 

@@ -40,7 +40,10 @@ void is::Window::tick( float dt ) {
                 m_focus = true;
                 break;
             }
-            case sf::Event::TextEntered: {}
+            case sf::Event::TextEntered: {
+                keyboard->addInput( event.text.unicode );
+                break;
+            }
             case sf::Event::KeyPressed: {}
             case sf::Event::KeyReleased: {}
             case sf::Event::MouseWheelMoved: {}
