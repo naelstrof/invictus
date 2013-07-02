@@ -1,0 +1,6 @@
+find_path(GLM_INCLUDE_DIR glm/glm.hpp)
+if (GLM_INCLUDE_DIR)
+	set(GLM_FOUND true)
+else ()
+	set(GLM_FOUND false)
+endif()

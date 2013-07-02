@@ -13,10 +13,11 @@ namespace is {
 class OS {
 public:
     int             init( int argc, char** argv );
-    void            exit( std::string message );
     int             printf( const char* s );
 template<typename T, typename... Args>
     int             printf( const char* s, T value, Args... args );
+    void            flush();
+    void            help();
 };
 
 // Define template functions, since they can't be defined in cpp files.

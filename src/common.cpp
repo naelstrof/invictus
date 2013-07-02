@@ -1,7 +1,7 @@
 #include "common.hpp"
 
 is::Common::Common() {
-    m_running = true;
+    m_running = false;
 }
 
 is::Common::~Common() {
@@ -13,6 +13,38 @@ is::Common* common = new is::Common();
 int is::Common::init( int argc, char** argv ) {
     boost::nowide::args( argc, argv );
 
+    // Parse game options.
+    int width = 0;
+    int height = 0;
+    bool fullscreen = false;
+    bool noborder = false;
+    for ( int i=0; i<argc; i++ ) {
+        std::string arg = argv[i];
+        if ( arg == "-w" || arg == "--width" ) {
+            width = atoi( argv[i+1] );
+            i++;
+            continue;
+        }
+        if ( arg == "-h" || arg == "--height" ) {
+            height = atoi( argv[i+1] );
+            i++;
+            continue;
+        }
+        if ( arg == "--fullscreen" ) {
+            fullscreen = true;
+            continue;
+        }
+        if ( arg == "--windowed" ) {
+            fullscreen = false;
+            continue;
+        }
+        if ( arg == "--noborder" ) {
+            noborder = true;
+            continue;
+        }
+    }
+
+    // Finally initialize the game.
     int err = filesystem->init( argv[0] );
     if ( err ) {
         os->printf( "ERR Failed initialize the filesystem, shutting down...\n" );
@@ -30,11 +62,25 @@ int is::Common::init( int argc, char** argv ) {
         os->printf( "ERR Failed to open window, shutting down...\n" );
         return err;
     }
+    if ( fullscreen ) {
+        window->setFullscreen( true );
+    } else {
+        window->setFullscreen( false );
+    }
+    if ( noborder ) {
+        window->setNoBorder( true );
+    }
+    if ( width || height ) {
+        window->setSize( width, height );
+    }
+
+    m_running = true;
+    m_time.restart();
     return 0;
 }
 
 void is::Common::tick() {
-    if ( keyboard->isDown( is::Key::Escape ) ) {
+    if ( keyboard->isDown( is::Key::Escape ) || keyboard->isDown( is::Key::Q ) ) {
         m_running = false;
         return;
     }
@@ -42,6 +88,9 @@ void is::Common::tick() {
         m_running = false;
         return;
     }
-    window->tick(0);
-    window->swapBuffers();
+    sf::Time dt = m_time.restart();
+    window->tick();
+    world->tick( dt.asSeconds() );
+    gui->tick( dt.asSeconds() );
+    render->draw();
 }

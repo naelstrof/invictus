@@ -16,7 +16,7 @@ private:
 public:
     bool            isDown( is::Key key );
     void            clearInput();
-    sf::String      getInput();
+    std::string     getInput();
     void            addInput( sf::String input );
 };
 

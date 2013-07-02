@@ -14,10 +14,12 @@ void is::Keyboard::clearInput() {
     m_input.clear();
 }
 
-sf::String is::Keyboard::getInput() {
-    sf::String copy = m_input;
+std::string is::Keyboard::getInput() {
+    // Gotta convert to utf-8 so input can be printed or used whereever.
+    std::string test;
+    sf::Utf<32>::toUtf8( m_input.begin(), m_input.end(), back_inserter( test ) );
     clearInput();
-    return m_input;
+    return test;
 }
 
 void is::Keyboard::addInput( sf::String input ) {

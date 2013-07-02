@@ -116,3 +116,26 @@ bool is::Lua::getBool( sf::String name ) {
     lua_pop( m_l, 2 );
     return boolean;
 }
+
+void is::Lua::setString( sf::String name, sf::String foo ) {
+    std::string actualname;
+    sf::Utf<32>::toUtf8( name.begin(), name.end(), back_inserter( actualname ) );
+
+    std::string actualvalue;
+    sf::Utf<32>::toUtf8( foo.begin(), foo.end(), back_inserter( actualvalue ) );
+
+    lua_getglobal( m_l, "_G" );
+    lua_pushstring( m_l, actualvalue.c_str() );
+    lua_setfield( m_l, -2, actualname.c_str() );
+    lua_pop( m_l, 1 );
+}
+
+void is::Lua::setBool( sf::String name, bool foo ) {
+    std::string actualname;
+    sf::Utf<32>::toUtf8( name.begin(), name.end(), back_inserter( actualname ) );
+
+    lua_getglobal( m_l, "_G" );
+    lua_pushboolean( m_l, foo );
+    lua_setfield( m_l, -2, actualname.c_str() );
+    lua_pop( m_l, 1 );
+}

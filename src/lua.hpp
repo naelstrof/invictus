@@ -26,6 +26,9 @@ public:
     float           getFloat( sf::String name );
     std::string     getString( sf::String name );
     bool            getBool( sf::String name );
+    void            setFloat( sf::String name, float foo );
+    void            setString( sf::String name, sf::String foo );
+    void            setBool( sf::String name, bool foo );
 };
 
 int luaL_loadstring( lua_State* l, const char* s, const char* dir );

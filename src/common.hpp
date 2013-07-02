@@ -7,10 +7,14 @@
 #include "keyboard.hpp"
 #include "filesystem.hpp"
 #include "lua.hpp"
+#include "scene.hpp"
+#include "render.hpp"
 
 namespace is {
 
 class Common {
+private:
+    sf::Clock m_time;
 public:
     Common();
     ~Common();
