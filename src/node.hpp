@@ -9,6 +9,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/projection.hpp>
 #include <glm/gtx/euler_angles.hpp>
+#include <SFML/Graphics/RenderTarget.hpp>
 
 #include "os.hpp"
 
@@ -23,7 +24,7 @@ public:
     // String identifier
     virtual std::string     type();
     virtual void            tick( float dt );
-    virtual void            draw();
+    virtual void            draw( sf::RenderTarget* target );
 
     glm::vec3               getPos();
     void                    setPos( glm::vec3 pos );

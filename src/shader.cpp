@@ -43,6 +43,9 @@ void is::Shader::addShader( std::string name, std::string vertdir, std::string f
     sf::Shader* shader = new sf::Shader();
     shader->loadFromMemory( vertdata, fragdata );
 
+    delete[] fragdata;
+    delete[] vertdata;
+
     m_shaders.push_back( shader );
     m_shadernames.push_back( name );
     os->printf( "INF Loaded shader %.\n", name );

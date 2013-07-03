@@ -80,6 +80,20 @@ int is::Common::init( int argc, char** argv ) {
         return err;
     }
 
+    err = font->init();
+    if ( err ) {
+        os->printf( "ERR Failed to initialize fonts, shutting down...\n" );
+        return err;
+    }
+
+    err = render->init();
+    if ( err ) {
+        os->printf( "ERR Failed to initialize render engine, shutting down...\n" );
+        return err;
+    }
+
+    gui->addNode( new is::Text( "hello, world!", "gui" ) );
+
     m_running = true;
     m_time.restart();
     return 0;

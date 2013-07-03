@@ -10,6 +10,7 @@
 #include "scene.hpp"
 #include "render.hpp"
 #include "shader.hpp"
+#include "font.hpp"
 
 namespace is {
 

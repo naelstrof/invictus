@@ -4,6 +4,7 @@
 #include "os.hpp"
 #include "filesystem.hpp"
 #include "shader.hpp"
+#include "font.hpp"
 
 #include <lua.hpp>
 

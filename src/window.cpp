@@ -85,7 +85,9 @@ void is::Window::tick() {
                 m_window->close();
                 break;
             }
-            case sf::Event::Resized: {}
+            case sf::Event::Resized: {
+                break;
+            }
             case sf::Event::LostFocus: {
                 m_focus = false;
                 break;
@@ -98,20 +100,23 @@ void is::Window::tick() {
                 keyboard->addInput( event.text.unicode );
                 break;
             }
-            case sf::Event::KeyPressed: {}
-            case sf::Event::KeyReleased: {}
-            case sf::Event::MouseWheelMoved: {}
-            case sf::Event::MouseButtonPressed: {}
-            case sf::Event::MouseButtonReleased: {}
-            case sf::Event::MouseMoved: {}
-            case sf::Event::MouseEntered: {}
-            case sf::Event::MouseLeft: {}
-            case sf::Event::JoystickButtonPressed: {}
-            case sf::Event::JoystickButtonReleased: {}
-            case sf::Event::JoystickMoved: {}
-            case sf::Event::JoystickConnected: {}
-            case sf::Event::JoystickDisconnected: {}
-            case sf::Event::Count: {}
+            //case sf::Event::KeyPressed: {}
+            //case sf::Event::KeyReleased: {}
+            //case sf::Event::MouseWheelMoved: {}
+            //case sf::Event::MouseButtonPressed: {}
+            //case sf::Event::MouseButtonReleased: {}
+            //case sf::Event::MouseMoved: {}
+            //case sf::Event::MouseEntered: {}
+            //case sf::Event::MouseLeft: {}
+            //case sf::Event::JoystickButtonPressed: {}
+            //case sf::Event::JoystickButtonReleased: {}
+            //case sf::Event::JoystickMoved: {}
+            //case sf::Event::JoystickConnected: {}
+            //case sf::Event::JoystickDisconnected: {}
+            //case sf::Event::Count: {}
+            default: {
+                break;
+            }
         }
     }
     // If the window changed, update it.
@@ -141,9 +146,13 @@ void is::Window::close() {
     m_window->close();
 }
 
-void is::Window::draw( sf::RenderTexture* foo ) {
+void is::Window::draw( sf::RenderTexture* foo, const sf::RenderStates &states ) {
     sf::Sprite sprite( foo->getTexture() );
-    m_window->draw( sprite );
+    m_window->draw( sprite, states );
+}
+
+void is::Window::draw( const sf::Drawable &drawable, const sf::RenderStates &states ) {
+    m_window->draw( drawable, states );
 }
 
 void is::Window::setSize( int w, int h ) {

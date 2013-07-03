@@ -44,7 +44,7 @@ std::string is::Node::type() {
 void is::Node::tick( float dt ) {
 }
 
-void is::Node::draw() {
+void is::Node::draw( sf::RenderTarget* target ) {
 }
 
 void is::Node::removeChild( is::Node* node ) {

@@ -14,10 +14,12 @@ class Render {
 private:
     sf::RenderTexture m_world;
     sf::RenderTexture m_gui;
+    bool m_sizeChanged;
 public:
     Render();
     int             init();
     void            draw();
+    void            updateSize();
 };
 
 };

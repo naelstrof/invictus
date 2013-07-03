@@ -60,7 +60,9 @@ set( source
      src/scene.cpp
      src/render.cpp
      src/shader.cpp
+     src/font.cpp
      src/node.cpp
+     src/nodes/text.cpp
      src/keyboard.cpp
      src/filesystem.cpp
      src/filesystem_read.cpp
@@ -73,11 +75,13 @@ find_package( SFML      REQUIRED )
 find_package( PHYSFS    REQUIRED )
 find_package( Lua51     REQUIRED )
 find_package( GLM       REQUIRED )
+find_package( OpenGL    REQUIRED )
 
 # Includes
 include_directories( ${SFML_INCLUDE_DIR}
                      ${LUA_INCLUDE_DIR}
                      ${GLM_INCLUDE_DIR}
+                     ${OPENGL_INCLUDE_DIRS}
                      ${PHYSFS_INCLUDE_DIR} )
 
 # Executable
@@ -87,4 +91,5 @@ add_executable( ${BIN_TARGET} ${source} )
 target_link_libraries( ${BIN_TARGET}
                        ${SFML_LIBRARY}
                        ${LUA_LIBRARIES}
+                       ${OPENGL_LIBRARIES}
                        ${PHYSFS_LIBRARY} )

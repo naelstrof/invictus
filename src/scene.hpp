@@ -6,6 +6,7 @@
 #include <vector>
 
 #include "node.hpp"
+#include "nodes/text.hpp"
 
 namespace is {
 
@@ -14,7 +15,8 @@ class Scene {
 public:
     ~Scene();
     void            tick( float dt );
-    void            draw();
+    void            draw( sf::RenderTarget* target );
+    void            addNode( is::Node* );
 };
 
 };

@@ -3,6 +3,7 @@
 #ifndef IS_WINDOW_H_
 #define IS_WINDOW_H_
 
+#include <GL/gl.h>
 #include <SFML/Window.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Graphics/RenderTexture.hpp>
@@ -10,6 +11,7 @@
 
 #include "keyboard.hpp"
 #include "lua.hpp"
+#include "render.hpp"
 
 namespace is {
 
@@ -21,8 +23,8 @@ private:
     bool                m_noborder;
     bool                m_vsync;
     int                 m_maxfps;
-    int                 m_width;
-    int                 m_height;
+    unsigned int        m_width;
+    unsigned int        m_height;
     std::string         m_name;
     bool                m_printed;
     bool                m_changed;
@@ -43,7 +45,8 @@ public:
     void                setNoBorder( bool foo );
     void                setFullscreen( bool foo );
     void                clear();
-    void                draw( sf::RenderTexture* foo );
+    void                draw( const sf::Drawable &drawable, const sf::RenderStates &states=sf::RenderStates::Default );
+    void                draw( sf::RenderTexture *foo, const sf::RenderStates &states=sf::RenderStates::Default );
 };
 
 };

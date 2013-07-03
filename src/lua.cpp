@@ -4,6 +4,7 @@ is::Lua* lua = new is::Lua();
 
 #include "lua/print.cpp"
 #include "lua/addshader.cpp"
+#include "lua/addfont.cpp"
 
 is::Lua::Lua() {
     m_l = luaL_newstate();
@@ -14,6 +15,7 @@ is::Lua::Lua() {
     // Unfortunately we can't just include lua functions in this file, we have to register them too. We'll do that here.
     addFunction( "print", luaPrint );
     addFunction( "addShader", luaAddShader );
+    addFunction( "addFont", luaAddFont );
 }
 
 is::Lua::~Lua() {
@@ -116,6 +118,13 @@ void is::Lua::setString( std::string name, std::string foo ) {
 void is::Lua::setBool( std::string name, bool foo ) {
     lua_getglobal( m_l, "_G" );
     lua_pushboolean( m_l, foo );
+    lua_setfield( m_l, -2, name.c_str() );
+    lua_pop( m_l, 1 );
+}
+
+void is::Lua::setFloat( std::string name, float foo ) {
+    lua_getglobal( m_l, "_G" );
+    lua_pushnumber( m_l, foo );
     lua_setfield( m_l, -2, name.c_str() );
     lua_pop( m_l, 1 );
 }
