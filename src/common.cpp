@@ -74,6 +74,12 @@ int is::Common::init( int argc, char** argv ) {
         window->setSize( width, height );
     }
 
+    err = shader->init();
+    if ( err ) {
+        os->printf( "ERR Failed to initialize shaders, shutting down...\n" );
+        return err;
+    }
+
     m_running = true;
     m_time.restart();
     return 0;

@@ -3,6 +3,7 @@
 
 #include "os.hpp"
 #include "filesystem.hpp"
+#include "shader.hpp"
 
 #include <lua.hpp>
 
@@ -20,15 +21,15 @@ public:
     ~Lua();
     int             init();
     void            tick();
-    int             doFile( sf::String dir );
-    int             doFolder( sf::String dir );
-    void            addFunction( sf::String name, lua_CFunction func );
-    float           getFloat( sf::String name );
-    std::string     getString( sf::String name );
-    bool            getBool( sf::String name );
-    void            setFloat( sf::String name, float foo );
-    void            setString( sf::String name, sf::String foo );
-    void            setBool( sf::String name, bool foo );
+    int             doFile( std::string dir );
+    int             doFolder( std::string dir );
+    void            addFunction( std::string name, lua_CFunction func );
+    float           getFloat( std::string name );
+    std::string     getString( std::string name );
+    bool            getBool( std::string name );
+    void            setFloat( std::string name, float foo );
+    void            setString( std::string name, std::string foo );
+    void            setBool( std::string name, bool foo );
 };
 
 int luaL_loadstring( lua_State* l, const char* s, const char* dir );

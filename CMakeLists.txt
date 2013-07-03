@@ -57,6 +57,10 @@ set( source
      src/os.cpp
      src/common.cpp
      src/window.cpp
+     src/scene.cpp
+     src/render.cpp
+     src/shader.cpp
+     src/node.cpp
      src/keyboard.cpp
      src/filesystem.cpp
      src/filesystem_read.cpp
@@ -68,10 +72,12 @@ set( CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmakemodules" )
 find_package( SFML      REQUIRED )
 find_package( PHYSFS    REQUIRED )
 find_package( Lua51     REQUIRED )
+find_package( GLM       REQUIRED )
 
 # Includes
 include_directories( ${SFML_INCLUDE_DIR}
                      ${LUA_INCLUDE_DIR}
+                     ${GLM_INCLUDE_DIR}
                      ${PHYSFS_INCLUDE_DIR} )
 
 # Executable

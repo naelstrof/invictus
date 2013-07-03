@@ -3,15 +3,13 @@
 
 #include "os.hpp"
 #include "filesystem.hpp"
-#include <System/String.hpp>
-#include <System/Utf.hpp>
 
 namespace is {
 namespace File {
 
 class Read {
 public:
-    Read( sf::String dir );
+    Read( std::string dir );
     ~Read();
     void close();
     bool good();

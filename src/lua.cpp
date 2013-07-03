@@ -3,6 +3,7 @@
 is::Lua* lua = new is::Lua();
 
 #include "lua/print.cpp"
+#include "lua/addshader.cpp"
 
 is::Lua::Lua() {
     m_l = luaL_newstate();
@@ -12,6 +13,7 @@ is::Lua::Lua() {
 
     // Unfortunately we can't just include lua functions in this file, we have to register them too. We'll do that here.
     addFunction( "print", luaPrint );
+    addFunction( "addShader", luaAddShader );
 }
 
 is::Lua::~Lua() {
@@ -24,12 +26,10 @@ int is::Lua::init() {
     return 0;
 }
 
-int is::Lua::doFile( sf::String dir ) {
-    std::string actualdir;
-    sf::Utf<32>::toUtf8( dir.begin(), dir.end(), back_inserter( actualdir ) );
+int is::Lua::doFile( std::string dir ) {
     is::File::Read file( dir );
     if ( !file.good() ) {
-        os->printf( "ERR Couldn't parse % as a lua file!\n", actualdir );
+        os->printf( "ERR Couldn't parse % as a lua file!\n", dir );
         return 1;
     }
 
@@ -38,7 +38,7 @@ int is::Lua::doFile( sf::String dir ) {
     filedata[ file.size() ] = '\0'; // Ensure the 'string' is terminated just in case we're parsing some randomass file.
 
     // Finally parse the string and check for errors.
-    int err = luaL_isdostring( m_l, filedata, actualdir.c_str() );
+    int err = luaL_isdostring( m_l, filedata, dir.c_str() );
     delete[] filedata;
     if ( err ) {
         std::string error = lua_tostring( m_l, -1 );
@@ -48,7 +48,7 @@ int is::Lua::doFile( sf::String dir ) {
     return 0;
 }
 
-int is::Lua::doFolder( sf::String dir ) {
+int is::Lua::doFolder( std::string dir ) {
     std::vector<std::string> files = filesystem->getFiles( dir );
     int results = 0;
     for ( unsigned int i=0;i<files.size();i++ ) {
@@ -59,24 +59,19 @@ int is::Lua::doFolder( sf::String dir ) {
     return results;
 }
 
-void is::Lua::addFunction( sf::String name, lua_CFunction func ) {
-    std::string actualname;
-    sf::Utf<32>::toUtf8( name.begin(), name.end(), back_inserter( actualname ) );
-    lua_register( m_l, actualname.c_str(), func );
+void is::Lua::addFunction( std::string name, lua_CFunction func ) {
+    lua_register( m_l, name.c_str(), func );
 }
 
 int is::luaL_loadstring( lua_State* l, const char* s, const char* dir ) {
     return luaL_loadbuffer( l, s, strlen(s), dir );
 }
 
-float is::Lua::getFloat( sf::String name ) {
-    std::string actualname;
-    sf::Utf<32>::toUtf8( name.begin(), name.end(), back_inserter( actualname ) );
-
+float is::Lua::getFloat( std::string name ) {
     lua_getglobal( m_l, "_G" );
-    lua_getfield( m_l, -1, actualname.c_str() );
+    lua_getfield( m_l, -1, name.c_str() );
     if ( !lua_isnumber( m_l, -1 ) ) {
-        os->printf( "WRN Lua tried to use % as a number. (It's not a number or doesn't exist!)\n", actualname );
+        os->printf( "WRN Lua tried to use % as a number. (It's not a number or doesn't exist!)\n", name );
         lua_pop( m_l, 2 );
         return 0;
     }
@@ -85,14 +80,11 @@ float is::Lua::getFloat( sf::String name ) {
     return num;
 }
 
-std::string is::Lua::getString( sf::String name ) {
-    std::string actualname;
-    sf::Utf<32>::toUtf8( name.begin(), name.end(), back_inserter( actualname ) );
-
+std::string is::Lua::getString( std::string name ) {
     lua_getglobal( m_l, "_G" );
-    lua_getfield( m_l, -1, actualname.c_str() );
+    lua_getfield( m_l, -1, name.c_str() );
     if ( !lua_isstring( m_l, -1 ) ) {
-        os->printf( "WRN Lua tried to use % as a string. (It's not a string or doesn't exist!)\n", actualname );
+        os->printf( "WRN Lua tried to use % as a string. (It's not a string or doesn't exist!)\n", name );
         lua_pop( m_l, 2 );
         return "NULL";
     }
@@ -101,14 +93,11 @@ std::string is::Lua::getString( sf::String name ) {
     return text;
 }
 
-bool is::Lua::getBool( sf::String name ) {
-    std::string actualname;
-    sf::Utf<32>::toUtf8( name.begin(), name.end(), back_inserter( actualname ) );
-
+bool is::Lua::getBool( std::string name ) {
     lua_getglobal( m_l, "_G" );
-    lua_getfield( m_l, -1, actualname.c_str() );
+    lua_getfield( m_l, -1, name.c_str() );
     if ( !lua_isboolean( m_l, -1 ) ) {
-        os->printf( "WRN Lua tried to use % as a string. (It's not a string or doesn't exist!)\n", actualname );
+        os->printf( "WRN Lua tried to use % as a string. (It's not a string or doesn't exist!)\n", name );
         lua_pop( m_l, 2 );
         return false;
     }
@@ -117,25 +106,16 @@ bool is::Lua::getBool( sf::String name ) {
     return boolean;
 }
 
-void is::Lua::setString( sf::String name, sf::String foo ) {
-    std::string actualname;
-    sf::Utf<32>::toUtf8( name.begin(), name.end(), back_inserter( actualname ) );
-
-    std::string actualvalue;
-    sf::Utf<32>::toUtf8( foo.begin(), foo.end(), back_inserter( actualvalue ) );
-
+void is::Lua::setString( std::string name, std::string foo ) {
     lua_getglobal( m_l, "_G" );
-    lua_pushstring( m_l, actualvalue.c_str() );
-    lua_setfield( m_l, -2, actualname.c_str() );
+    lua_pushstring( m_l, foo.c_str() );
+    lua_setfield( m_l, -2, name.c_str() );
     lua_pop( m_l, 1 );
 }
 
-void is::Lua::setBool( sf::String name, bool foo ) {
-    std::string actualname;
-    sf::Utf<32>::toUtf8( name.begin(), name.end(), back_inserter( actualname ) );
-
+void is::Lua::setBool( std::string name, bool foo ) {
     lua_getglobal( m_l, "_G" );
     lua_pushboolean( m_l, foo );
-    lua_setfield( m_l, -2, actualname.c_str() );
+    lua_setfield( m_l, -2, name.c_str() );
     lua_pop( m_l, 1 );
 }

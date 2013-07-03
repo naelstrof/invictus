@@ -58,17 +58,13 @@ void is::FileSystem::tick() {
     checkError();
 }
 
-std::vector<std::string> is::FileSystem::getFiles( sf::String dir ) {
-    // Gotta convert to UTF-8 in order for PHYSFS to properly read the directory.
-    std::string actualdir;
-    sf::Utf<32>::toUtf8( dir.begin(), dir.end(), back_inserter(actualdir) );
-
+std::vector<std::string> is::FileSystem::getFiles( std::string dir ) {
     std::vector<std::string> files;
 
-    char** list = PHYSFS_enumerateFiles( actualdir.c_str() );
+    char** list = PHYSFS_enumerateFiles( dir.c_str() );
     int i = 0;
     while ( list[i] != NULL ) {
-        std::string file = actualdir + '/' + std::string( list[i] );
+        std::string file = dir + '/' + std::string( list[i] );
         files.push_back( file );
         if ( PHYSFS_isDirectory( file.c_str() ) ) {
             std::vector<std::string> newfiles = getFiles( file );
@@ -80,8 +76,6 @@ std::vector<std::string> is::FileSystem::getFiles( sf::String dir ) {
     return files;
 }
 
-bool is::FileSystem::exists( sf::String dir ) {
-    std::string actualdir;
-    sf::Utf<32>::toUtf8( dir.begin(), dir.end(), back_inserter( actualdir ) );
-    return PHYSFS_exists( actualdir.c_str() );
+bool is::FileSystem::exists( std::string dir ) {
+    return PHYSFS_exists( dir.c_str() );
 }

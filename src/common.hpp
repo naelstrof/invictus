@@ -9,6 +9,7 @@
 #include "lua.hpp"
 #include "scene.hpp"
 #include "render.hpp"
+#include "shader.hpp"
 
 namespace is {
 
