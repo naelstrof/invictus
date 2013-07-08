@@ -1,9 +1,9 @@
 #include "font.hpp"
 
-is::Font* font = new is::Font();
+is::Font* fonts = new is::Font();
+is::ftlib = NULL;
 
 is::Font::Font() {
-
 }
 
 is::Font::~Font() {
@@ -11,9 +11,15 @@ is::Font::~Font() {
         delete m_fonts[i].m_font;
         delete[] m_fonts[i].m_data;
     }
+    FT_Done_FreeType( is::ftlib );
 }
 
 int is::Font::init() {
+    int err = FT_Init_FreeType( &is::ftlib );
+    if ( err ) {
+        os->printf( "ERR Freetype failed to initialize!\n" );
+        return 1;
+    }
     lua->doFolder( "data/fonts" );
     return 0;
 }
@@ -46,8 +52,13 @@ void is::Font::loadFont( int id ) {
     char* data = new char[ file.size() ];
     file.read( data, file.size() );
 
-    m_fonts.at( id ).m_font = new sf::Font();
-    m_fonts.at( id ).m_font->loadFromMemory( data, file.size() );
+    //m_fonts.at( id ).m_font = new sf::Font();
+    //m_fonts.at( id ).m_font->loadFromMemory( data, file.size() );
+    int err = FT_New_Memory_Face( is::ftlib, (const unsigned char*)data, file.size(), 0, &( m_fonts.at( id ).m_font ) );
+    if ( err ) {
+        os->printf( "ERR Error loading font: %. It's either corrupt, not a font, or otherwise unreadable!\n", dir );
+        return;
+    }
 
     // Can't delete the data until it's not being used anymore :/
     m_fonts.at( id ).m_data = data;

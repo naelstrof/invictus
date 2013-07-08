@@ -6,7 +6,7 @@
 #include <vector>
 
 #include "node.hpp"
-#include "nodes/text.hpp"
+//#include "nodes/text.hpp"
 
 namespace is {
 
