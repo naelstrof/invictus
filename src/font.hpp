@@ -6,19 +6,19 @@
 #include <vector>
 #include <string>
 #include <SFML/Graphics/Font.hpp>
+#include <ft2build.h>
+#include FT_FREETYPE_H
 
 #include "lua.hpp"
 
 namespace is {
 
-FT_Library ftlib;
-
 class FontStore {
 public:
-    FontStore( std::string name, std::string dir, sf::Font* font );
+    FontStore( std::string name, std::string dir, FT_Face font );
     std::string m_name;
     std::string m_dir;
-    FontFace*   m_font;
+    FT_Face     m_face;
     char*       m_data;
 };
 

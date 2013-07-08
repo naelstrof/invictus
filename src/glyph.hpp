@@ -5,36 +5,54 @@
 
 #include <vector>
 #include <string>
+#include <glm/glm.hpp>
+#include <SFML/System/Utf.hpp>
+#include <SFML/System/String.hpp>
 
 #include "texture_atlas.hpp"
+#include "font.hpp"
 
 namespace is {
 
 // Stores a single glyph's information
 class GlyphInfo {
-    // Not sure what we have to store yet :u
+public:
+    GlyphInfo( is::FontStore* font, int size, sf::String id, is::TextureAtlas* texture );
+    sf::String      m_id;
+    int             m_size;
+    bool            m_renderable;
+    float           m_advanceX;
+    float           m_advanceY;
+    float           m_bitmapWidth;
+    float           m_bitmapHeight;
+    float           m_bitmapLeft;
+    float           m_bitmapTop;
+    glm::vec2       m_uv[4];
 };
 
 // Stores a set of glyph information.
 class GlyphsContainer {
-    std::vector<GlyphInfo>      m_glyphs;
-    std::vector<sf::Uint32>     m_id;
-    is::TextureAtlas*           m_texture;
-    std::string                 m_name;
+private:
+    is::GlyphInfo*              add( sf::String id, int size );
+public:
+    GlyphsContainer( is::FontStore* font, int textureSize );
+    std::vector<is::GlyphInfo>  m_glyphs;
+    is::TextureAtlas            m_texture;
+    is::FontStore*              m_font;
+    is::GlyphInfo*              find( sf::String id, int size );
 };
 
 class Glyph {
 private:
     std::vector<GlyphsContainer*> m_glyphcontainers;
 public:
-    Glyph();
     ~Glyph();
-    int             init();
-    is::GlyphInfo*  get( sf::Uint32 id, std::string font, char style );
+    is::GlyphInfo*      get( sf::String id, std::string font, int size );
+    is::TextureAtlas*   getTexture( std::string font );
 };
 
 };
 
-extern is::Glyph* glyph;
+extern is::Glyph* glyphs;
 
 #endif // IS_GLYPH_H_

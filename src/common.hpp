@@ -11,7 +11,8 @@
 #include "render.hpp"
 #include "shader.hpp"
 #include "model.hpp"
-//#include "font.hpp"
+#include "font.hpp"
+#include "glyph.hpp"
 
 namespace is {
 

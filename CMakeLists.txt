@@ -61,9 +61,11 @@ set( source
      src/render.cpp
      src/shader.cpp
      src/model.cpp
-     #src/font.cpp
+     src/font.cpp
      src/node.cpp
-     #src/nodes/text.cpp
+     src/nodes/text.cpp
+     src/glyph.cpp
+     src/texture_atlas.cpp
      src/keyboard.cpp
      src/filesystem.cpp
      src/filesystem_read.cpp
@@ -78,10 +80,12 @@ find_package( Lua51     REQUIRED )
 find_package( GLM       REQUIRED )
 find_package( OpenGL    REQUIRED )
 find_package( AssImp    REQUIRED )
+find_package( Freetype  REQUIRED )
 
 # Includes
 include_directories( ${SFML_INCLUDE_DIR}
                      ${LUA_INCLUDE_DIR}
+                     ${FREETYPE_INCLUDE_DIRS}
                      ${ASSIMP_INCLUDE_DIR}
                      ${GLM_INCLUDE_DIR}
                      ${OPENGL_INCLUDE_DIRS}
@@ -93,6 +97,7 @@ add_executable( ${BIN_TARGET} ${source} )
 # Libraries
 target_link_libraries( ${BIN_TARGET}
                        ${SFML_LIBRARY}
+                       ${FREETYPE_LIBRARIES}
                        ${LUA_LIBRARIES}
                        ${OPENGL_LIBRARIES}
                        ${ASSIMP_LIBRARY}

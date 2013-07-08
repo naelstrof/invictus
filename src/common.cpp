@@ -80,6 +80,12 @@ int is::Common::init( int argc, char** argv ) {
         return err;
     }
 
+    err = fonts->init();
+    if ( err ) {
+        os->printf( "ERR Failed to initialize fonts, shutting down...\n" );
+        return err;
+    }
+
     err = models->init();
     if ( err ) {
         os->printf( "ERR Failed to initialize models, shutting down...\n" );
@@ -92,7 +98,7 @@ int is::Common::init( int argc, char** argv ) {
         return err;
     }
 
-    //gui->addNode( new is::Text( "hello, world!", "gui" ) );
+    gui->addNode( new is::Text( "hello world!" ) );
 
     m_running = true;
     m_time.restart();

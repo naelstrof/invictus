@@ -7,8 +7,9 @@ void is::cleanUp() {
     delete keyboard;
     delete filesystem;
     delete lua;
-    delete shader;
-    //delete font;
+    delete shaders;
+    delete glyphs;
+    delete fonts;
     delete models;
     delete world;
     delete gui;

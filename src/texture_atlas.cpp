@@ -1,5 +1,10 @@
 #include "texture_atlas.hpp"
 
+is::TextureAtlas::TextureAtlas() {
+    m_width = 0;
+    m_height = 0;
+}
+
 is::TextureAtlas::TextureAtlas( unsigned int w, unsigned int h ) {
     m_width = w;
     m_height = h;
@@ -15,6 +20,7 @@ is::TextureAtlas::TextureAtlas( unsigned int w, unsigned int h ) {
         data[i] = 0;
     }
     glTexImage2D( GL_TEXTURE_2D, 0, GL_ALPHA, m_width, m_height, 0, GL_ALPHA, GL_UNSIGNED_BYTE, data );
+    delete[] data;
 }
 
 is::TextureAtlas::~TextureAtlas() {
@@ -26,7 +32,7 @@ void is::TextureAtlas::bind() {
     glBindTexture( GL_TEXTURE_2D, m_texture );
 }
 
-is::TextureAtlas::Node* is::TextureAtlas::insertImage( unsigned int w, unsigned int h, unsigned char* imagedata ) {
+is::TextureAtlas::Node* is::TextureAtlas::insert( unsigned int w, unsigned int h, unsigned char* imagedata ) {
     is::TextureAtlas::Node* node = m_node.insert( w, h );
     if ( !node ) {
         os->printf( "ERR Texture atlas has ran out of room! This needs to be fixed by a developer!\n" );
@@ -35,7 +41,7 @@ is::TextureAtlas::Node* is::TextureAtlas::insertImage( unsigned int w, unsigned 
 
     glBindTexture( GL_TEXTURE_2D, m_texture );
     // Render the small texture to our atlas.
-    glTexSubImage2D(GL_TEXTURE_2D, 0, node->m_rect.Left, node->m_rect.Top, w, h, GL_ALPHA, GL_UNSIGNED_BYTE, imagedata);
+    glTexSubImage2D(GL_TEXTURE_2D, 0, node->m_rect.left, node->m_rect.top, w, h, GL_ALPHA, GL_UNSIGNED_BYTE, imagedata);
     return node;
 }
 
@@ -43,25 +49,25 @@ is::TextureAtlas::Node::Node( unsigned int w, unsigned int h ) {
     m_children[0] = NULL;
     m_children[1] = NULL;
     m_img = 0;
-    m_rect = sf::Rect( 0, 0, w, h );
+    m_rect = sf::Rect<unsigned int>( 0, 0, w, h );
 }
 
 is::TextureAtlas::Node::Node() {
     m_children[0] = NULL;
     m_children[1] = NULL;
     m_img = 0;
-    m_rect = sf::Rect( 0, 0, 0, 0 );
+    m_rect = sf::Rect<unsigned int>( 0, 0, 0, 0 );
 }
 
-is::TextureAtlas::Node::Node( unsigned int top, unsigned int left, unsigned int right, unsigned int bottom ) {
+is::TextureAtlas::Node::Node( unsigned int left, unsigned int top, unsigned int width, unsigned int height ) {
     m_children[0] = NULL;
     m_children[1] = NULL;
     m_img = 0;
-    m_rect = sf::Rect( top, left, right, bottom );
+    m_rect = sf::Rect<unsigned int>( left, top, width, height );
 }
 
 is::TextureAtlas::Node::~Node() {
-    if ( m_children[0] ) {
+    if ( m_children[0] != NULL ) {
         delete m_children[0];
         delete m_children[1];
     }
@@ -69,7 +75,7 @@ is::TextureAtlas::Node::~Node() {
 
 is::TextureAtlas::Node* is::TextureAtlas::Node::insert( unsigned int w, unsigned int h ) {
     // If we're not a leaf
-    if ( m_children[0] ) {
+    if ( m_children[0] != NULL ) {
         // Try inserting into first child
         is::TextureAtlas::Node* node = m_children[0]->insert( w, h );
         if ( node ) {
@@ -85,28 +91,28 @@ is::TextureAtlas::Node* is::TextureAtlas::Node::insert( unsigned int w, unsigned
         return NULL;
     }
     // If we're too small, return
-    if ( m_rect.GetWidth() < w || m_rect.GetHeight() < h ) {
+    if ( m_rect.width < w || m_rect.height < h ) {
         return NULL;
     }
     // We found a perfect fit!
-    if ( m_rect.GetWidth() == w || m_rect.GetHeight() == h ) {
+    if ( m_rect.width == w || m_rect.height == h ) {
         m_img = true;
         return this;
     }
 
     // Ok, we have room, but we need to split to make it perfect.
-    unsigned int dw = m_rect.GetWidth() - w;
-    unsigned int dh = m_rect.GetHeight() - h;
+    unsigned int dw = m_rect.width - w;
+    unsigned int dh = m_rect.height - h;
 
     // Decide which way to split
     if ( dw > dh ) {
         // Vertical split, left node fits texture.
-        m_children[0] = new is::TextureAtlas::Node( m_rect.Left, m_rect.Top, m_rect.Left+w, m_rect.Bottom );
-        m_children[1] = new is::TextureAtlas::Node( m_rect.Left+w+1, m_rect.Top, m_rect.Right, m_rect.Bottom);
+        m_children[0] = new is::TextureAtlas::Node( m_rect.left, m_rect.top, w, m_rect.height );
+        m_children[1] = new is::TextureAtlas::Node( m_rect.left+w+1, m_rect.top, m_rect.width-w-1, m_rect.height);
     } else {
         // Horizontal split, top node fits texture.
-        m_children[0] = new is::TextureAtlas::Node( m_rect.Left, m_rect.Top, m_rect.Right, m_rect.Bottom+h+1 );
-        m_children[1] = new is::TextureAtlas::Node( m_rect.Left, m_rect.Bottom+h, m_rect.Right, m_rect.Bottom);
+        m_children[0] = new is::TextureAtlas::Node( m_rect.left, m_rect.top, m_rect.width, m_rect.height-h );
+        m_children[1] = new is::TextureAtlas::Node( m_rect.left, m_rect.top-h-1, m_rect.width, m_rect.height-h-1);
     }
 
     // Now insert it into our top/left node

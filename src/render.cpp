@@ -3,6 +3,7 @@
 is::Render* render = new is::Render();
 
 is::Render::Render() {
+    m_sizeChanged = false;
 }
 
 int is::Render::init() {

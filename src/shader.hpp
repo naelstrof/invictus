@@ -25,6 +25,6 @@ public:
 
 };
 
-extern is::Shader* shader;
+extern is::Shader* shaders;
 
 #endif // IS_SHADER_H_

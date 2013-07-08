@@ -1,6 +1,6 @@
 #include "shader.hpp"
 
-is::Shader* shader = new is::Shader();
+is::Shader* shaders = new is::Shader();
 
 is::Shader::Shader() {
 

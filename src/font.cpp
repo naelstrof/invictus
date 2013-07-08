@@ -1,21 +1,22 @@
 #include "font.hpp"
 
 is::Font* fonts = new is::Font();
-is::ftlib = NULL;
+FT_Library ftlib = NULL;
 
 is::Font::Font() {
 }
 
 is::Font::~Font() {
+    FT_Done_FreeType( ftlib );
     for ( unsigned int i=0; i<m_fonts.size(); i++ ) {
-        delete m_fonts[i].m_font;
-        delete[] m_fonts[i].m_data;
+        if ( m_fonts[i].m_data != NULL ) {
+            delete[] m_fonts[i].m_data;
+        }
     }
-    FT_Done_FreeType( is::ftlib );
 }
 
 int is::Font::init() {
-    int err = FT_Init_FreeType( &is::ftlib );
+    int err = FT_Init_FreeType( &ftlib );
     if ( err ) {
         os->printf( "ERR Freetype failed to initialize!\n" );
         return 1;
@@ -24,11 +25,11 @@ int is::Font::init() {
     return 0;
 }
 
-sf::Font* is::Font::get( std::string fontname ) {
+is::FontStore* is::Font::get( std::string fontname ) {
     for ( unsigned int i=0; i<m_fonts.size(); i++ ) {
         if ( fontname == m_fonts[i].m_name ) {
             loadFont( i );
-            return m_fonts.at( i ).m_font;
+            return &( m_fonts.at( i ) );
         }
     }
     os->printf( "ERR Couldn't find font %!\n", fontname );
@@ -43,7 +44,7 @@ void is::Font::addFont( std::string name, std::string dir ) {
 
 void is::Font::loadFont( int id ) {
     is::FontStore font = m_fonts.at( id );
-    if ( font.m_font != NULL ) {
+    if ( font.m_face != NULL ) {
         return;
     }
 
@@ -54,9 +55,9 @@ void is::Font::loadFont( int id ) {
 
     //m_fonts.at( id ).m_font = new sf::Font();
     //m_fonts.at( id ).m_font->loadFromMemory( data, file.size() );
-    int err = FT_New_Memory_Face( is::ftlib, (const unsigned char*)data, file.size(), 0, &( m_fonts.at( id ).m_font ) );
+    int err = FT_New_Memory_Face( ftlib, (const unsigned char*)data, file.size(), 0, & ( m_fonts.at( id ).m_face ) );
     if ( err ) {
-        os->printf( "ERR Error loading font: %. It's either corrupt, not a font, or otherwise unreadable!\n", dir );
+        os->printf( "ERR Error loading font: %. It's either corrupt, not a font, or otherwise unreadable!\n", font.m_dir );
         return;
     }
 
@@ -68,8 +69,9 @@ void is::Font::loadFont( int id ) {
     os->printf( "INF Loaded font % as %.\n", font.m_name, font.m_dir );
 }
 
-is::FontStore::FontStore( std::string name, std::string dir, sf::Font* font ) {
+is::FontStore::FontStore( std::string name, std::string dir, FT_Face font ) {
     m_name = name;
     m_dir = dir;
-    m_font = font;
+    m_face = font;
+    m_data = NULL;
 }
