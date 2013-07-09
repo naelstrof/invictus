@@ -1,52 +1,97 @@
 #include "shader.hpp"
 
-is::Shader* shaders = new is::Shader();
+is::Shader::Shader( std::string name, std::string vert, std::string frag ) {
+    // Create the program to link to.
+    m_program = glCreateProgram();
 
-is::Shader::Shader() {
+    const char* vertsrc = vert.c_str();
+    const char* fragsrc = frag.c_str();
 
+    // Compile both shaders.
+    unsigned int vertShader = glCreateShader( GL_VERTEX_SHADER );
+    glShaderSource( vertShader, 1, &vertsrc , NULL );
+    int err = compile( vertShader );
+
+    unsigned int fragShader = glCreateShader( GL_FRAGMENT_SHADER );
+    glShaderSource( fragShader, 1, &fragsrc, NULL );
+    err += compile( fragShader );
+
+    if ( err ) {
+        os->printf( "ERR Failed to compile shader %.\n", name );
+        glDeleteShader( vertShader );
+        glDeleteShader( fragShader );
+        return;
+    }
+
+    // Then attempt to link them to this shader.
+    err = link( vertShader, fragShader );
+    if ( err ) {
+        os->printf( "ERR Failed to link shader %.\n", name );
+    }
+
+    // Clean up :)
+    glDeleteShader( vertShader );
+    glDeleteShader( fragShader );
 }
 
 is::Shader::~Shader() {
-    for ( unsigned int i=0; i<m_shaders.size(); i++ ) {
-        delete m_shaders[i];
-    }
+    glDeleteProgram( m_program );
 }
 
-int is::Shader::init() {
-    lua->doFolder( "data/shaders" );
+unsigned int is::Shader::getProgram() {
+    return m_program;
+}
+
+void is::Shader::bind() {
+    glUseProgram( m_program );
+}
+
+int is::Shader::compile( unsigned int shader ) {
+    glCompileShader( shader );
+
+    // Compiling the shader is the easy part, all this junk down here is for printing the error it might generate.
+    int result;
+    int logLength;
+    glGetShaderiv( shader, GL_COMPILE_STATUS, &result );
+    glGetShaderiv( shader, GL_INFO_LOG_LENGTH, &logLength );
+    if ( result == GL_FALSE ) {
+        char* errormsg = new char[ logLength ];
+        glGetShaderInfoLog( shader, logLength, NULL, errormsg );
+        os->printf( "%\n", errormsg );
+        delete[] errormsg;
+        return 1;
+    }
     return 0;
 }
 
-sf::Shader* is::Shader::get( std::string shadername ) {
-    for ( unsigned int i=0; i<m_shaders.size(); i++ ) {
-        if ( shadername == m_shadernames[i] ) {
-            return m_shaders[i];
-        }
+int is::Shader::link( unsigned int vertshader, unsigned int fragshader ) {
+    glAttachShader( m_program, vertshader );
+    glAttachShader( m_program, fragshader );
+    glLinkProgram( m_program );
+
+    // Linking the shader is the easy part, all this junk down here is for printing the error it might generate.
+    int result;
+    int logLength;
+    glGetProgramiv( m_program, GL_LINK_STATUS, &result);
+    glGetProgramiv( m_program, GL_INFO_LOG_LENGTH, &logLength);
+    if ( result == GL_FALSE ) {
+        char* errormsg = new char[ logLength ];
+        glGetProgramInfoLog( m_program, logLength, NULL, errormsg );
+        os->printf( "%\n", errormsg );
+        delete[] errormsg;
+        return 1;
     }
-    os->printf( "ERR Couldn't find shader %!\n", shadername );
-    // TODO: Return a default shader here so we don't crash.
-    return NULL;
+    return 0;
 }
 
-void is::Shader::addShader( std::string name, std::string vertdir, std::string fragdir ) {
-    is::File::Read vert( vertdir );
-    is::File::Read frag( fragdir );
+unsigned int is::Shader::getUniformLocation( std::string name ) {
+    return glGetUniformLocation( m_program, name.c_str() );
+}
 
-    char* vertdata = new char[ vert.size() + 1 ];
-    vert.read( vertdata, vert.size() );
-    vertdata[ vert.size() ] = '\0';
+void is::Shader::setParameter( std::string name, int foo ) {
+    glUniform1i( getUniformLocation( name ), foo );
+}
 
-    char* fragdata = new char[ frag.size() + 1 ];
-    frag.read( fragdata, frag.size() );
-    fragdata[ frag.size() ] = '\0';
-
-    sf::Shader* shader = new sf::Shader();
-    shader->loadFromMemory( vertdata, fragdata );
-
-    delete[] fragdata;
-    delete[] vertdata;
-
-    m_shaders.push_back( shader );
-    m_shadernames.push_back( name );
-    os->printf( "INF Loaded shader %.\n", name );
+void is::Shader::setParameter( std::string name, glm::mat4 foo ) {
+    glUniformMatrix4fv( getUniformLocation( name ), 1, GL_FALSE, glm::value_ptr( foo ) );
 }

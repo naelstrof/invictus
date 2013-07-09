@@ -60,6 +60,7 @@ set( source
      src/scene.cpp
      src/render.cpp
      src/shader.cpp
+     src/shaderloader.cpp
      src/model.cpp
      src/font.cpp
      src/node.cpp
@@ -81,11 +82,13 @@ find_package( GLM       REQUIRED )
 find_package( OpenGL    REQUIRED )
 find_package( AssImp    REQUIRED )
 find_package( Freetype  REQUIRED )
+find_package( GLEW      REQUIRED )
 
 # Includes
 include_directories( ${SFML_INCLUDE_DIR}
                      ${LUA_INCLUDE_DIR}
                      ${FREETYPE_INCLUDE_DIRS}
+                     ${GLEW_INCLUDE_PATH}
                      ${ASSIMP_INCLUDE_DIR}
                      ${GLM_INCLUDE_DIR}
                      ${OPENGL_INCLUDE_DIRS}
@@ -101,4 +104,5 @@ target_link_libraries( ${BIN_TARGET}
                        ${LUA_LIBRARIES}
                        ${OPENGL_LIBRARIES}
                        ${ASSIMP_LIBRARY}
+                       ${GLEW_LIBRARY}
                        ${PHYSFS_LIBRARY} )

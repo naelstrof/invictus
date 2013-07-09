@@ -13,8 +13,8 @@ is::Window::Window() {
     m_width = 512;
     m_height = 512;
     m_printed = false;
-    m_window = new sf::RenderWindow( sf::VideoMode( m_width, m_height ), m_name );
-    m_changed = true;
+    m_window = new sf::RenderWindow();
+    m_changed = false;
 }
 
 is::Window::~Window() {

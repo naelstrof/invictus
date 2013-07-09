@@ -15,9 +15,9 @@
 namespace is {
 
 // Stores a single glyph's information
-class GlyphInfo {
+class Glyph {
 public:
-    GlyphInfo( is::FontStore* font, int size, sf::String id, is::TextureAtlas* texture );
+    Glyph( is::Font* font, int size, sf::String id, is::TextureAtlas* texture );
     sf::String      m_id;
     int             m_size;
     bool            m_renderable;
@@ -33,26 +33,28 @@ public:
 // Stores a set of glyph information.
 class GlyphsContainer {
 private:
-    is::GlyphInfo*              add( sf::String id, int size );
+    is::Glyph*              add( sf::String id, int size );
 public:
-    GlyphsContainer( is::FontStore* font, int textureSize );
-    std::vector<is::GlyphInfo>  m_glyphs;
-    is::TextureAtlas            m_texture;
-    is::FontStore*              m_font;
-    is::GlyphInfo*              find( sf::String id, int size );
+    GlyphsContainer( is::Font* font, int textureSize );
+    ~GlyphsContainer();
+    std::vector<is::Glyph>  m_glyphs;
+    // Must be a pointer because otherwise it gets deconstructed in some place i couldn't find.
+    is::TextureAtlas*        m_texture;
+    is::Font*               m_font;
+    is::Glyph*              find( sf::String id, int size );
 };
 
-class Glyph {
+class GlyphLoader {
 private:
     std::vector<GlyphsContainer*> m_glyphcontainers;
 public:
-    ~Glyph();
-    is::GlyphInfo*      get( sf::String id, std::string font, int size );
+    ~GlyphLoader();
+    is::Glyph*          get( sf::String id, std::string font, int size );
     is::TextureAtlas*   getTexture( std::string font );
 };
 
 };
 
-extern is::Glyph* glyphs;
+extern is::GlyphLoader* glyphs;
 
 #endif // IS_GLYPH_H_

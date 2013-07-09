@@ -3,6 +3,7 @@
 is::TextureAtlas::TextureAtlas() {
     m_width = 0;
     m_height = 0;
+    m_texture = 0;
 }
 
 is::TextureAtlas::TextureAtlas( unsigned int w, unsigned int h ) {
@@ -12,15 +13,13 @@ is::TextureAtlas::TextureAtlas( unsigned int w, unsigned int h ) {
     m_node = Node( m_width, m_height );
 
     // Generate an empty texture to use as a texture atlas.
-    glActiveTexture( GL_TEXTURE0 );
     glGenTextures( 1, &m_texture );
-    unsigned char* data = new unsigned char[ m_width*m_height ];
-    for ( unsigned int i=0; i<m_width*m_height; i++ ) {
-        // Make sure the whole image is empty.
-        data[i] = 0;
-    }
-    glTexImage2D( GL_TEXTURE_2D, 0, GL_ALPHA, m_width, m_height, 0, GL_ALPHA, GL_UNSIGNED_BYTE, data );
-    delete[] data;
+    glBindTexture( GL_TEXTURE_2D, m_texture );
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexStorage2D( GL_TEXTURE_2D, 1, GL_R8, m_width, m_height );
 }
 
 is::TextureAtlas::~TextureAtlas() {
@@ -41,7 +40,8 @@ is::TextureAtlas::Node* is::TextureAtlas::insert( unsigned int w, unsigned int h
 
     glBindTexture( GL_TEXTURE_2D, m_texture );
     // Render the small texture to our atlas.
-    glTexSubImage2D(GL_TEXTURE_2D, 0, node->m_rect.left, node->m_rect.top, w, h, GL_ALPHA, GL_UNSIGNED_BYTE, imagedata);
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+    glTexSubImage2D( GL_TEXTURE_2D, 0, node->m_rect.left, node->m_rect.top-h, w, h, GL_RED, GL_UNSIGNED_BYTE, imagedata );
     return node;
 }
 
@@ -49,7 +49,7 @@ is::TextureAtlas::Node::Node( unsigned int w, unsigned int h ) {
     m_children[0] = NULL;
     m_children[1] = NULL;
     m_img = 0;
-    m_rect = sf::Rect<unsigned int>( 0, 0, w, h );
+    m_rect = sf::Rect<unsigned int>( 0, h, w, h );
 }
 
 is::TextureAtlas::Node::Node() {
@@ -95,7 +95,7 @@ is::TextureAtlas::Node* is::TextureAtlas::Node::insert( unsigned int w, unsigned
         return NULL;
     }
     // We found a perfect fit!
-    if ( m_rect.width == w || m_rect.height == h ) {
+    if ( m_rect.width == w && m_rect.height == h ) {
         m_img = true;
         return this;
     }
@@ -111,7 +111,7 @@ is::TextureAtlas::Node* is::TextureAtlas::Node::insert( unsigned int w, unsigned
         m_children[1] = new is::TextureAtlas::Node( m_rect.left+w+1, m_rect.top, m_rect.width-w-1, m_rect.height);
     } else {
         // Horizontal split, top node fits texture.
-        m_children[0] = new is::TextureAtlas::Node( m_rect.left, m_rect.top, m_rect.width, m_rect.height-h );
+        m_children[0] = new is::TextureAtlas::Node( m_rect.left, m_rect.top, m_rect.width, h );
         m_children[1] = new is::TextureAtlas::Node( m_rect.left, m_rect.top-h-1, m_rect.width, m_rect.height-h-1);
     }
 

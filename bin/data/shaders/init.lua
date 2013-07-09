@@ -1,1 +1,1 @@
-addShader( "flat", "data/shaders/flat.vert", "data/shaders/flat.frag" );
+addShader( "text", "data/shaders/text.vert", "data/shaders/text.frag" );

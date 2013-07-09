@@ -20,6 +20,7 @@ public:
     int             init();
     void            draw();
     void            updateSize();
+    void            tick();
 };
 
 };

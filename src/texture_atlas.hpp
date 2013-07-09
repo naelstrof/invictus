@@ -4,7 +4,7 @@
 #define IS_TEXTURE_ATLAS_H_
 
 #include <SFML/Graphics/Rect.hpp>
-#include <GL/gl.h>
+#include <GL/glew.h>
 
 #include "os.hpp"
 

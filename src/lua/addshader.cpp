@@ -3,7 +3,7 @@ int luaAddShader( lua_State* l ) {
     std::string vertdir = luaL_checkstring( l, 2 );
     std::string fragdir = luaL_checkstring( l, 3 );
 
-    shader->addShader( shadername, vertdir, fragdir );
+    shaders->addShader( shadername, vertdir, fragdir );
 
     return 0;
 }

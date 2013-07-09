@@ -8,6 +8,7 @@ is::Node::Node() {
     m_scale = glm::vec3( 1 );
     m_matrix = glm::mat4( 1 );
     m_parent = NULL;
+    m_matrixChanged = false;
 }
 
 is::Node::~Node() {

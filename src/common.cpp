@@ -74,7 +74,14 @@ int is::Common::init( int argc, char** argv ) {
         window->setSize( width, height );
     }
 
-    err = shader->init();
+    err = glewInit();
+    if ( err != GLEW_OK ) {
+        os->printf( "ERR %\n", glewGetErrorString( err ) );
+        os->printf( "ERR Failed to initialize glew, shutting down...\n" );
+        return err;
+    }
+
+    err = shaders->init();
     if ( err ) {
         os->printf( "ERR Failed to initialize shaders, shutting down...\n" );
         return err;
@@ -98,7 +105,10 @@ int is::Common::init( int argc, char** argv ) {
         return err;
     }
 
-    gui->addNode( new is::Text( "hello world!" ) );
+    is::Text* text = new is::Text( "abcdefghijklmnopqrstuvwxyz!" );
+    gui->addNode( text );
+
+    text->setPos(0,30,0);
 
     m_running = true;
     m_time.restart();
@@ -118,5 +128,6 @@ void is::Common::tick() {
     window->tick();
     world->tick( dt.asSeconds() );
     gui->tick( dt.asSeconds() );
+    render->tick();
     render->draw();
 }

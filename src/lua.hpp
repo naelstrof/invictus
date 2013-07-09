@@ -3,7 +3,7 @@
 
 #include "os.hpp"
 #include "filesystem.hpp"
-#include "shader.hpp"
+#include "shaderloader.hpp"
 #include "font.hpp"
 #include "model.hpp"
 

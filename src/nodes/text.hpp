@@ -3,7 +3,9 @@
 #ifndef IS_TEXT_H_
 #define IS_TEXT_H_
 
-#include <SFML/Graphics/Text.hpp>
+#include <GL/glew.h>
+#include <glm/gtx/projection.hpp>
+
 #include "../glyph.hpp"
 #include "../window.hpp"
 #include "../node.hpp"
@@ -23,10 +25,11 @@ public:
     bool            m_changed;
     int             m_size;
 private:
-    std::vector<glm::vec2> m_uvs;
-    std::vector<glm::vec2> m_verts;
-    unsigned int m_buffers[2];
-    is::TextureAtlas m_texture;
+    std::vector<glm::vec2>  m_uvs;
+    std::vector<glm::vec2>  m_verts;
+    unsigned int            m_vertcount;
+    unsigned int            m_buffers[2];
+    is::TextureAtlas*       m_texture;
 };
 
 };

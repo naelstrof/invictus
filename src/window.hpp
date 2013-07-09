@@ -3,7 +3,7 @@
 #ifndef IS_WINDOW_H_
 #define IS_WINDOW_H_
 
-#include <GL/gl.h>
+#include <GL/glew.h>
 #include <SFML/Window.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Graphics/RenderTexture.hpp>
