@@ -108,7 +108,7 @@ int is::Common::init( int argc, char** argv ) {
     is::Text* text = new is::Text( "abcdefghijklmnopqrstuvwxyz!" );
     gui->addNode( text );
 
-    text->setPos(0,30,0);
+    text->setPos(256,256-32,-500);
 
     m_running = true;
     m_time.restart();

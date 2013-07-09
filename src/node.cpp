@@ -173,7 +173,7 @@ glm::mat4 is::Node::getMatrix() {
     }
     //Otherwise just generate a new matrix.
     m_matrix = glm::translate( glm::mat4(1), m_position );
-    m_matrix = glm::eulerAngleYXZ( m_angle.x, m_angle.y, m_angle.z ) * m_matrix;
+    m_matrix = m_matrix*glm::eulerAngleYXZ( m_angle.x, m_angle.y, m_angle.z );
     m_matrix = glm::scale( m_matrix, m_scale );
     return m_matrix;
 }

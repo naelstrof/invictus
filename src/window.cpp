@@ -86,6 +86,7 @@ void is::Window::tick() {
                 break;
             }
             case sf::Event::Resized: {
+                glViewport( 0, 0, event.size.width, event.size.height );
                 break;
             }
             case sf::Event::LostFocus: {
