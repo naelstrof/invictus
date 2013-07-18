@@ -35,7 +35,7 @@ void is::TextureAtlas::bind() {
 is::TextureAtlas::Node* is::TextureAtlas::insert( unsigned int w, unsigned int h, unsigned char* imagedata ) {
     // We don't want to explode the video memory by accident.
     if ( w > 4028 || h > 4028 ) {
-        os->printf( "ERR Texture atlas overflow, please don't insert huge images into it!\n" );
+        os->printf( "ERR Texture atlas overflow, please don't insert huge images like that!\n" );
     }
 
     is::TextureAtlas::Node* node = m_node->insert( w, h );
@@ -46,14 +46,15 @@ is::TextureAtlas::Node* is::TextureAtlas::insert( unsigned int w, unsigned int h
         // We must have ran out of room in the texture, automatically double in size.
         m_width *= 2;
         m_height *= 2;
+        // Make sure we're not doing a futile resize
+        if ( m_width < w || m_height < h ) {
+            continue;
+        }
         is::TextureAtlas::Node* newnode = new Node( m_width, m_height );
         is::TextureAtlas::Node* oldnode = newnode->insert( m_node );
         m_node = newnode;
 
         node = m_node->insert( w, h );
-        if ( !node ) {
-            continue;
-        }
 
         // Oh yeah and recreate the texture.
         // First start by copying the original texture to memory.
