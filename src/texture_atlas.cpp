@@ -40,6 +40,8 @@ is::TextureAtlas::Node* is::TextureAtlas::insert( unsigned int w, unsigned int h
 
     is::TextureAtlas::Node* node = m_node->insert( w, h );
     // Continually resize the texture until we can fit the requested texture.
+    unsigned int oldw = m_width;
+    unsigned int oldh = m_height;
     while ( !node ) {
         // We must have ran out of room in the texture, automatically double in size.
         m_width *= 2;
@@ -48,10 +50,14 @@ is::TextureAtlas::Node* is::TextureAtlas::insert( unsigned int w, unsigned int h
         is::TextureAtlas::Node* oldnode = newnode->insert( m_node );
         m_node = newnode;
 
+        node = m_node->insert( w, h );
+        if ( !node ) {
+            continue;
+        }
 
         // Oh yeah and recreate the texture.
         // First start by copying the original texture to memory.
-        unsigned char* oldtexture = new unsigned char[m_width/2*m_height/2];
+        unsigned char* oldtexture = new unsigned char[oldw*oldh];
         glBindTexture( GL_TEXTURE_2D, m_texture );
         glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
         glGetTexImage( GL_TEXTURE_2D, 0, GL_RED, GL_UNSIGNED_BYTE, oldtexture );
@@ -66,10 +72,8 @@ is::TextureAtlas::Node* is::TextureAtlas::insert( unsigned int w, unsigned int h
         glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
         glTexStorage2D( GL_TEXTURE_2D, 1, GL_R8, m_width, m_height );
         glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-        glTexSubImage2D( GL_TEXTURE_2D, 0, oldnode->m_rect.left, oldnode->m_rect.top-oldnode->m_rect.height, m_width/2, m_height/2, GL_RED, GL_UNSIGNED_BYTE, oldtexture );
+        glTexSubImage2D( GL_TEXTURE_2D, 0, oldnode->m_rect.left, oldnode->m_rect.top-oldnode->m_rect.height, oldw, oldh, GL_RED, GL_UNSIGNED_BYTE, oldtexture );
         delete[] oldtexture;
-
-        node = m_node->insert( w, h );
     }
 
 
