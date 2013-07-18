@@ -1,6 +1,7 @@
 #include "node.hpp"
 
 is::Node::Node() {
+    m_color = glm::vec4( 1 );
     m_localPosition = glm::vec3( 0 );
     m_localAngle = glm::vec3( 0 );
     m_position = glm::vec3( 0 );
@@ -89,14 +90,6 @@ glm::vec3 is::Node::getPos() {
     return m_position;
 }
 
-glm::vec3 is::Node::getAng() {
-    if ( m_parent ) {
-        //TODO
-        //If we're hooked to another node, grab our real angle from the matrix.
-    }
-    return m_angle;
-}
-
 void is::Node::setPos( glm::vec3 pos ) {
     m_position = pos;
     if ( m_parent ) {
@@ -117,6 +110,14 @@ void is::Node::setPos( float x, float y, float z ) {
         m_children[i]->m_matrixChanged = true;
     }
     m_matrixChanged = true;
+}
+
+glm::vec3 is::Node::getAng() {
+    if ( m_parent ) {
+        //TODO
+        //If we're hooked to another node, grab our real angle from the matrix.
+    }
+    return m_angle;
 }
 
 void is::Node::setAng( glm::vec3 ang ) {
@@ -141,6 +142,14 @@ void is::Node::setAng( float y, float p, float r ) {
     m_matrixChanged = true;
 }
 
+glm::vec3 is::Node::getScale() {
+    if ( m_parent ) {
+        //TODO
+        //If we're hooked to another node, grab our real angle from the matrix.
+    }
+    return m_angle;
+}
+
 void is::Node::setScale(glm::vec3 scale) {
     m_scale = scale;
     for( unsigned int i=0;i<m_children.size();i++ ) {
@@ -155,6 +164,18 @@ void is::Node::setScale( float w, float h, float d ) {
         m_children[i]->m_matrixChanged = true;
     }
     m_matrixChanged = true;
+}
+
+glm::vec4 is::Node::getColor() {
+    return m_color;
+}
+
+void is::Node::setColor( glm::vec4 color ) {
+    m_color = color;
+}
+
+void is::Node::setColor( float r, float g, float b, float a ) {
+    m_color = glm::vec4( r, g, b, a );
 }
 
 glm::mat4 is::Node::getMatrix() {

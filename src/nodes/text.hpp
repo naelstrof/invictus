@@ -5,6 +5,7 @@
 
 #include <GL/glew.h>
 #include <glm/gtx/projection.hpp>
+#include <SFML/System/Utf.hpp>
 
 #include "../glyph.hpp"
 #include "../window.hpp"
@@ -26,11 +27,14 @@ public:
     unsigned int    m_size;
     void            setSize( unsigned int size );
 private:
+    float                   m_totaltime;
     std::vector<glm::vec2>  m_uvs;
     std::vector<glm::vec2>  m_verts;
     unsigned int            m_vertcount;
     unsigned int            m_buffers[2];
     is::TextureAtlas*       m_texture;
+    void                    generateBuffers();
+    unsigned int            m_textureSize;
 };
 
 };

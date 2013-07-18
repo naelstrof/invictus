@@ -5,6 +5,7 @@ is::TextureAtlas::TextureAtlas() {
     m_height = 0;
     m_texture = 0;
     m_node = NULL;
+    m_changed = false;
 }
 
 is::TextureAtlas::TextureAtlas( unsigned int w, unsigned int h ) {
@@ -21,6 +22,13 @@ is::TextureAtlas::TextureAtlas( unsigned int w, unsigned int h ) {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexStorage2D( GL_TEXTURE_2D, 1, GL_R8, m_width, m_height );
+    // Clear the image
+    unsigned char* buffer = new unsigned char[m_width*m_height];
+    for (unsigned int i=0;i<m_width*m_height;i++ ) {
+        buffer[i] = 0;
+    }
+    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, m_width, m_height, GL_RED, GL_UNSIGNED_BYTE, buffer);
+    delete buffer;
 }
 
 is::TextureAtlas::~TextureAtlas() {
@@ -32,17 +40,24 @@ void is::TextureAtlas::bind() {
     glBindTexture( GL_TEXTURE_2D, m_texture );
 }
 
-is::TextureAtlas::Node* is::TextureAtlas::insert( unsigned int w, unsigned int h, unsigned char* imagedata ) {
+is::TextureAtlas::Node* is::TextureAtlas::insert( unsigned int w, unsigned int h, unsigned char* imagedata, int padding ) {
     // We don't want to explode the video memory by accident.
     if ( w > 4028 || h > 4028 ) {
         os->printf( "ERR Texture atlas overflow, please don't insert huge images like that!\n" );
     }
+
+    // Record the actual image size, then add padding values.
+    float imagewidth = w;
+    float imageheight = h;
+    w += padding*2;
+    h += padding*2;
 
     is::TextureAtlas::Node* node = m_node->insert( w, h );
     // Continually resize the texture until we can fit the requested texture.
     unsigned int oldw = m_width;
     unsigned int oldh = m_height;
     while ( !node ) {
+        m_changed = true;
         // We must have ran out of room in the texture, automatically double in size.
         m_width *= 2;
         m_height *= 2;
@@ -72,6 +87,14 @@ is::TextureAtlas::Node* is::TextureAtlas::insert( unsigned int w, unsigned int h
         glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
         glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
         glTexStorage2D( GL_TEXTURE_2D, 1, GL_R8, m_width, m_height );
+        // Clear the image;
+        unsigned char* buffer = new unsigned char[m_width*m_height];
+        for (unsigned int i=0;i<m_width*m_height;i++ ) {
+            buffer[i] = 0;
+        }
+        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, m_width, m_height, GL_RED, GL_UNSIGNED_BYTE, buffer);
+        delete buffer;
+
         glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
         glTexSubImage2D( GL_TEXTURE_2D, 0, oldnode->m_rect.left, oldnode->m_rect.top-oldnode->m_rect.height, oldw, oldh, GL_RED, GL_UNSIGNED_BYTE, oldtexture );
         delete[] oldtexture;
@@ -81,8 +104,15 @@ is::TextureAtlas::Node* is::TextureAtlas::insert( unsigned int w, unsigned int h
     glBindTexture( GL_TEXTURE_2D, m_texture );
     // Render the small texture to our atlas.
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-    glTexSubImage2D( GL_TEXTURE_2D, 0, node->m_rect.left, node->m_rect.top-h, w, h, GL_RED, GL_UNSIGNED_BYTE, imagedata );
+    glTexSubImage2D( GL_TEXTURE_2D, 0, node->m_rect.left+padding, node->m_rect.top-h+padding, imagewidth, imageheight, GL_RED, GL_UNSIGNED_BYTE, imagedata );
     return node;
+}
+
+// This function is to determine if the texture atlas resized after inserting things into it. Useful when generating text meshes in order to understand whether or not to re-create the uv buffer.
+bool is::TextureAtlas::changed() {
+    bool mem = m_changed;
+    m_changed = false;
+    return mem;
 }
 
 is::TextureAtlas::Node::Node( unsigned int w, unsigned int h ) {

@@ -1,13 +1,13 @@
-#version 120
+#version 130
 
-attribute vec2 vertex;
-attribute vec2 uv;
+in vec2 vertex;
+in vec2 uv;
 
 uniform mat4 matrix;
 //uniform mat4 view;
 uniform mat4 projection;
 
-varying vec2 uvCoords;
+out vec2 uvCoords;
 
 void main()
 {

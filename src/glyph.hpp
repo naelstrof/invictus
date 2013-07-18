@@ -17,9 +17,8 @@ namespace is {
 // Stores a single glyph's information
 class Glyph {
 public:
-    Glyph( is::Font* font, int size, sf::String id, is::TextureAtlas* texture );
+    Glyph( is::Font* font, unsigned int size, sf::String id, is::TextureAtlas* texture );
     sf::String              m_id;
-    int                     m_size;
     bool                    m_renderable;
     float                   m_advanceX;
     float                   m_advanceY;
@@ -29,6 +28,7 @@ public:
     float                   m_bitmapTop;
     void                    fixUV( is::TextureAtlas* texture );
     glm::vec2               m_uv[4];
+    unsigned int            m_size;
 private:
     is::TextureAtlas::Node* m_node;
     float                   m_texturesize;
@@ -37,15 +37,16 @@ private:
 // Stores a set of glyph information.
 class GlyphsContainer {
 private:
-    is::Glyph*              add( sf::String id, int size );
+    is::Glyph*                  add( sf::String id );
 public:
-    GlyphsContainer( is::Font* font, int textureSize );
+    GlyphsContainer( std::string fontname, unsigned int fontSize, int textureSize );
     ~GlyphsContainer();
-    std::vector<is::Glyph>  m_glyphs;
+    std::vector<is::Glyph>      m_glyphs;
     // Must be a pointer because otherwise it gets deconstructed in some place i couldn't find.
-    is::TextureAtlas*        m_texture;
-    is::Font*               m_font;
-    is::Glyph*              find( sf::String id, int size );
+    is::TextureAtlas*           m_texture;
+    is::Font*                   m_font;
+    is::Glyph*                  find( sf::String id );
+    unsigned int                m_size;
 };
 
 class GlyphLoader {
@@ -54,8 +55,8 @@ private:
     std::vector<GlyphsContainer*> m_glyphcontainers;
 public:
     ~GlyphLoader();
-    is::Glyph*          get( sf::String id, std::string font, int size );
-    is::TextureAtlas*   getTexture( std::string font );
+    is::Glyph*          get( sf::String id, std::string font, unsigned int size );
+    is::TextureAtlas*   getTexture( std::string font, unsigned int size );
 };
 
 };

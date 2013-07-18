@@ -5,12 +5,14 @@ is::Text::Text( sf::String text, std::string fontname, int size ) {
     m_font = fontname;
     m_size = size;
     m_changed = true;
-    m_texture = glyphs->getTexture( fontname );
+    m_texture = glyphs->getTexture( fontname, size );
     if ( !m_texture ) {
         os->printf( "ERR Font not found: %\n", fontname );
     }
+    m_textureSize = m_texture->m_width;
     m_vertcount = 0;
     glGenBuffers( 2, m_buffers);
+    m_totaltime = 0;
 }
 
 is::Text::~Text() {
@@ -25,23 +27,27 @@ std::string is::Text::type() {
     return "text";
 }
 
-void is::Text::tick( float dt ) {
-    //SPIN
-    //setAng(getAng()+glm::vec3(dt,0,0));
-    // Here we'll make sure we have a properly generated buffer.
-    if ( !m_changed ) {
+void is::Text::generateBuffers() {
+    // We need to check to make sure we actually need to regenerate the buffers.
+    if ( !m_changed && m_textureSize == m_texture->m_width ) {
         return;
     }
+    m_textureSize = m_texture->m_width;
     float penx = 0;
     float peny = 0;
     for ( unsigned int i=0; i<m_text.getSize(); i++ ) {
+        //std::string text;
+        //sf::Utf<32>::toUtf8( m_text.begin()+i, m_text.begin()+i+1, back_inserter( text ) );
+        //os->printf( "%: %\n", text, m_text[i] );
         // Generate glyph information and render it to a texture atlas.
         is::Glyph* glyph = glyphs->get( m_text[i], m_font, m_size );
         if ( !glyph ) {
             continue;
         }
-        float w = glyph->m_bitmapWidth;
-        float h = glyph->m_bitmapHeight;
+        // The shadow size is a static 5 in the shader as well as here and in glyphs->get()
+        float shadowSize = 5;
+        float w = glyph->m_bitmapWidth+shadowSize;
+        float h = glyph->m_bitmapHeight+shadowSize;
         float xoff = glyph->m_bitmapLeft;
         float yoff = glyph->m_bitmapTop;
         m_verts.push_back( glm::vec2( penx+xoff,    peny+yoff ) );
@@ -65,15 +71,32 @@ void is::Text::tick( float dt ) {
     m_vertcount = m_verts.size();
     m_verts.clear();
     m_uvs.clear();
+    // We need to check if the texture atlas resized itself during glyph rendering, if it did we need to regenerate the buffers again...
+    if ( m_texture->changed() ) {
+        generateBuffers();
+    }
+    m_changed = false;
+}
+
+
+void is::Text::tick( float dt ) {
+    //SPIN
+    //setAng(getAng()+glm::vec3(dt,0,0));
+    setSize( fabs(sin(m_totaltime))*128 + 1 );
+    m_totaltime += dt;
 }
 
 void is::Text::draw( sf::RenderTarget* target ) {
+    // Here we'll make sure we have a properly generated buffer.
+    generateBuffers();
+
     is::Shader* shader = shaders->get( "text" );
     unsigned int program = shader->getProgram();
     shader->bind();
     glActiveTexture( GL_TEXTURE0 );
     m_texture->bind();
     shader->setParameter( "texture", 0 );
+    shader->setParameter( "color", getColor() );
     shader->setParameter( "matrix", getMatrix() );
     shader->setParameter( "projection", glm::ortho( 0.f, (float)window->getWidth(), 0.f, (float)window->getHeight(), 0.f, 3000.f ) );
     //shader->setParameter( "view", glm::mat4() );
@@ -107,4 +130,5 @@ void is::Text::setSize( unsigned int size ) {
     }
     m_size = size;
     m_changed = true;
+    m_texture = glyphs->getTexture( m_font, size );
 }

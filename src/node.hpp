@@ -26,6 +26,10 @@ public:
     virtual void            tick( float dt );
     virtual void            draw( sf::RenderTarget* target );
 
+    glm::vec4               getColor();
+    void                    setColor( glm::vec4 color );
+    void                    setColor( float r, float g, float b, float a );
+
     glm::vec3               getPos();
     void                    setPos( glm::vec3 pos );
     void                    setPos( float x, float y, float z );
@@ -57,6 +61,7 @@ private:
     glm::vec3               m_position;
     glm::vec3               m_angle;
     glm::vec3               m_scale;
+    glm::vec4               m_color;
 };
 
 };

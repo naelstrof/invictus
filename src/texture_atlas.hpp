@@ -31,10 +31,12 @@ public:
     TextureAtlas( unsigned int w, unsigned int h );
     ~TextureAtlas();
     void                        bind();
-    is::TextureAtlas::Node*     insert( unsigned int w, unsigned int h, unsigned char* imagedata );
+    is::TextureAtlas::Node*     insert( unsigned int w, unsigned int h, unsigned char* imagedata, int padding = 0 );
     unsigned int                m_width;
     unsigned int                m_height;
+    bool                        changed();
 private:
+    bool                        m_changed;
     Node*                       m_node;
     unsigned int                m_texture;
 

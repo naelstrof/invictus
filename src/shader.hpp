@@ -16,16 +16,18 @@ class Shader {
 public:
     Shader( std::string name, std::string vert, std::string frag );
     ~Shader();
-    unsigned int getProgram();
-    void         bind();
-    void         setParameter( std::string name, int foo );
-    void         setParameter( std::string name, glm::mat4 foo );
+    unsigned int    getProgram();
+    void            bind();
+    void            setParameter( std::string name, int foo );
+    void            setParameter( std::string name, glm::mat4 foo );
+    void            setParameter( std::string name, glm::vec4 foo );
 private:
-    unsigned int getUniformLocation( std::string );
-    int compile( unsigned int shader );
-    int link( unsigned int vert, unsigned int frag );
-    unsigned int m_program;
-    std::string m_name;
+    bool            m_good;
+    unsigned int    getUniformLocation( std::string );
+    int             compile( unsigned int shader );
+    int             link( unsigned int vert, unsigned int frag );
+    unsigned int    m_program;
+    std::string     m_name;
 };
 
 };

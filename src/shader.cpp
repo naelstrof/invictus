@@ -1,6 +1,7 @@
 #include "shader.hpp"
 
 is::Shader::Shader( std::string name, std::string vert, std::string frag ) {
+    m_good = false;
     // Create the program to link to.
     m_program = glCreateProgram();
 
@@ -27,11 +28,15 @@ is::Shader::Shader( std::string name, std::string vert, std::string frag ) {
     err = link( vertShader, fragShader );
     if ( err ) {
         os->printf( "ERR Failed to link shader %.\n", name );
+        glDeleteShader( vertShader );
+        glDeleteShader( fragShader );
+        return;
     }
 
     // Clean up :)
     glDeleteShader( vertShader );
     glDeleteShader( fragShader );
+    m_good = true;
 }
 
 is::Shader::~Shader() {
@@ -85,13 +90,30 @@ int is::Shader::link( unsigned int vertshader, unsigned int fragshader ) {
 }
 
 unsigned int is::Shader::getUniformLocation( std::string name ) {
+    if ( !m_good ) {
+        return 0;
+    }
+    glUseProgram( m_program );
     return glGetUniformLocation( m_program, name.c_str() );
 }
 
 void is::Shader::setParameter( std::string name, int foo ) {
+    if ( !m_good ) {
+        return;
+    }
     glUniform1i( getUniformLocation( name ), foo );
 }
 
 void is::Shader::setParameter( std::string name, glm::mat4 foo ) {
+    if ( !m_good ) {
+        return;
+    }
     glUniformMatrix4fv( getUniformLocation( name ), 1, GL_FALSE, glm::value_ptr( foo ) );
+}
+
+void is::Shader::setParameter( std::string name, glm::vec4 foo ) {
+    if ( !m_good ) {
+        return;
+    }
+    glUniform4f( getUniformLocation( name ), foo.x, foo.y, foo.z, foo.w );
 }

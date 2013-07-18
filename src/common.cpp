@@ -108,21 +108,30 @@ int is::Common::init( int argc, char** argv ) {
     is::Text* text = new is::Text( "abcdefghijklmnopqrstuvwxyz" );
     text->setSize(128);
     text->setPos(0,128,-1000);
+    text->setColor(1,0.5,0,1);
     gui->addNode( text );
 
     text = new is::Text( "ABCDEFGHIJKLMNOPQRSTUVWXYZ" );
     text->setSize(128);
     text->setPos(0,0,-1000);
+    text->setColor(0,1,0.7,1);
     gui->addNode( text );
 
     text = new is::Text( "1234567890!@#$%^&*()" );
     text->setSize(128);
     text->setPos(0,256,-1000);
+    text->setColor(0.5,0.5,1,1);
     gui->addNode( text );
 
-    text = new is::Text( L"ラドクリフ、マラソン五輪代表に!" );
+    text = new is::Text( L"ラドクリフ、マラソン五輪代表に" );
     text->setSize(128);
     text->setPos(0,384,-1000);
+    gui->addNode( text );
+
+    text = new is::Text( L"Бу́ря мгло́ю не́бо кро́ет" );
+    text->setSize(64);
+    text->setPos(0,512,-1000);
+    text->setColor(0,0,0,1);
     gui->addNode( text );
 
 
