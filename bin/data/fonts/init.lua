@@ -1,1 +1,1 @@
-addFont( "gui", "data/fonts/freesans.ttf" );
+addFont( "gui", "data/fonts/dotum.ttf" );

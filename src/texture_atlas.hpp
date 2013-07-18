@@ -15,6 +15,7 @@ public:
     class Node {
         public:
         Node();
+        Node( Node* smallernode,  unsigned int w, unsigned int h );
         Node( unsigned int w, unsigned int h );
         Node( unsigned int top, unsigned int left, unsigned int width, unsigned int height );
         ~Node();
@@ -22,6 +23,8 @@ public:
         sf::Rect<unsigned int>  m_rect;
         bool                    m_img;
         is::TextureAtlas::Node* insert( unsigned int w, unsigned int h );
+        is::TextureAtlas::Node* insert( Node* node );
+        void                    localize( Node* node );
     };
 
     TextureAtlas();
@@ -32,7 +35,7 @@ public:
     unsigned int                m_width;
     unsigned int                m_height;
 private:
-    Node                        m_node;
+    Node*                       m_node;
     unsigned int                m_texture;
 
     // Node is private since TextureAtlas should be the only one using it.

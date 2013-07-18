@@ -27,7 +27,7 @@ std::string is::Text::type() {
 
 void is::Text::tick( float dt ) {
     //SPIN
-    setAng(getAng()+glm::vec3(dt,0,0));
+    //setAng(getAng()+glm::vec3(dt,0,0));
     // Here we'll make sure we have a properly generated buffer.
     if ( !m_changed ) {
         return;
@@ -75,7 +75,7 @@ void is::Text::draw( sf::RenderTarget* target ) {
     m_texture->bind();
     shader->setParameter( "texture", 0 );
     shader->setParameter( "matrix", getMatrix() );
-    shader->setParameter( "projection", glm::ortho( 0.f, (float)window->getWidth(), 0.f, (float)window->getHeight(), 0.f, 1000.f ) );
+    shader->setParameter( "projection", glm::ortho( 0.f, (float)window->getWidth(), 0.f, (float)window->getHeight(), 0.f, 3000.f ) );
     //shader->setParameter( "view", glm::mat4() );
 
     unsigned int va = glGetAttribLocation( program, "vertex" );
@@ -99,4 +99,12 @@ void is::Text::draw( sf::RenderTarget* target ) {
     glDisableVertexAttribArray( uv );
 
     glUseProgram( 0 );
+}
+
+void is::Text::setSize( unsigned int size ) {
+    if ( m_size == size ) {
+        return;
+    }
+    m_size = size;
+    m_changed = true;
 }

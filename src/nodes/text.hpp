@@ -23,7 +23,8 @@ public:
     std::string     m_font;
     sf::String      m_text;
     bool            m_changed;
-    int             m_size;
+    unsigned int    m_size;
+    void            setSize( unsigned int size );
 private:
     std::vector<glm::vec2>  m_uvs;
     std::vector<glm::vec2>  m_verts;

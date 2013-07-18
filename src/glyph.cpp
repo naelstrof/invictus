@@ -9,6 +9,13 @@ is::GlyphLoader::~GlyphLoader() {
 }
 
 is::TextureAtlas* is::GlyphLoader::getTexture( std::string fontname ) {
+    // Get texture starting size.
+    m_textureStartSize = 512;
+    float check = lua->getFloat( "textureAtlasStartSize" );
+    if ( check > 0 ) {
+        m_textureStartSize = ( unsigned int )check;
+    }
+
     for ( unsigned int i=0; i<m_glyphcontainers.size(); i++ ) {
         if ( fontname == m_glyphcontainers[i]->m_font->m_name ) {
             return m_glyphcontainers[i]->m_texture;
@@ -40,6 +47,8 @@ is::Glyph* is::GlyphLoader::get( sf::String id, std::string fontname, int size )
                 os->printf( "ERR The glyph % cannot be found!", text );
                 return NULL;
             }
+            // Here we check if the texture size has recently changed, and if so fix the glyph.
+            info->fixUV( m_glyphcontainers[i]->m_texture );
             return info;
         }
     }
@@ -49,7 +58,7 @@ is::Glyph* is::GlyphLoader::get( sf::String id, std::string fontname, int size )
         os->printf( "ERR The font % cannot be found!", fontname );
         return NULL;
     }
-    m_glyphcontainers.push_back( new is::GlyphsContainer( font, 1024 ) );
+    m_glyphcontainers.push_back( new is::GlyphsContainer( font, m_textureStartSize ) );
     return m_glyphcontainers.back()->find( id, size );
 }
 
@@ -77,14 +86,14 @@ is::Glyph* is::GlyphsContainer::find( sf::String id, int size ) {
 }
 
 is::Glyph::Glyph( is::Font* font, int size, sf::String id, is::TextureAtlas* texture ) {
+    m_texturesize = 0;
     m_renderable = false;
     m_size = size;
     m_id = id;
     // Set the height of the glyph in pixels.
     FT_Set_Pixel_Sizes( font->m_face, 0, m_size );
-    // FIXME: This conversion could lose data on certain compilers I think.
     const sf::Uint32* dat = id.getData();
-    FT_Load_Char( font->m_face, ( unsigned int )dat[0], FT_LOAD_RENDER );
+    FT_Load_Char( font->m_face, ( unsigned long long )dat[0], FT_LOAD_RENDER );
     FT_GlyphSlot glyph = font->m_face->glyph;
     m_advanceX = glyph->advance.x >> 6;
     m_advanceY = glyph->advance.y >> 6;
@@ -98,23 +107,24 @@ is::Glyph::Glyph( is::Font* font, int size, sf::String id, is::TextureAtlas* tex
         //return;
     //}
     // Insert image into texture atlas.
-    is::TextureAtlas::Node* node = texture->insert( glyph->bitmap.width, glyph->bitmap.rows, glyph->bitmap.buffer );
-    if ( !node ) {
-        os->printf( "ERR Texture atlas overfilled!\n" );
-        return;
-    }
+    m_node = texture->insert( glyph->bitmap.width, glyph->bitmap.rows, glyph->bitmap.buffer );
     m_renderable = true;
     // Now generate uv coords.
-    float left = (float)node->m_rect.left / (float)texture->m_width;
-    float width = (float)node->m_rect.width / (float)texture->m_width;
-    float top = (float)node->m_rect.top / (float)texture->m_height;
-    float height = float(node->m_rect.height) / float(texture->m_height);
+    fixUV( texture );
+}
+
+void is::Glyph::fixUV( is::TextureAtlas* texture ) {
+    if ( m_texturesize == texture->m_width ) {
+        return;
+    }
+    // Texture's size should always be square.
+    m_texturesize = texture->m_width;
+    float left = (float)m_node->m_rect.left / m_texturesize;
+    float width = (float)m_node->m_rect.width / m_texturesize;
+    float top = (float)m_node->m_rect.top / m_texturesize;
+    float height = float(m_node->m_rect.height) / m_texturesize;
     m_uv[0] = glm::vec2( left, top-height );
     m_uv[1] = glm::vec2( left + width, top-height );
     m_uv[2] = glm::vec2( left + width, top );
     m_uv[3] = glm::vec2( left, top );
-    //m_uv[0] = glm::vec2( 0, 1 );
-    //m_uv[1] = glm::vec2( 1, 1 );
-    //m_uv[2] = glm::vec2( 1, 0 );
-    //m_uv[3] = glm::vec2( 0, 0 );
 }

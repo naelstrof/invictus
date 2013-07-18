@@ -18,16 +18,20 @@ namespace is {
 class Glyph {
 public:
     Glyph( is::Font* font, int size, sf::String id, is::TextureAtlas* texture );
-    sf::String      m_id;
-    int             m_size;
-    bool            m_renderable;
-    float           m_advanceX;
-    float           m_advanceY;
-    float           m_bitmapWidth;
-    float           m_bitmapHeight;
-    float           m_bitmapLeft;
-    float           m_bitmapTop;
-    glm::vec2       m_uv[4];
+    sf::String              m_id;
+    int                     m_size;
+    bool                    m_renderable;
+    float                   m_advanceX;
+    float                   m_advanceY;
+    float                   m_bitmapWidth;
+    float                   m_bitmapHeight;
+    float                   m_bitmapLeft;
+    float                   m_bitmapTop;
+    void                    fixUV( is::TextureAtlas* texture );
+    glm::vec2               m_uv[4];
+private:
+    is::TextureAtlas::Node* m_node;
+    float                   m_texturesize;
 };
 
 // Stores a set of glyph information.
@@ -46,6 +50,7 @@ public:
 
 class GlyphLoader {
 private:
+    unsigned int        m_textureStartSize;
     std::vector<GlyphsContainer*> m_glyphcontainers;
 public:
     ~GlyphLoader();

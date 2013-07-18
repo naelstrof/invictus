@@ -105,10 +105,26 @@ int is::Common::init( int argc, char** argv ) {
         return err;
     }
 
-    is::Text* text = new is::Text( "abcdefghijklmnopqrstuvwxyz!" );
+    is::Text* text = new is::Text( "abcdefghijklmnopqrstuvwxyz" );
+    text->setSize(128);
+    text->setPos(0,128,-1000);
     gui->addNode( text );
 
-    text->setPos(256,256-32,-500);
+    text = new is::Text( "ABCDEFGHIJKLMNOPQRSTUVWXYZ" );
+    text->setSize(128);
+    text->setPos(0,0,-1000);
+    gui->addNode( text );
+
+    text = new is::Text( "1234567890!@#$%^&*()" );
+    text->setSize(128);
+    text->setPos(0,256,-1000);
+    gui->addNode( text );
+
+    text = new is::Text( L"ラドクリフ、マラソン五輪代表に!" );
+    text->setSize(128);
+    text->setPos(0,384,-1000);
+    gui->addNode( text );
+
 
     m_running = true;
     m_time.restart();
