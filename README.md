@@ -5,7 +5,8 @@ A highly effecient, multi-platform, multi-lingual engine that's meant to follow 
 Current State
 -------------
 This image will update with the current state of the engine.
-![Invictus Image](farmpolice.com/content/current.png "Invictus running Astrostruct")
+
+![Invictus Image](http://farmpolice.com/content/current.png "Invictus running Astrostruct")
 
 Libraries
 ---------
