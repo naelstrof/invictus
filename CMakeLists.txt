@@ -59,10 +59,12 @@ set( source
      src/window.cpp
      src/scene.cpp
      src/render.cpp
+     src/framebuffer.cpp
      src/shader.cpp
      src/shaderloader.cpp
      src/model.cpp
      src/font.cpp
+     src/camera.cpp
      src/node.cpp
      src/nodes/text.cpp
      src/glyph.cpp

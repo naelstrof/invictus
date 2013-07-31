@@ -122,8 +122,8 @@ void is::Glyph::fixUV( is::TextureAtlas* texture ) {
     float width = float( m_node->m_rect.width - shadow ) / m_texturesize;
     float top = float( m_node->m_rect.top - shadow ) / m_texturesize;
     float height = float( m_node->m_rect.height - shadow ) / m_texturesize;
-    m_uv[0] = glm::vec2( left, top-height );
-    m_uv[1] = glm::vec2( left + width, top-height );
-    m_uv[2] = glm::vec2( left + width, top );
-    m_uv[3] = glm::vec2( left, top );
+    m_uv[0] = glm::vec2( left, top );
+    m_uv[1] = glm::vec2( left + width, top );
+    m_uv[2] = glm::vec2( left + width, top-height );
+    m_uv[3] = glm::vec2( left, top-height );
 }

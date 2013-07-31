@@ -24,7 +24,7 @@ public:
     // String identifier
     virtual std::string     type();
     virtual void            tick( float dt );
-    virtual void            draw( sf::RenderTarget* target );
+    virtual void            draw();
 
     glm::vec4               getColor();
     void                    setColor( glm::vec4 color );
@@ -50,8 +50,7 @@ public:
     void                    removeChild( is::Node* node );
     void                    addChild( is::Node* node );
 
-    glm::mat4               getMatrix();
-    void                    setMatrix( glm::mat4 matrix );
+    glm::mat4               getModelMatrix();
 private:
     bool                    m_matrixChanged;
     is::Node*               m_parent;

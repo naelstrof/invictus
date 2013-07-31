@@ -22,13 +22,12 @@ is::TextureAtlas::TextureAtlas( unsigned int w, unsigned int h ) {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexStorage2D( GL_TEXTURE_2D, 1, GL_R8, m_width, m_height );
-    // Clear the image
-    unsigned char* buffer = new unsigned char[m_width*m_height];
-    for (unsigned int i=0;i<m_width*m_height;i++ ) {
-        buffer[i] = 0;
-    }
-    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, m_width, m_height, GL_RED, GL_UNSIGNED_BYTE, buffer);
-    delete buffer;
+    // Clear the image using a framebuffer, this way we don't have to worry about clogging the pipeline with 0's.
+    is::Framebuffer fb;
+    fb.createFromTexture( m_texture );
+    fb.bind();
+    fb.clear();
+    fb.unbind();
 }
 
 is::TextureAtlas::~TextureAtlas() {
@@ -87,13 +86,13 @@ is::TextureAtlas::Node* is::TextureAtlas::insert( unsigned int w, unsigned int h
         glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
         glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
         glTexStorage2D( GL_TEXTURE_2D, 1, GL_R8, m_width, m_height );
-        // Clear the image;
-        unsigned char* buffer = new unsigned char[m_width*m_height];
-        for (unsigned int i=0;i<m_width*m_height;i++ ) {
-            buffer[i] = 0;
-        }
-        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, m_width, m_height, GL_RED, GL_UNSIGNED_BYTE, buffer);
-        delete buffer;
+        // Clear the image using a framebuffer, this way we don't have to worry about clogging the pipeline with 0's.
+        // FIXME: Not sure if a clear is needed... It should be needed, but it causes flickering when I clear it :(. Seems to work fine without it.
+        /*is::Framebuffer fb;
+        fb.createFromTexture( m_texture );
+        fb.bind();
+        fb.clear();
+        fb.unbind();*/
 
         glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
         glTexSubImage2D( GL_TEXTURE_2D, 0, oldnode->m_rect.left, oldnode->m_rect.top-oldnode->m_rect.height, oldw, oldh, GL_RED, GL_UNSIGNED_BYTE, oldtexture );

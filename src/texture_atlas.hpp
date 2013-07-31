@@ -7,6 +7,7 @@
 #include <GL/glew.h>
 
 #include "os.hpp"
+#include "framebuffer.hpp"
 
 namespace is {
 

@@ -50,10 +50,10 @@ void is::Text::generateBuffers() {
         float h = glyph->m_bitmapHeight+shadowSize;
         float xoff = glyph->m_bitmapLeft;
         float yoff = glyph->m_bitmapTop;
-        m_verts.push_back( glm::vec2( penx+xoff,    peny+yoff ) );
-        m_verts.push_back( glm::vec2( penx+xoff+w,  peny+yoff ) );
-        m_verts.push_back( glm::vec2( penx+xoff+w,  peny+yoff-h ) );
         m_verts.push_back( glm::vec2( penx+xoff,    peny+yoff-h ) );
+        m_verts.push_back( glm::vec2( penx+xoff+w,  peny+yoff-h ) );
+        m_verts.push_back( glm::vec2( penx+xoff+w,  peny+yoff ) );
+        m_verts.push_back( glm::vec2( penx+xoff,    peny+yoff ) );
 
         m_uvs.push_back( glyph->m_uv[0] );
         m_uvs.push_back( glyph->m_uv[1] );
@@ -86,31 +86,20 @@ void is::Text::tick( float dt ) {
     m_totaltime += dt;
 }
 
-void is::Text::draw( sf::RenderTarget* target ) {
+void is::Text::draw() {
     // Here we'll make sure we have a properly generated buffer.
     generateBuffers();
 
     is::Shader* shader = shaders->get( "text" );
-    unsigned int program = shader->getProgram();
     shader->bind();
-    glActiveTexture( GL_TEXTURE0 );
-    m_texture->bind();
     shader->setParameter( "texture", 0 );
     shader->setParameter( "color", getColor() );
-    shader->setParameter( "matrix", getMatrix() );
-    shader->setParameter( "projection", glm::ortho( 0.f, (float)window->getWidth(), 0.f, (float)window->getHeight(), 0.f, 3000.f ) );
-    //shader->setParameter( "view", glm::mat4() );
+    shader->setParameter( "model", getModelMatrix() );
+    shader->setParameter( "shadowSize", 5.f );
+    shader->setAttribute( "vertex", m_buffers[0], 2 );
+    shader->setAttribute( "uv", m_buffers[1], 2 );
 
-    unsigned int va = glGetAttribLocation( program, "vertex" );
-    glEnableVertexAttribArray( va );
-    glBindBuffer( GL_ARRAY_BUFFER, m_buffers[0] );
-    glVertexAttribPointer( va, 2, GL_FLOAT, GL_FALSE, 0, NULL );
-
-    unsigned int uv = glGetAttribLocation( program, "uv" );
-    glEnableVertexAttribArray( uv );
-    glBindBuffer( GL_ARRAY_BUFFER, m_buffers[1] );
-    glVertexAttribPointer( uv, 2, GL_FLOAT, GL_FALSE, 0, NULL );
-
+    m_texture->bind();
     glEnable( GL_BLEND );
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable( GL_TEXTURE_2D );
@@ -118,10 +107,7 @@ void is::Text::draw( sf::RenderTarget* target ) {
     glDisable( GL_TEXTURE_2D );
     glDisable( GL_BLEND );
 
-    glDisableVertexAttribArray( va );
-    glDisableVertexAttribArray( uv );
-
-    glUseProgram( 0 );
+    shader->unbind();
 }
 
 void is::Text::setSize( unsigned int size ) {

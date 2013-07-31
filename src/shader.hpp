@@ -14,20 +14,25 @@ namespace is {
 
 class Shader {
 public:
-    Shader( std::string name, std::string vert, std::string frag );
+    Shader( std::string name, std::string vert, std::string frag, std::string shadertype = "other" );
     ~Shader();
     unsigned int    getProgram();
     void            bind();
+    void            unbind();
     void            setParameter( std::string name, int foo );
+    void            setParameter( std::string name, float foo );
     void            setParameter( std::string name, glm::mat4 foo );
     void            setParameter( std::string name, glm::vec4 foo );
-private:
-    bool            m_good;
-    unsigned int    getUniformLocation( std::string );
-    int             compile( unsigned int shader );
-    int             link( unsigned int vert, unsigned int frag );
-    unsigned int    m_program;
+    void            setAttribute( std::string name, unsigned int buffer, unsigned int stepsize );
+    int             m_type;
     std::string     m_name;
+private:
+    std::vector<unsigned int>   m_activeattribs;
+    bool                        m_good;
+    unsigned int                getUniformLocation( std::string );
+    int                         compile( unsigned int shader );
+    int                         link( unsigned int vert, unsigned int frag );
+    unsigned int                m_program;
 };
 
 };

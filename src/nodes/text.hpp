@@ -4,7 +4,6 @@
 #define IS_TEXT_H_
 
 #include <GL/glew.h>
-#include <glm/gtx/projection.hpp>
 #include <SFML/System/Utf.hpp>
 
 #include "../glyph.hpp"
@@ -20,7 +19,7 @@ public:
     void            remove();
     std::string     type();
     void            tick( float dt );
-    void            draw( sf::RenderTarget* target );
+    void            draw();
     std::string     m_font;
     sf::String      m_text;
     bool            m_changed;

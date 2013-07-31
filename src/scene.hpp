@@ -15,7 +15,7 @@ class Scene {
 public:
     ~Scene();
     void            tick( float dt );
-    void            draw( sf::RenderTarget* target );
+    void            draw();
     void            addNode( is::Node* );
 };
 

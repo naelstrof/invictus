@@ -17,9 +17,13 @@ int is::ShaderLoader::init() {
     return 0;
 }
 
+std::vector<is::Shader*> is::ShaderLoader::getAll() {
+    return m_shaders;
+}
+
 is::Shader* is::ShaderLoader::get( std::string shadername ) {
     for ( unsigned int i=0; i<m_shaders.size(); i++ ) {
-        if ( shadername == m_shadernames[i] ) {
+        if ( shadername == m_shaders[i]->m_name ) {
             return m_shaders[i];
         }
     }
@@ -28,7 +32,7 @@ is::Shader* is::ShaderLoader::get( std::string shadername ) {
     return NULL;
 }
 
-void is::ShaderLoader::addShader( std::string name, std::string vertdir, std::string fragdir ) {
+void is::ShaderLoader::addShader( std::string name, std::string vertdir, std::string fragdir, std::string shadertype ) {
     is::File::Read vert( vertdir );
     is::File::Read frag( fragdir );
 
@@ -40,12 +44,11 @@ void is::ShaderLoader::addShader( std::string name, std::string vertdir, std::st
     frag.read( fragdata, frag.size() );
     fragdata[ frag.size() ] = '\0';
 
-    is::Shader* shader = new is::Shader( name, vertdata, fragdata );
+    is::Shader* shader = new is::Shader( name, vertdata, fragdata, shadertype );
 
     delete[] fragdata;
     delete[] vertdata;
 
     m_shaders.push_back( shader );
-    m_shadernames.push_back( name );
     os->printf( "INF Loaded shader %.\n", name );
 }

@@ -15,9 +15,9 @@ void is::Scene::tick( float dt ) {
     }
 }
 
-void is::Scene::draw( sf::RenderTarget* target ) {
+void is::Scene::draw() {
     for ( unsigned int i=0;i<m_nodes.size();i++ ) {
-        m_nodes[i]->draw( target );
+        m_nodes[i]->draw();
     }
 }
 

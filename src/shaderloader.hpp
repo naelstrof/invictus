@@ -13,14 +13,14 @@ namespace is {
 
 class ShaderLoader {
 private:
-    std::vector<std::string> m_shadernames;
     std::vector<is::Shader*> m_shaders;
 public:
     ShaderLoader();
     ~ShaderLoader();
-    int             init();
-    is::Shader*     get( std::string shadername );
-    void            addShader( std::string name, std::string vertdir, std::string fragdir );
+    int                         init();
+    is::Shader*                 get( std::string shadername );
+    void                        addShader( std::string name, std::string vertdir, std::string fragdir, std::string type );
+    std::vector<is::Shader*>    getAll();
 };
 
 };

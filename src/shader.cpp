@@ -1,6 +1,15 @@
 #include "shader.hpp"
 
-is::Shader::Shader( std::string name, std::string vert, std::string frag ) {
+is::Shader::Shader( std::string name, std::string vert, std::string frag, std::string type ) {
+    // Set up the type of the shader, this is read by render to know what kind of matricies it needs.
+    m_name = name;
+    if ( type == "perspective" ) {
+        m_type = 0;
+    } else if ( type == "orthographic" ) {
+        m_type = 1;
+    } else {
+        m_type = -1;
+    }
     m_good = false;
     // Create the program to link to.
     m_program = glCreateProgram();
@@ -104,6 +113,13 @@ void is::Shader::setParameter( std::string name, int foo ) {
     glUniform1i( getUniformLocation( name ), foo );
 }
 
+void is::Shader::setParameter( std::string name, float foo ) {
+    if ( !m_good ) {
+        return;
+    }
+    glUniform1f( getUniformLocation( name ), foo );
+}
+
 void is::Shader::setParameter( std::string name, glm::mat4 foo ) {
     if ( !m_good ) {
         return;
@@ -116,4 +132,19 @@ void is::Shader::setParameter( std::string name, glm::vec4 foo ) {
         return;
     }
     glUniform4f( getUniformLocation( name ), foo.x, foo.y, foo.z, foo.w );
+}
+
+void is::Shader::setAttribute( std::string name, unsigned int buffer, unsigned int stepsize ) {
+    unsigned int a = glGetAttribLocation( m_program, name.c_str() );
+    glEnableVertexAttribArray( a );
+    glBindBuffer( GL_ARRAY_BUFFER, buffer );
+    glVertexAttribPointer( a, stepsize, GL_FLOAT, GL_FALSE, 0, NULL );
+    m_activeattribs.push_back( a );
+}
+
+void is::Shader::unbind() {
+    for ( unsigned int i=0; i<m_activeattribs.size(); i++ ) {
+        glDisableVertexAttribArray( m_activeattribs[i] );
+    }
+    glUseProgram( 0 );
 }

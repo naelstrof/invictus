@@ -46,7 +46,7 @@ std::string is::Node::type() {
 void is::Node::tick( float dt ) {
 }
 
-void is::Node::draw( sf::RenderTarget* target ) {
+void is::Node::draw() {
 }
 
 void is::Node::removeChild( is::Node* node ) {
@@ -178,7 +178,7 @@ void is::Node::setColor( float r, float g, float b, float a ) {
     m_color = glm::vec4( r, g, b, a );
 }
 
-glm::mat4 is::Node::getMatrix() {
+glm::mat4 is::Node::getModelMatrix() {
     //If we have a cached matrix, then just return that.
     if ( !m_matrixChanged ) {
         return m_matrix;
@@ -186,7 +186,7 @@ glm::mat4 is::Node::getMatrix() {
     m_matrixChanged = false;
     //If we have a parent, use their matrix offset by our local values.
     if ( m_parent ) {
-        m_matrix = m_parent->getMatrix();
+        m_matrix = m_parent->getModelMatrix();
         m_matrix = glm::translate( m_matrix, m_localPosition );
         m_matrix = glm::eulerAngleYXZ( m_localAngle.x, m_localAngle.y, m_localAngle.z ) * m_matrix;
         m_matrix = glm::scale( m_matrix, m_scale );

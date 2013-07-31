@@ -3,20 +3,48 @@
 is::Render* render = new is::Render();
 
 is::Render::Render() {
-    m_sizeChanged = false;
+    m_camera = NULL;
+    m_orthoMatrix = glm::mat4(1);
+    m_perspMatrix = glm::mat4(1);
 }
 
 int is::Render::init() {
-    // Create an FBO for the world and the gui.
-    // Simply so we can apply post processing effects on each separately.
-    m_world.create( window->getWidth(), window->getHeight(), true );
-    m_gui.create( window->getWidth(), window->getHeight(), false );
-
-    glDisable( GL_CULL_FACE );
+    glEnable( GL_CULL_FACE );
     return 0;
 }
 
 void is::Render::tick() {
+    m_guiBuffer.create( window->getWidth(), window->getHeight(), is::Framebuffer::color | is::Framebuffer::depth );
+    // Create the camera if it doesn't exist.
+    if ( m_camera == NULL ) {
+        m_camera = new Camera();
+        world->addNode( m_camera );
+    }
+    // Set up perspective and ortho matricies. (Should happen every frame to make depth buffer accurate)
+    m_orthoMatrix = glm::ortho( 0.f, (float)window->getWidth(), 0.f, (float)window->getHeight(), 0.f, 3000.f );
+    m_perspMatrix = glm::perspective( 45.f, float( window->getWidth() )/float( window->getHeight() ), 0.f, 3000.f );
+    // Loop through all shaders, setting up View and World matricies.
+    std::vector<is::Shader*> shaderlist = shaders->getAll();
+    for ( unsigned int i=0; i<shaderlist.size(); i++ ) {
+        is::Shader* shader = shaderlist[i];
+        switch ( shader->m_type ) {
+            // Perspective
+            case 0: {
+                shader->setParameter( "view", m_camera->getViewMatrix() );
+                shader->setParameter( "world", m_perspMatrix );
+                break;
+            }
+            // Orthographic
+            case 1: {
+                shader->setParameter( "world", m_orthoMatrix );
+                break;
+            }
+            // Everything else
+            default: {
+                break;
+            }
+        }
+    }
     GLenum glErr = glGetError();
     if (glErr != GL_NO_ERROR )
     {
@@ -25,33 +53,17 @@ void is::Render::tick() {
 }
 
 void is::Render::draw() {
-    if ( m_sizeChanged ) {
-        init();
-        m_sizeChanged = false;
-    }
-    // Render to the world FBO.
-    /*m_world.setActive();
-    m_world.clear();
-    //m_world.clear(sf::Color(1,1,1,1));
-    world->draw( &m_world );
-    m_world.display();
 
-    // Now render to the gui FBO.
-    m_gui.setActive();
-    m_gui.clear();
-    //m_gui.clear(sf::Color(1,1,1,1));
-    gui->draw( &m_gui );
-    m_gui.display();*/
+    m_guiBuffer.bind();
+    m_guiBuffer.clear( glm::vec4(0,0,0,1) );
+    gui->draw();
+    m_guiBuffer.unbind();
 
     window->setActive();
     glClearColor(1,1,1,1);
     glClear( GL_COLOR_BUFFER_BIT );
+    m_guiBuffer.draw();
     //window->draw( &m_world );
     //window->draw( &m_gui );
-    gui->draw( NULL );
     window->display();
-}
-
-void is::Render::updateSize() {
-    m_sizeChanged = true;
 }
