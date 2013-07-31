@@ -1,18 +1,14 @@
 #include "text.hpp"
 
-is::Text::Text( sf::String text, std::string fontname, int size ) {
-    m_text = text;
-    m_font = fontname;
-    m_size = size;
-    m_changed = true;
-    m_texture = glyphs->getTexture( fontname, size );
+is::Text::Text( sf::String text, std::string fontname, int size )
+    : m_text( text ), m_font( fontname ), m_size( size ), m_changed( true ),
+      m_texture( glyphs->getTexture( fontname, size ) ), m_vertcount( 0 ), m_totaltime( 0 ) {
+
     if ( !m_texture ) {
         os->printf( "ERR Font not found: %\n", fontname );
     }
     m_textureSize = m_texture->m_width;
-    m_vertcount = 0;
     glGenBuffers( 2, m_buffers);
-    m_totaltime = 0;
 }
 
 is::Text::~Text() {

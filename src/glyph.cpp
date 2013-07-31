@@ -2,6 +2,10 @@
 
 is::GlyphLoader* glyphs = new is::GlyphLoader();
 
+is::GlyphLoader::GlyphLoader() {
+    m_textureStartSize = 512;
+}
+
 is::GlyphLoader::~GlyphLoader() {
     for ( unsigned int i=0; i<m_glyphcontainers.size(); i++ ) {
         delete m_glyphcontainers[i];
@@ -10,7 +14,6 @@ is::GlyphLoader::~GlyphLoader() {
 
 is::TextureAtlas* is::GlyphLoader::getTexture( std::string fontname, unsigned int size ) {
     // Get texture starting size.
-    m_textureStartSize = 512;
     float check = lua->getFloat( "textureAtlasStartSize" );
     if ( check > 0 ) {
         m_textureStartSize = ( unsigned int )check;
@@ -54,6 +57,11 @@ is::Glyph* is::GlyphLoader::get( sf::String id, std::string fontname, unsigned i
     // Now since the glyphcontainer doesn't exist, we must grab it and initialize it.
     m_glyphcontainers.push_back( new is::GlyphsContainer( fontname, size, m_textureStartSize ) );
     return m_glyphcontainers.back()->find( id );
+}
+
+is::GlyphsContainer::GlyphsContainer( const is::GlyphsContainer& foo )
+    : m_font( foo.m_font ), m_size( foo.m_size ) {
+    m_texture = new is::TextureAtlas( foo.m_texture->m_width, foo.m_texture->m_width );
 }
 
 is::GlyphsContainer::~GlyphsContainer() {

@@ -39,6 +39,7 @@ class GlyphsContainer {
 private:
     is::Glyph*                  add( sf::String id );
 public:
+    GlyphsContainer( const GlyphsContainer& foo );
     GlyphsContainer( std::string fontname, unsigned int fontSize, int textureSize );
     ~GlyphsContainer();
     std::vector<is::Glyph>      m_glyphs;
@@ -54,6 +55,7 @@ private:
     unsigned int        m_textureStartSize;
     std::vector<GlyphsContainer*> m_glyphcontainers;
 public:
+    GlyphLoader();
     ~GlyphLoader();
     is::Glyph*          get( sf::String id, std::string font, unsigned int size );
     is::TextureAtlas*   getTexture( std::string font, unsigned int size );

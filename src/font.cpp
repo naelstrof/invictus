@@ -68,9 +68,7 @@ void is::FontLoader::loadFont( int id ) {
     os->printf( "INF Loaded font % as %.\n", font.m_name, font.m_dir );
 }
 
-is::Font::Font( std::string name, std::string dir, FT_Face font ) {
-    m_name = name;
-    m_dir = dir;
-    m_face = font;
-    m_data = NULL;
+is::Font::Font( std::string name, std::string dir, FT_Face font )
+    : m_name(name), m_dir(dir), m_face(font), m_data(NULL) {
+    // Use initialization lists for faster loading!
 }

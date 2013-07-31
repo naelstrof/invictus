@@ -20,18 +20,18 @@ public:
     std::string     type();
     void            tick( float dt );
     void            draw();
-    std::string     m_font;
     sf::String      m_text;
-    bool            m_changed;
+    std::string     m_font;
     unsigned int    m_size;
+    bool            m_changed;
     void            setSize( unsigned int size );
 private:
+    is::TextureAtlas*       m_texture;
+    unsigned int            m_vertcount;
     float                   m_totaltime;
     std::vector<glm::vec2>  m_uvs;
     std::vector<glm::vec2>  m_verts;
-    unsigned int            m_vertcount;
     unsigned int            m_buffers[2];
-    is::TextureAtlas*       m_texture;
     void                    generateBuffers();
     unsigned int            m_textureSize;
 };

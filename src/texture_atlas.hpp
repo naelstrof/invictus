@@ -28,6 +28,7 @@ public:
         void                    localize( Node* node );
     };
 
+    TextureAtlas( const TextureAtlas& foo );
     TextureAtlas();
     TextureAtlas( unsigned int w, unsigned int h );
     ~TextureAtlas();

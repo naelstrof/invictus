@@ -5,6 +5,12 @@ is::Framebuffer::Framebuffer() {
     m_width = 0;
     m_height = 0;
     m_flags = (is::Framebuffer::buffers)0;
+    m_depth = 0;
+    m_stencil = 0;
+    m_frame = 0;
+    m_buffers[0] = 0;
+    m_buffers[1] = 0;
+    m_texture = 0;
 }
 
 is::Framebuffer::Framebuffer( unsigned int width, unsigned int height, unsigned char flags ) {
@@ -104,6 +110,9 @@ is::Framebuffer::~Framebuffer() {
         if ( m_flags & stencil ) {
             glDeleteRenderbuffersEXT( 1, &m_stencil );
         }
+    }
+    if ( generatedBuffers ) {
+        glDeleteBuffers( 2, m_buffers );
     }
 }
 

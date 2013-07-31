@@ -21,7 +21,6 @@ private:
     is::Framebuffer m_guiBuffer;
     glm::mat4       m_perspMatrix;
     glm::mat4       m_orthoMatrix;
-    bool            m_sizeChanged;
 public:
     Render();
     int             init();
