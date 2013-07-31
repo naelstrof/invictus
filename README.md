@@ -28,6 +28,7 @@ Invictus was supposed to use as few libraries as possible-- but there's no reaso
 Compiling
 ---------
 Invictus uses CMake as a compiling medium. Compiling will be different for each operating system, but will follow similar rules:
+
 1. Install each of the listed libraries so that CMake can detect them.
 2. Run CMake in the same directory as the CMakeLists.txt file to create a method of compilation on your system (makefile, Visual Studio files, etc).
 3. Compile!
