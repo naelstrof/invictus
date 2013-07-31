@@ -2,8 +2,7 @@ Invictus
 ========
 A highly effecient, multi-platform, multi-lingual engine that's meant to follow linux application standards.
 
-Current State
--------------
+### Current State
 This image will update with the current state of the engine.
 
 ![Invictus Image](http://farmpolice.com/content/current.png "Invictus running Astrostruct")
