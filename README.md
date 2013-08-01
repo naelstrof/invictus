@@ -1,4 +1,4 @@
-Invictus
+![Invictus Icon](http://farmpolice.com/content/invictus_128.png)Invictus
 ========
 A highly effecient, multi-platform, multi-lingual engine that's meant to follow linux application standards.
 
