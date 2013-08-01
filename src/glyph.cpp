@@ -61,7 +61,7 @@ is::Glyph* is::GlyphLoader::get( sf::String id, std::string fontname, unsigned i
 
 is::GlyphsContainer::GlyphsContainer( const is::GlyphsContainer& foo )
     : m_font( foo.m_font ), m_size( foo.m_size ) {
-    m_texture = new is::TextureAtlas( foo.m_texture->m_width, foo.m_texture->m_width );
+    m_texture = new is::TextureAtlas( foo.m_texture->m_size );
 }
 
 is::GlyphsContainer::~GlyphsContainer() {
@@ -75,7 +75,7 @@ is::GlyphsContainer::GlyphsContainer( std::string fontname, unsigned int fontSiz
         return;
     }
     m_size = fontSize;
-    m_texture = new is::TextureAtlas( textureSize, textureSize );
+    m_texture = new is::TextureAtlas( textureSize );
 }
 
 is::Glyph* is::GlyphsContainer::add( sf::String id ) {
@@ -119,11 +119,10 @@ is::Glyph::Glyph( is::Font* font, unsigned int size, sf::String id, is::TextureA
 }
 
 void is::Glyph::fixUV( is::TextureAtlas* texture ) {
-    if ( m_texturesize == texture->m_width ) {
+    if ( m_texturesize == texture->m_size ) {
         return;
     }
-    // Texture's size should always be square.
-    m_texturesize = texture->m_width;
+    m_texturesize = texture->m_size;
     // Adjust for shadow padding as well
     float shadow = 0;
     float left = float( m_node->m_rect.left + shadow ) / m_texturesize;

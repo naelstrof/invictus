@@ -1,19 +1,27 @@
 #include "texture_atlas.hpp"
 
 is::TextureAtlas::TextureAtlas() {
-    m_width = 0;
-    m_height = 0;
+    m_size = 0;
     m_texture = 0;
     m_node = NULL;
     m_changed = false;
 }
 
-is::TextureAtlas::TextureAtlas( unsigned int w, unsigned int h ) {
+is::TextureAtlas::TextureAtlas( unsigned int s ) {
     m_changed = false;
-    m_width = w;
-    m_height = h;
 
-    m_node = new Node( m_width, m_height );
+    // Make sure we're to the nearest power of 2, because 'fast' or something.
+    unsigned int i = 1;
+    while ( true ) {
+        unsigned int power = pow( 2, i );
+        if ( power >= s ) {
+            m_size = power;
+            break;
+        }
+        i++;
+    }
+
+    m_node = new Node( m_size, m_size );
 
     // Generate an empty texture to use as a texture atlas.
     glGenTextures( 1, &m_texture );
@@ -22,7 +30,7 @@ is::TextureAtlas::TextureAtlas( unsigned int w, unsigned int h ) {
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
-    glTexStorage2D( GL_TEXTURE_2D, 1, GL_R8, m_width, m_height );
+    glTexStorage2D( GL_TEXTURE_2D, 1, GL_R8, m_size, m_size );
     // Clear the image using a framebuffer, this way we don't have to worry about clogging the pipeline with 0's.
     is::Framebuffer fb;
     fb.createFromTexture( m_texture );
@@ -32,10 +40,10 @@ is::TextureAtlas::TextureAtlas( unsigned int w, unsigned int h ) {
 }
 
 is::TextureAtlas::TextureAtlas( const is::TextureAtlas& foo )
-    : m_width( foo.m_width ), m_height( foo.m_height ) {
+    : m_size( foo.m_size ) {
     m_changed = false;
-    m_node = new Node( m_width, m_height );
-    unsigned char* oldtexture = new unsigned char[m_width*m_height];
+    m_node = new Node( m_size, m_size );
+    unsigned char* oldtexture = new unsigned char[m_size*m_size];
     glBindTexture( GL_TEXTURE_2D, foo.m_texture );
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
     glGetTexImage( GL_TEXTURE_2D, 0, GL_RED, GL_UNSIGNED_BYTE, oldtexture );
@@ -46,7 +54,7 @@ is::TextureAtlas::TextureAtlas( const is::TextureAtlas& foo )
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
-    glTexStorage2D( GL_TEXTURE_2D, 1, GL_R8, m_width, m_height );
+    glTexStorage2D( GL_TEXTURE_2D, 1, GL_R8, m_size, m_size );
     // Clear the image using a framebuffer, this way we don't have to worry about clogging the pipeline with 0's.
     // FIXME: Not sure if a clear is needed... It should be needed, but it causes flickering when I clear it :(. Seems to work fine without it.
     /*is::Framebuffer fb;
@@ -56,7 +64,7 @@ is::TextureAtlas::TextureAtlas( const is::TextureAtlas& foo )
     fb.unbind();*/
 
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-    glTexSubImage2D( GL_TEXTURE_2D, 0, 0, 0, m_width, m_height, GL_RED, GL_UNSIGNED_BYTE, oldtexture );
+    glTexSubImage2D( GL_TEXTURE_2D, 0, 0, 0, m_size, m_size, GL_RED, GL_UNSIGNED_BYTE, oldtexture );
     delete[] oldtexture;
 }
 
@@ -83,18 +91,16 @@ is::TextureAtlas::Node* is::TextureAtlas::insert( unsigned int w, unsigned int h
 
     is::TextureAtlas::Node* node = m_node->insert( w, h );
     // Continually resize the texture until we can fit the requested texture.
-    unsigned int oldw = m_width;
-    unsigned int oldh = m_height;
+    unsigned int olds = m_size;
     while ( !node ) {
         m_changed = true;
         // We must have ran out of room in the texture, automatically double in size.
-        m_width *= 2;
-        m_height *= 2;
+        m_size *= 2;
         // Make sure we're not doing a futile resize
-        if ( m_width < w || m_height < h ) {
+        if ( m_size < w || m_size < h ) {
             continue;
         }
-        is::TextureAtlas::Node* newnode = new Node( m_width, m_height );
+        is::TextureAtlas::Node* newnode = new Node( m_size, m_size );
         is::TextureAtlas::Node* oldnode = newnode->insert( m_node );
         m_node = newnode;
 
@@ -102,7 +108,7 @@ is::TextureAtlas::Node* is::TextureAtlas::insert( unsigned int w, unsigned int h
 
         // Oh yeah and recreate the texture.
         // First start by copying the original texture to memory.
-        unsigned char* oldtexture = new unsigned char[oldw*oldh];
+        unsigned char* oldtexture = new unsigned char[olds*olds];
         glBindTexture( GL_TEXTURE_2D, m_texture );
         glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
         glGetTexImage( GL_TEXTURE_2D, 0, GL_RED, GL_UNSIGNED_BYTE, oldtexture );
@@ -115,7 +121,7 @@ is::TextureAtlas::Node* is::TextureAtlas::insert( unsigned int w, unsigned int h
         glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
         glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
         glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
-        glTexStorage2D( GL_TEXTURE_2D, 1, GL_R8, m_width, m_height );
+        glTexStorage2D( GL_TEXTURE_2D, 1, GL_R8, m_size, m_size );
         // Clear the image using a framebuffer, this way we don't have to worry about clogging the pipeline with 0's.
         // FIXME: Not sure if a clear is needed... It should be needed, but it causes flickering when I clear it :(. Seems to work fine without it.
         /*is::Framebuffer fb;
@@ -125,7 +131,7 @@ is::TextureAtlas::Node* is::TextureAtlas::insert( unsigned int w, unsigned int h
         fb.unbind();*/
 
         glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-        glTexSubImage2D( GL_TEXTURE_2D, 0, oldnode->m_rect.left, oldnode->m_rect.top-oldnode->m_rect.height, oldw, oldh, GL_RED, GL_UNSIGNED_BYTE, oldtexture );
+        glTexSubImage2D( GL_TEXTURE_2D, 0, oldnode->m_rect.left, oldnode->m_rect.top-oldnode->m_rect.height, olds, olds, GL_RED, GL_UNSIGNED_BYTE, oldtexture );
         delete[] oldtexture;
     }
 

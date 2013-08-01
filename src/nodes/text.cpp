@@ -7,7 +7,7 @@ is::Text::Text( sf::String text, std::string fontname, int size )
     if ( !m_texture ) {
         os->printf( "ERR Font not found: %\n", fontname );
     }
-    m_textureSize = m_texture->m_width;
+    m_textureSize = m_texture->m_size;
     glGenBuffers( 2, m_buffers);
 }
 
@@ -25,10 +25,10 @@ std::string is::Text::type() {
 
 void is::Text::generateBuffers() {
     // We need to check to make sure we actually need to regenerate the buffers.
-    if ( !m_changed && m_textureSize == m_texture->m_width ) {
+    if ( !m_changed && m_textureSize == m_texture->m_size ) {
         return;
     }
-    m_textureSize = m_texture->m_width;
+    m_textureSize = m_texture->m_size;
     float penx = 0;
     float peny = 0;
     for ( unsigned int i=0; i<m_text.getSize(); i++ ) {

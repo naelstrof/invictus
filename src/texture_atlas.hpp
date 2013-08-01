@@ -30,12 +30,11 @@ public:
 
     TextureAtlas( const TextureAtlas& foo );
     TextureAtlas();
-    TextureAtlas( unsigned int w, unsigned int h );
+    TextureAtlas( unsigned int s );
     ~TextureAtlas();
     void                        bind();
     is::TextureAtlas::Node*     insert( unsigned int w, unsigned int h, unsigned char* imagedata, int padding = 0 );
-    unsigned int                m_width;
-    unsigned int                m_height;
+    unsigned int                m_size;
     bool                        changed();
 private:
     bool                        m_changed;
