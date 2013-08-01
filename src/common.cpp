@@ -87,6 +87,12 @@ int is::Common::init( int argc, char** argv ) {
         return err;
     }
 
+    err = textures->init();
+    if ( err ) {
+        os->printf( "ERR Failed to initialize textures, shutting down...\n" );
+        return err;
+    }
+
     err = fonts->init();
     if ( err ) {
         os->printf( "ERR Failed to initialize fonts, shutting down...\n" );
@@ -134,6 +140,15 @@ int is::Common::init( int argc, char** argv ) {
     text->setColor(0,0,0,1);
     gui->addNode( text );
 
+    is::Icon* dothan = new is::Icon( "dothan" );
+    //dothan->setPos(0,0,0);
+    dothan->setScale( glm::vec3( 64, 64, 1 ) );
+    gui->addNode( dothan );
+
+    dothan = new is::Icon( "thisisanimated" );
+    dothan->setScale( glm::vec3( 64, 64, 1 ) );
+    dothan->setPos( glm::vec3( 64, 0, 0 ) );
+    gui->addNode( dothan );
 
     m_running = true;
     m_time.restart();

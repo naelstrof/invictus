@@ -8,6 +8,7 @@ Features (So far!)
 * **Text rendering**: Extremely efficient text rendering using self-sizing texture atlases. The only thing sent through the pipeline is the glyphs themselves and then they're cached immediately after. Texture clearing and rendering is all done on the GPU.
 * **Virtualized Filesystem**: Thanks to PHYSFS the filesystem is completely virtualized allowing for files to be loaded from a combination of archives and actual files. Prioritizes user files located in their home folder over actual game files. So not only can modding easily be done on a per-user basis without destroying original game content, but you can also have game clients download content packages from servers without any risk to the user!
 * **Lua**: Not only does Lua power the game's configuration, but it also powers what resources are loaded and most game content! So now a mature content filter could easily be created without editing any C++ code. Instead of finding a font that encompasses all the languages you wish to support you could have Lua automatically detect and load the specific font that supports the language. Game content will even be capable of updating real-time while the game is running!
+* **Animated Textures**: Easily load in animated textures only supports frame by frame and loads via lua. You can set custom FPS as well as if it loops or not. In the future I may add the ability to execute code on certain frames.
 
 ### Current State
 This image will update with the current state of the engine.

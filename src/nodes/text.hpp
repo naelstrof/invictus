@@ -7,7 +7,6 @@
 #include <SFML/System/Utf.hpp>
 
 #include "../glyph.hpp"
-#include "../window.hpp"
 #include "../node.hpp"
 
 namespace is {

@@ -62,11 +62,14 @@ set( source
      src/framebuffer.cpp
      src/shader.cpp
      src/shaderloader.cpp
+     src/texture.cpp
+     src/textureloader.cpp
      src/model.cpp
      src/font.cpp
      src/camera.cpp
      src/node.cpp
      src/nodes/text.cpp
+     src/nodes/icon.cpp
      src/glyph.cpp
      src/texture_atlas.cpp
      src/keyboard.cpp
@@ -101,9 +104,9 @@ add_executable( ${BIN_TARGET} ${source} )
 
 # Libraries
 target_link_libraries( ${BIN_TARGET}
+                       ${LUA_LIBRARIES}
                        ${SFML_LIBRARY}
                        ${FREETYPE_LIBRARIES}
-                       ${LUA_LIBRARIES}
                        ${OPENGL_LIBRARIES}
                        ${ASSIMP_LIBRARY}
                        ${GLEW_LIBRARY}

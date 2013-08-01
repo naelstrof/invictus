@@ -4,9 +4,12 @@
 #include "os.hpp"
 #include "filesystem.hpp"
 #include "shaderloader.hpp"
+#include "textureloader.hpp"
 #include "font.hpp"
 #include "model.hpp"
 
+// Required to use luaL_register, not sure of any alternatives.
+#define LUA_COMPAT_MODULE
 #include <lua.hpp>
 
 // Here we define our own lua dostring function that properly registers file location for error messages.

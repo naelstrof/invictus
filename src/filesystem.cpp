@@ -39,7 +39,7 @@ int is::FileSystem::init( std::string pwd ) {
     // This should never be enabled, it's a huge security flaw otherwise.
     PHYSFS_permitSymbolicLinks( false );
     // Creates a sane configuraton where written files are saved to ~/.invictus/astrostruct and scans for .zip files named as .pak in the base directory to add to the game data.
-    PHYSFS_setSaneConfig( "invictus", "astrostruct", "ZIP", 0, 0 );
+    PHYSFS_setSaneConfig( "invictus", "astrostruct", "zip", 0, 0 );
 
     // Here we'll print out some handy information:
     os->printf( "INF PHYSFS supported archives are: " );

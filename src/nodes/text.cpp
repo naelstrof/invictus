@@ -12,7 +12,7 @@ is::Text::Text( sf::String text, std::string fontname, int size )
 }
 
 is::Text::~Text() {
-
+    glDeleteBuffers( 2, m_buffers);
 }
 
 void is::Text::remove() {
@@ -91,7 +91,6 @@ void is::Text::draw() {
     shader->setParameter( "texture", 0 );
     shader->setParameter( "color", getColor() );
     shader->setParameter( "model", getModelMatrix() );
-    shader->setParameter( "shadowSize", 5.f );
     shader->setAttribute( "vertex", m_buffers[0], 2 );
     shader->setAttribute( "uv", m_buffers[1], 2 );
 

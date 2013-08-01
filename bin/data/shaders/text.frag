@@ -2,7 +2,6 @@
 
 uniform sampler2D texture;
 uniform vec4 color;
-uniform float shadowSize;
 
 in vec2 uvCoords;
 out vec4 finalColor;
@@ -20,7 +19,7 @@ void main()
     // Check how far we are away from other pixels.
     ivec2 texSize = textureSize( texture, 0 );
     float glow = 0;
-    float glowSize = shadowSize/float(texSize.x); // Glow by 5 pixels
+    float glowSize = 5/float(texSize.x); // Glow by 5 pixels
     float glowStep = 1/float(texSize.x); // Step by 1 pixel
     int count = 0;
     for ( float x = -glowSize; x < glowSize; x += glowStep ) {

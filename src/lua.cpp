@@ -6,6 +6,7 @@ is::Lua* lua = new is::Lua();
 #include "lua/addshader.cpp"
 #include "lua/addfont.cpp"
 #include "lua/addmodel.cpp"
+#include "lua/addtexture.cpp"
 
 is::Lua::Lua() {
     m_l = luaL_newstate();
@@ -18,6 +19,8 @@ is::Lua::Lua() {
     addFunction( "addShader", luaAddShader );
     addFunction( "addFont", luaAddFont );
     addFunction( "addModel", luaAddModel );
+    luaRegisterAnimations( m_l );
+    addFunction( "addTexture", luaAddTexture );
 }
 
 is::Lua::~Lua() {
@@ -54,6 +57,10 @@ int is::Lua::doFile( std::string dir ) {
 
 int is::Lua::doFolder( std::string dir ) {
     std::vector<std::string> files = filesystem->getFiles( dir );
+    if ( files.size() <= 0 ) {
+        os->printf( "WRN Couldn't find anything in %, does it exist?\n", dir );
+        return 1;
+    }
     int results = 0;
     for ( unsigned int i=0;i<files.size();i++ ) {
         if ( files[i].find(".lua") == files[i].size()-4 ) {

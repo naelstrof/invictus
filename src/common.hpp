@@ -10,9 +10,11 @@
 #include "scene.hpp"
 #include "render.hpp"
 #include "shader.hpp"
+#include "textureloader.hpp"
 #include "model.hpp"
 #include "font.hpp"
 #include "glyph.hpp"
+#include "nodes/icon.hpp"
 
 namespace is {
 
