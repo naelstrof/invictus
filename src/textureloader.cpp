@@ -39,7 +39,10 @@ sf::Texture* is::TextureLoader::addRawTexture( std::string dir ) {
     file.read( data, file.size() );
 
     sf::Texture* texture = new sf::Texture();
-    texture->loadFromMemory( data, file.size() );
+    bool success = texture->loadFromMemory( data, file.size() );
+    if ( !success ) {
+        os->printf( "ERR SFML failed to load texture %! It will appear black.\n", dir );
+    }
 
     delete[] data;
 

@@ -3,26 +3,46 @@
 is::Render* render = new is::Render();
 
 is::Render::Render() {
-    m_camera = NULL;
+    m_camera = new is::Camera();
     m_orthoMatrix = glm::mat4(1);
     m_perspMatrix = glm::mat4(1);
 }
 
 int is::Render::init() {
+    os->printf( "INF OpenGL Vender: %\n", glGetString(GL_VENDOR) );
+    os->printf( "INF OpenGL Version: %\n", glGetString(GL_VERSION) );
+    os->printf( "INF OpenGL Renderer: %\n", glGetString(GL_RENDERER) );
+    os->printf( "INF GLSL Version: %\n", glGetString(GL_SHADING_LANGUAGE_VERSION) );
     glEnable( GL_CULL_FACE );
+    glCullFace( GL_BACK );
     return 0;
 }
 
 void is::Render::tick() {
-    m_guiBuffer.create( window->getWidth(), window->getHeight(), is::Framebuffer::color | is::Framebuffer::depth );
-    // Create the camera if it doesn't exist.
-    if ( m_camera == NULL ) {
-        m_camera = new Camera();
-        world->addNode( m_camera );
+    // Update our framebuffer (it won't recreate itself unless it has to).
+    m_buffer.create( window->getWidth(), window->getHeight(), is::Framebuffer::color );
+
+    // Grab all entities within 5000 units of the view fulstrum.
+    m_camera->m_far = 5000;
+    m_drawables = world->getSortedDrawables();
+    if ( m_drawables.size() != 0 ) {
+        // Here we set up the camera.
+        m_camera->setRatio( window->getWidth(), window->getHeight() );
+        m_camera->m_near = m_drawables.at(0)->m_depth-m_drawables.back()->m_hullsize;
+        // Clamp above 0
+        if ( m_camera->m_near <= 0 ) {
+            m_camera->m_near = 0.1;
+        }
+        // +1 just so near and far can never equal.
+        m_camera->m_far = m_drawables.back()->m_depth+m_drawables.back()->m_hullsize;
     }
-    // Set up perspective and ortho matricies. (Should happen every frame to make depth buffer accurate)
-    m_orthoMatrix = glm::ortho( 0.f, (float)window->getWidth(), 0.f, (float)window->getHeight(), 0.f, 3000.f );
-    m_perspMatrix = glm::perspective( 45.f, float( window->getWidth() )/float( window->getHeight() ), 0.f, 3000.f );
+
+    // Update the frustum
+    m_camera->m_frustum->setCameraInternals( m_camera );
+
+    // Set up perspective and ortho matricies. (Should happen every frame to make depth buffer accurate, orthographic ignores near plane limitations due to being 2D.)
+    m_orthoMatrix = glm::ortho( 0.f, (float)window->getWidth(), 0.f, (float)window->getHeight(), 0.f, m_camera->m_far );
+    m_perspMatrix = glm::perspective( m_camera->m_fov, float( window->getWidth() )/float( window->getHeight() ), m_camera->m_near, m_camera->m_far );
     // Loop through all shaders, setting up View and World matricies.
     std::vector<is::Shader*> shaderlist = shaders->getAll();
     for ( unsigned int i=0; i<shaderlist.size(); i++ ) {
@@ -53,17 +73,20 @@ void is::Render::tick() {
 }
 
 void is::Render::draw() {
-
-    m_guiBuffer.bind();
-    m_guiBuffer.clear( glm::vec4(0,0,0,1) );
-    gui->draw();
-    m_guiBuffer.unbind();
-
     window->setActive();
     glClearColor(1,1,1,1);
-    glClear( GL_COLOR_BUFFER_BIT );
-    m_guiBuffer.draw();
-    //window->draw( &m_world );
-    //window->draw( &m_gui );
+    glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT  );
+
+    m_buffer.bind();
+    m_buffer.clear( glm::vec4(0,0,0,1) );
+    for ( unsigned int i=0; i<m_drawables.size(); i++ ) {
+        m_drawables[i]->draw();
+    }
+    m_buffer.unbind();
+    m_drawables.clear();
+
+    window->setActive();
+    m_buffer.draw();
+    gui->draw();
     window->display();
 }

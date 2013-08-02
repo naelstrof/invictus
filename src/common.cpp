@@ -111,44 +111,12 @@ int is::Common::init( int argc, char** argv ) {
         return err;
     }
 
-    is::Text* text = new is::Text( "abcdefghijklmnopqrstuvwxyz" );
-    text->setSize(128);
-    text->setPos(0,128,-1000);
-    text->setColor(1,0.5,0,1);
-    gui->addNode( text );
-
-    text = new is::Text( "ABCDEFGHIJKLMNOPQRSTUVWXYZ" );
-    text->setSize(128);
-    text->setPos(0,0,-1000);
-    text->setColor(0,1,0.7,1);
-    gui->addNode( text );
-
-    text = new is::Text( "1234567890!@#$%^&*()" );
-    text->setSize(128);
-    text->setPos(0,256,-1000);
-    text->setColor(0.5,0.5,1,1);
-    gui->addNode( text );
-
-    text = new is::Text( L"ラドクリフ、マラソン五輪代表に" );
-    text->setSize(128);
-    text->setPos(0,384,-1000);
-    gui->addNode( text );
-
-    text = new is::Text( L"Бу́ря мгло́ю не́бо кро́ет" );
-    text->setSize(64);
-    text->setPos(0,512,-1000);
-    text->setColor(0,0,0,1);
-    gui->addNode( text );
-
-    is::Icon* dothan = new is::Icon( "dothan" );
-    //dothan->setPos(0,0,0);
-    dothan->setScale( glm::vec3( 64, 64, 1 ) );
-    gui->addNode( dothan );
-
-    dothan = new is::Icon( "thisisanimated" );
-    dothan->setScale( glm::vec3( 64, 64, 1 ) );
-    dothan->setPos( glm::vec3( 64, 0, 0 ) );
-    gui->addNode( dothan );
+    m_interval = 0;
+    m_text = new is::Text( "THEY COME!" );
+    m_text->setSize(64);
+    m_text->setPos(0,10,0);
+    m_text->setColor(1,0,0,1);
+    gui->addNode( m_text );
 
     m_running = true;
     m_time.restart();
@@ -156,6 +124,21 @@ int is::Common::init( int argc, char** argv ) {
 }
 
 void is::Common::tick() {
+    if ( sf::Mouse::isButtonPressed( sf::Mouse::Left ) ) {
+        glm::vec3 angle = render->m_camera->getAng();
+        glm::vec3 forward = glm::vec3( sin( angle.x ),
+                                       cos( angle.x )*cos( angle.y ),
+                                       cos( angle.x )*sin( angle.y ) );
+        is::Icon* dothan = new is::Icon( "dothan" );
+        dothan->setScale( glm::vec3( 64, 64, 1 ) );
+        dothan->setPos( forward*300.f );
+        dothan->setAng( glm::vec3( PI+angle.x, 0, 0 ) );
+        dothan->setColor( glm::vec4( float(rand()%100)/100.f,
+                                     float(rand()%100)/100.f,
+                                     float(rand()%100)/100.f, 1.f ) );
+        dothan->m_shader = shaders->get( "unlitGeneric" );
+        world->addNode( dothan );
+    }
     if ( keyboard->isDown( is::Key::Escape ) || keyboard->isDown( is::Key::Q ) ) {
         m_running = false;
         return;
@@ -165,6 +148,21 @@ void is::Common::tick() {
         return;
     }
     sf::Time dt = m_time.restart();
+    m_interval += dt.asSeconds();
+    if ( m_interval > 0.1 ) {
+        if ( m_text->getColor().x == 1 ) {
+            m_text->setColor( 0, 0, 0, 1 );
+        } else {
+            m_text->setColor( 1, 0, 0, 1 );
+        }
+        m_interval = 0;
+    }
+    if ( keyboard->isDown( is::Key::A ) ) {
+        render->m_camera->setAng( render->m_camera->getAng() - glm::vec3( dt.asSeconds(), 0, 0 ) );
+    }
+    if ( keyboard->isDown( is::Key::D ) ) {
+        render->m_camera->setAng( render->m_camera->getAng() + glm::vec3( dt.asSeconds(), 0, 0 ) );
+    }
     window->tick();
     world->tick( dt.asSeconds() );
     gui->tick( dt.asSeconds() );

@@ -10,6 +10,8 @@ is::Node::Node() {
     m_matrix = glm::mat4( 1 );
     m_parent = NULL;
     m_matrixChanged = false;
+    m_depth = 0;
+    m_hullsize = 0;
 }
 
 is::Node::~Node() {
@@ -47,6 +49,10 @@ void is::Node::tick( float dt ) {
 }
 
 void is::Node::draw() {
+}
+
+bool is::Node::visible() {
+    return false;
 }
 
 void is::Node::removeChild( is::Node* node ) {
@@ -147,7 +153,7 @@ glm::vec3 is::Node::getScale() {
         //TODO
         //If we're hooked to another node, grab our real angle from the matrix.
     }
-    return m_angle;
+    return m_scale;
 }
 
 void is::Node::setScale(glm::vec3 scale) {

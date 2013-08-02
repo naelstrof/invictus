@@ -6,6 +6,8 @@
 #include <GL/glew.h>
 #include <SFML/System/Utf.hpp>
 
+#include "../render.hpp"
+#include "../camera.hpp"
 #include "../glyph.hpp"
 #include "../node.hpp"
 
@@ -19,17 +21,19 @@ public:
     std::string     type();
     void            tick( float dt );
     void            draw();
+    bool            visible();
     sf::String      m_text;
     std::string     m_font;
     unsigned int    m_size;
     bool            m_changed;
+    unsigned int    m_width;
+    unsigned int    m_height;
+    is::Shader*     m_shader;
     void            setSize( unsigned int size );
+    void            setText( sf::String text );
 private:
     is::TextureAtlas*       m_texture;
     unsigned int            m_vertcount;
-    float                   m_totaltime;
-    std::vector<glm::vec2>  m_uvs;
-    std::vector<glm::vec2>  m_verts;
     unsigned int            m_buffers[2];
     void                    generateBuffers();
     unsigned int            m_textureSize;

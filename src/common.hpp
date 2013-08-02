@@ -27,6 +27,8 @@ public:
     int             init( int argc, char** argv );
     void            tick();
     bool            m_running;
+    float           m_interval;
+    is::Text*       m_text;
 };
 
 };

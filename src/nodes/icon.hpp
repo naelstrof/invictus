@@ -6,6 +6,8 @@
 #include <GL/glew.h>
 #include <SFML/System/Utf.hpp>
 
+#include "../render.hpp"
+#include "../camera.hpp"
 #include "../texture.hpp"
 #include "../node.hpp"
 
@@ -19,8 +21,10 @@ public:
     std::string     type();
     void            tick( float dt );
     void            draw();
+    bool            visible();
     void            play( std::string );
     is::Texture*    m_texture;
+    is::Shader*     m_shader;
     bool            m_changed;
 private:
     unsigned int            m_vertcount;

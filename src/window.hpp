@@ -17,7 +17,6 @@ namespace is {
 
 class Window {
 private:
-    sf::RenderWindow*   m_window;
     bool                m_focus;
     bool                m_fullscreen;
     bool                m_noborder;
@@ -29,6 +28,7 @@ private:
     bool                m_printed;
     bool                m_changed;
 public:
+    sf::RenderWindow*   m_window;
     Window();
     ~Window();
     void                tick();

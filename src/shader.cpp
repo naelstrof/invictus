@@ -146,5 +146,6 @@ void is::Shader::unbind() {
     for ( unsigned int i=0; i<m_activeattribs.size(); i++ ) {
         glDisableVertexAttribArray( m_activeattribs[i] );
     }
+    m_activeattribs.clear();
     glUseProgram( 0 );
 }

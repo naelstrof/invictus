@@ -67,6 +67,7 @@ set( source
      src/model.cpp
      src/font.cpp
      src/camera.cpp
+     src/frustum.cpp
      src/node.cpp
      src/nodes/text.cpp
      src/nodes/icon.cpp

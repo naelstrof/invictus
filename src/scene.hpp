@@ -4,19 +4,24 @@
 #define IS_SCENE_H_
 
 #include <vector>
+#include <algorithm>
 
 #include "node.hpp"
 #include "nodes/text.hpp"
 
 namespace is {
 
+bool nodeCompareDepth( is::Node* a, is::Node* b );
+
 class Scene {
     std::vector<is::Node*> m_nodes;
 public:
     ~Scene();
-    void            tick( float dt );
-    void            draw();
-    void            addNode( is::Node* );
+    void                    tick( float dt );
+    std::vector<is::Node*>  getSortedDrawables();
+    std::vector<is::Node*>  getDrawables();
+    void                    addNode( is::Node* );
+    void                    draw();
 };
 
 };

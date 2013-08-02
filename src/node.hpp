@@ -13,6 +13,8 @@
 
 #include "os.hpp"
 
+#define PI 3.14159265359
+
 namespace is {
 
 class Node {
@@ -25,6 +27,7 @@ public:
     virtual std::string     type();
     virtual void            tick( float dt );
     virtual void            draw();
+    virtual bool            visible();
 
     glm::vec4               getColor();
     void                    setColor( glm::vec4 color );
@@ -51,6 +54,8 @@ public:
     void                    addChild( is::Node* node );
 
     glm::mat4               getModelMatrix();
+    float                   m_depth;
+    float                   m_hullsize;
 private:
     bool                    m_matrixChanged;
     is::Node*               m_parent;

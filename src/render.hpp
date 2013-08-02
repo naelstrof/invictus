@@ -16,18 +16,20 @@
 
 namespace is {
 
+class Camera;
+
 class Render {
 private:
-    is::Framebuffer m_guiBuffer;
+    is::Framebuffer m_buffer;
     glm::mat4       m_perspMatrix;
     glm::mat4       m_orthoMatrix;
 public:
     Render();
-    int             init();
-    void            draw();
-    void            tick();
-    void            setActiveCamera( is::Camera camera );
-    is::Camera*     m_camera;
+    int                     init();
+    void                    draw();
+    void                    tick();
+    is::Camera*             m_camera;
+    std::vector<is::Node*>  m_drawables;
 };
 
 };
