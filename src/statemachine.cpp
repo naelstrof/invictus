@@ -53,6 +53,9 @@ is::State::State( std::string name, int luaReference )
 
 is::State::~State() {
     luaL_unref( lua->m_l, LUA_REGISTRYINDEX, m_luaReference );
+    if ( m_luaStateReference != LUA_NOREF ) {
+        luaL_unref( lua->m_l, LUA_REGISTRYINDEX, m_luaReference );
+    }
 }
 
 void is::State::init() {

@@ -13,6 +13,10 @@ is::Camera::Camera() {
     m_frustum = new Frustum( this );
 }
 
+is::Camera::~Camera() {
+    delete m_frustum;
+}
+
 glm::mat4 is::Camera::getViewMatrix() {
     update();
     return m_viewMatrix;

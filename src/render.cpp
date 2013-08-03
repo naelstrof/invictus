@@ -8,6 +8,10 @@ is::Render::Render() {
     m_perspMatrix = glm::mat4(1);
 }
 
+is::Render::~Render() {
+    delete m_camera;
+}
+
 int is::Render::init() {
     os->printf( "INF OpenGL Vender: %\n", glGetString(GL_VENDOR) );
     os->printf( "INF OpenGL Version: %\n", glGetString(GL_VERSION) );

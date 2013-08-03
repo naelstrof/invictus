@@ -19,6 +19,7 @@ class Frustum;
 class Camera {
 public:
                 Camera();
+                ~Camera();
     glm::mat4   getViewMatrix();
     void        setPos( glm::vec3 pos );
     void        setAng( glm::vec3 ang );

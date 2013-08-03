@@ -26,6 +26,7 @@ private:
     glm::mat4               m_orthoMatrix;
 public:
     Render();
+    ~Render();
     int                     init();
     void                    draw();
     void                    tick();
