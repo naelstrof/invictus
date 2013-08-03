@@ -28,27 +28,38 @@ sf::Texture* is::TextureLoader::getRaw( std::string dir ) {
     return addRawTexture( dir );
 }
 
-sf::Texture* is::TextureLoader::addRawTexture( std::string dir ) {
-    is::File::Read file( dir );
-    if ( !file.good() ) {
-        os->printf( "ERR Couldn't find texture %!\n", dir );
-        return NULL;
-    }
+void is::TextureLoader::render( sf::Texture* texture ) {
+    for ( unsigned int i=0; i<m_rawTextures.size(); i++ ) {
+        if ( texture == m_rawTextures[i] && m_rawTextureDirs[i] != "" ) {
 
-    char* data = new char[ file.size() ];
-    file.read( data, file.size() );
+            is::File::Read file( m_rawTextureDirs[i] );
+            if ( !file.good() ) {
+                os->printf( "ERR Couldn't find texture %!\n", m_rawTextureDirs[i] );
+                m_rawTextureDirs[i] = "";
+                return;
+            }
+            char* data = new char[ file.size() ];
+            file.read( data, file.size() );
+
+            bool success = texture->loadFromMemory( data, file.size() );
+            if ( !success ) {
+                os->printf( "ERR SFML failed to load texture %! It will appear black.\n", m_rawTextureDirs[i]);
+            }
+
+            delete[] data;
+            os->printf( "INF Loaded texture %.\n", m_rawTextureDirs[i] );
+            m_rawTextureDirs[i] = "";
+            return;
+
+        }
+    }
+}
+
+sf::Texture* is::TextureLoader::addRawTexture( std::string dir ) {
 
     sf::Texture* texture = new sf::Texture();
-    bool success = texture->loadFromMemory( data, file.size() );
-    if ( !success ) {
-        os->printf( "ERR SFML failed to load texture %! It will appear black.\n", dir );
-    }
-
-    delete[] data;
-
     m_rawTextures.push_back( texture );
     m_rawTextureDirs.push_back( dir );
-    os->printf( "INF Loaded texture %.\n", dir );
     return texture;
 }
 

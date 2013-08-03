@@ -1,7 +1,7 @@
 #include "texture.hpp"
 
 is::Animation::Animation( std::string name )
-    : m_name( name ), m_fps( 0 ), m_ct( 0 ), m_loop( true ) {
+    : m_name( name ), m_fps( 0 ), m_ct( 0 ), m_loop( true ), m_rendered( false ) {
 }
 
 is::Animation::~Animation() {
@@ -13,6 +13,7 @@ void is::Animation::tick( float dt ) {
 }
 
 sf::Texture* is::Animation::currentFrame() {
+    renderAll();
     if ( m_loop ) {
         return m_frames[ fmod( m_ct*m_fps, m_frames.size() ) ];
     }
@@ -23,7 +24,18 @@ sf::Texture* is::Animation::currentFrame() {
     return m_frames.back();
 }
 
+void is::Animation::renderAll() {
+    if ( m_rendered ) {
+        return;
+    }
+    for ( unsigned int i=0; i<m_frames.size(); i++ ) {
+        textures->render( m_frames.at( i ) );
+    }
+    m_rendered = true;
+}
+
 void is::Animation::bind() {
+    renderAll();
     if ( m_loop ) {
         sf::Texture::bind( m_frames[ fmod( m_ct*m_fps, m_frames.size() ) ] );
         return;

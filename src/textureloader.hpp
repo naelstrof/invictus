@@ -27,6 +27,7 @@ public:
     void                        addTexture( is::Texture* texture );
     sf::Texture*                getRaw( std::string dir );
     sf::Texture*                addRawTexture( std::string dir );
+    void                        render( sf::Texture* );
 };
 
 };

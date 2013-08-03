@@ -26,6 +26,8 @@ public:
     float m_fps;
     float m_ct;
     bool m_loop;
+    bool m_rendered;
+    void renderAll();
 private:
     std::vector<sf::Texture*> m_frames;
 };
