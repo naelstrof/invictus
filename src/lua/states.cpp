@@ -1,17 +1,17 @@
-is::State* lua_toState( lua_State* l, int index ) {
+is::State* lua_tostate( lua_State* l, int index ) {
     is::State** state = (is::State**)luaL_checkudata( l, index, "State" );
     return *state;
 }
 
-is::State* lua_checkState( lua_State* l, int narg ) {
-    is::State* foo = lua_toState( l, narg );
+is::State* lua_checkstate( lua_State* l, int narg ) {
+    is::State* foo = lua_tostate( l, narg );
     if (foo == NULL) {
         luaL_argerror( l, narg, "attempt to index a NULL State!" );
     }
     return foo;
 }
 
-void lua_pushState( lua_State* l, is::State* state ) {
+void lua_pushstate( lua_State* l, is::State* state ) {
     is::State** pointer = (is::State**)lua_newuserdata( l, sizeof(is::State*) );
     *pointer = state;
     luaL_getmetatable( l, "State" );
@@ -19,7 +19,7 @@ void lua_pushState( lua_State* l, is::State* state ) {
 }
 
 int luaState__index( lua_State* l ) {
-    is::State* state = lua_toState(l,1);
+    is::State* state = lua_tostate(l,1);
     if ( state == NULL ) {
         lua_Debug ar1;
         lua_getstack( l, 1, &ar1 );
@@ -47,7 +47,7 @@ int luaState__index( lua_State* l ) {
 }
 
 int luaState__newindex( lua_State* l ) {
-    is::State* state = lua_toState(l,1);
+    is::State* state = lua_tostate(l,1);
     if ( state == NULL ) {
         lua_Debug ar1;
         lua_getstack( l, 1, &ar1 );

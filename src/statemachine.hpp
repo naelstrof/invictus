@@ -19,6 +19,7 @@ public:
     void tick( float dt );
     std::string  m_name;
     int m_luaReference;
+    int m_luaStateReference;
 };
 
 class StateMachine {
@@ -37,7 +38,7 @@ public:
 
 };
 
-void lua_pushState( lua_State* l, is::State* state );
+void lua_pushstate( lua_State* l, is::State* state );
 
 extern is::StateMachine* states;
 

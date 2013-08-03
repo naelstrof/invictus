@@ -14,10 +14,6 @@ is::StateMachine::~StateMachine() {
 }
 
 int is::StateMachine::init() {
-    if ( m_states.size() > 0 && m_activeState == -1 ) {
-        m_activeState = 0;
-        m_states.at( m_activeState )->init();
-    }
     return 0;
 }
 
@@ -41,9 +37,6 @@ void is::StateMachine::setState( std::string statename ) {
 
 void is::StateMachine::addState( is::State* state ) {
     m_states.push_back( state );
-    if ( m_activeState == -1 ) {
-        m_activeState = m_states.size()-1;
-    }
 }
 
 void is::StateMachine::tick( float dt ) {
@@ -55,6 +48,7 @@ void is::StateMachine::tick( float dt ) {
 
 is::State::State( std::string name, int luaReference )
     : m_name( name ), m_luaReference( luaReference ) {
+    m_luaStateReference = LUA_NOREF;
 }
 
 is::State::~State() {
@@ -62,9 +56,9 @@ is::State::~State() {
 }
 
 void is::State::init() {
-    // FIXME: This check might be entirely useless.
-    if ( m_luaReference == LUA_NOREF ) {
-        return;
+    if ( m_luaStateReference == LUA_NOREF ) {
+        lua_pushstate( lua->m_l, this );
+        m_luaStateReference = luaL_ref( lua->m_l, LUA_REGISTRYINDEX );
     }
 
     lua_rawgeti( lua->m_l, LUA_REGISTRYINDEX, m_luaReference );
@@ -73,14 +67,16 @@ void is::State::init() {
         lua_pop( lua->m_l, 2 );
         return;
     }
-    lua_pushState( lua->m_l, this );
+    //lua_pushstate( lua->m_l, this );
+    lua_rawgeti( lua->m_l, LUA_REGISTRYINDEX, m_luaStateReference );
     lua->call( 1, 0 );
     lua_pop( lua->m_l, 1 );
 }
 
 void is::State::deinit() {
-    if ( m_luaReference == LUA_NOREF ) {
-        return;
+    if ( m_luaStateReference == LUA_NOREF ) {
+        lua_pushstate( lua->m_l, this );
+        m_luaStateReference = luaL_ref( lua->m_l, LUA_REGISTRYINDEX );
     }
 
     lua_rawgeti( lua->m_l, LUA_REGISTRYINDEX, m_luaReference );
@@ -89,14 +85,16 @@ void is::State::deinit() {
         lua_pop( lua->m_l, 2 );
         return;
     }
-    lua_pushState( lua->m_l, this );
+    //lua_pushstate( lua->m_l, this );
+    lua_rawgeti( lua->m_l, LUA_REGISTRYINDEX, m_luaStateReference );
     lua->call( 1, 0 );
     lua_pop( lua->m_l, 1 );
 }
 
 void is::State::tick( float dt ) {
-    if ( m_luaReference == LUA_NOREF ) {
-        return;
+    if ( m_luaStateReference == LUA_NOREF ) {
+        lua_pushstate( lua->m_l, this );
+        m_luaStateReference = luaL_ref( lua->m_l, LUA_REGISTRYINDEX );
     }
 
     lua_rawgeti( lua->m_l, LUA_REGISTRYINDEX, m_luaReference );
@@ -105,7 +103,8 @@ void is::State::tick( float dt ) {
         lua_pop( lua->m_l, 2 );
         return;
     }
-    lua_pushState( lua->m_l, this );
+    //lua_pushstate( lua->m_l, this );
+    lua_rawgeti( lua->m_l, LUA_REGISTRYINDEX, m_luaStateReference );
     lua_pushnumber( lua->m_l, dt );
     lua->call( 2, 0 );
     lua_pop( lua->m_l, 1 );
