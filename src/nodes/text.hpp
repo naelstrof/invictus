@@ -4,7 +4,6 @@
 #define IS_TEXT_H_
 
 #include <GL/glew.h>
-#include <SFML/System/Utf.hpp>
 
 #include "../render.hpp"
 #include "../camera.hpp"

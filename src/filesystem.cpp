@@ -58,15 +58,18 @@ void is::FileSystem::tick() {
     checkError();
 }
 
-std::vector<std::string> is::FileSystem::getFiles( std::string dir ) {
+std::vector<std::string> is::FileSystem::getFiles( std::string dir, bool recursive ) {
     std::vector<std::string> files;
+    if ( !exists( dir ) ) {
+        return files;
+    }
 
     char** list = PHYSFS_enumerateFiles( dir.c_str() );
     int i = 0;
     while ( list[i] != NULL ) {
         std::string file = dir + '/' + std::string( list[i] );
         files.push_back( file );
-        if ( PHYSFS_isDirectory( file.c_str() ) ) {
+        if ( recursive && PHYSFS_isDirectory( file.c_str() ) ) {
             std::vector<std::string> newfiles = getFiles( file );
             files.insert( files.end(), newfiles.begin(), newfiles.end() );
         }
@@ -78,4 +81,8 @@ std::vector<std::string> is::FileSystem::getFiles( std::string dir ) {
 
 bool is::FileSystem::exists( std::string dir ) {
     return PHYSFS_exists( dir.c_str() );
+}
+
+bool is::FileSystem::isDirectory( std::string dir ) {
+    return PHYSFS_isDirectory( dir.c_str() );
 }

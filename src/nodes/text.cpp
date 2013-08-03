@@ -43,9 +43,6 @@ void is::Text::generateBuffers() {
     std::vector<glm::vec2>  uvs;
     std::vector<glm::vec2>  verts;
     for ( unsigned int i=0; i<m_text.getSize(); i++ ) {
-        //std::string text;
-        //sf::Utf<32>::toUtf8( m_text.begin()+i, m_text.begin()+i+1, back_inserter( text ) );
-        //os->printf( "%: %\n", text, m_text[i] );
         // Generate glyph information and render it to a texture atlas.
         is::Glyph* glyph = glyphs->get( m_text[i], m_font, m_size );
         if ( !glyph ) {

@@ -63,3 +63,7 @@ void is::Camera::setAng( float y, float p, float r ) {
 void is::Camera::setRatio( unsigned int w, unsigned int h ) {
     m_ratio = float( w ) / float( h );
 }
+
+void is::Camera::updateFrustum() {
+    m_frustum->setCameraInternals( this );
+}

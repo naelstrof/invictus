@@ -7,9 +7,18 @@ is::Lua* lua = new is::Lua();
 #include "lua/addfont.cpp"
 #include "lua/addmodel.cpp"
 #include "lua/addtexture.cpp"
+#include "lua/states.cpp"
+#include "lua/color.cpp"
+#include "lua/vector.cpp"
+#include "lua/icon.cpp"
+#include "lua/getwindow.cpp"
+#include "lua/setstate.cpp"
 
 is::Lua::Lua() {
     m_l = luaL_newstate();
+
+    // First load the panic manager
+    lua_atpanic( m_l, luaOnPanic );
 
     // Load up all the lua libs.
     luaL_openlibs( m_l );
@@ -21,6 +30,14 @@ is::Lua::Lua() {
     addFunction( "addModel", luaAddModel );
     luaRegisterAnimations( m_l );
     addFunction( "addTexture", luaAddTexture );
+    luaRegisterStates( m_l );
+    luaRegisterVectors( m_l );
+    luaRegisterColors( m_l );
+    luaRegisterIcons( m_l );
+
+    addFunction( "getWindowWidth", luaGetWindowWidth );
+    addFunction( "getWindowHeight", luaGetWindowHeight );
+    addFunction( "setState", luaSetState );
 }
 
 is::Lua::~Lua() {
@@ -29,6 +46,7 @@ is::Lua::~Lua() {
 
 int is::Lua::init() {
     doFolder( "data/config" );
+    luaLoadStates( m_l );
     // Lua should never fail, since it handles its own errors.
     return 0;
 }
@@ -136,4 +154,17 @@ void is::Lua::setFloat( std::string name, float foo ) {
     lua_pushnumber( m_l, foo );
     lua_setfield( m_l, -2, name.c_str() );
     lua_pop( m_l, 1 );
+}
+
+int is::Lua::call( int nargs, int nresults ) {
+    if ( lua_pcall( m_l, nargs, nresults, 0 ) ) {
+        os->printf( "ERR %\n", lua_tostring( m_l, -1 ) );
+        return 1;
+    }
+    return 0;
+}
+
+int is::luaOnPanic( lua_State* l ) {
+    os->printf( "ERR %\n", lua_tostring( l, -1 ) );
+    return 0;
 }

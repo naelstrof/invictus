@@ -12,6 +12,17 @@ void is::Animation::tick( float dt ) {
     m_ct += dt;
 }
 
+sf::Texture* is::Animation::currentFrame() {
+    if ( m_loop ) {
+        return m_frames[ fmod( m_ct*m_fps, m_frames.size() ) ];
+    }
+    unsigned int location = abs( m_ct*m_fps );
+    if ( location < m_frames.size() ) {
+        return m_frames[ abs( m_ct*m_fps ) ];
+    }
+    return m_frames.back();
+}
+
 void is::Animation::bind() {
     if ( m_loop ) {
         sf::Texture::bind( m_frames[ fmod( m_ct*m_fps, m_frames.size() ) ] );
@@ -68,4 +79,12 @@ void is::Texture::play( std::string name ) {
             return;
         }
     }
+}
+
+unsigned int is::Texture::getWidth() {
+    return m_animations[ m_currentAnimation ].currentFrame()->getSize().x;
+}
+
+unsigned int is::Texture::getHeight() {
+    return m_animations[ m_currentAnimation ].currentFrame()->getSize().y;
 }

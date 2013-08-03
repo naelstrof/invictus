@@ -19,6 +19,7 @@ public:
     Animation( std::string name );
     ~Animation();
     void bind();
+    sf::Texture* currentFrame();
     void addFrame( std::string dir );
     void tick( float dt );
     std::string m_name;
@@ -39,6 +40,8 @@ public:
     void            unbind();
     void            addAnimation( is::Animation animation );
     void            play( std::string name );
+    unsigned int    getWidth();
+    unsigned int    getHeight();
     std::string     m_name;
 private:
     std::vector<is::Animation> m_animations;

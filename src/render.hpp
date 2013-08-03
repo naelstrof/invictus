@@ -20,9 +20,10 @@ class Camera;
 
 class Render {
 private:
-    is::Framebuffer m_buffer;
-    glm::mat4       m_perspMatrix;
-    glm::mat4       m_orthoMatrix;
+    void                    updateCamera( float distance );
+    is::Framebuffer         m_buffer;
+    glm::mat4               m_perspMatrix;
+    glm::mat4               m_orthoMatrix;
 public:
     Render();
     int                     init();

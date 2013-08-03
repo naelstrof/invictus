@@ -74,9 +74,11 @@ set( source
      src/glyph.cpp
      src/texture_atlas.cpp
      src/keyboard.cpp
+     src/mouse.cpp
      src/filesystem.cpp
      src/filesystem_read.cpp
      src/lua.cpp
+     src/statemachine.cpp
      src/main.cpp )
 
 # Obtain library paths and make sure they exist.

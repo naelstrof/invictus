@@ -22,23 +22,7 @@ void is::Render::tick() {
     // Update our framebuffer (it won't recreate itself unless it has to).
     m_buffer.create( window->getWidth(), window->getHeight(), is::Framebuffer::color );
 
-    // Grab all entities within 5000 units of the view fulstrum.
-    m_camera->m_far = 5000;
-    m_drawables = world->getSortedDrawables();
-    if ( m_drawables.size() != 0 ) {
-        // Here we set up the camera.
-        m_camera->setRatio( window->getWidth(), window->getHeight() );
-        m_camera->m_near = m_drawables.at(0)->m_depth-m_drawables.back()->m_hullsize;
-        // Clamp above 0
-        if ( m_camera->m_near <= 0 ) {
-            m_camera->m_near = 0.1;
-        }
-        // +1 just so near and far can never equal.
-        m_camera->m_far = m_drawables.back()->m_depth+m_drawables.back()->m_hullsize;
-    }
-
-    // Update the frustum
-    m_camera->m_frustum->setCameraInternals( m_camera );
+    updateCamera( 5000 );
 
     // Set up perspective and ortho matricies. (Should happen every frame to make depth buffer accurate, orthographic ignores near plane limitations due to being 2D.)
     m_orthoMatrix = glm::ortho( 0.f, (float)window->getWidth(), 0.f, (float)window->getHeight(), 0.f, m_camera->m_far );
@@ -89,4 +73,25 @@ void is::Render::draw() {
     m_buffer.draw();
     gui->draw();
     window->display();
+}
+
+void is::Render::updateCamera( float dist ) {
+    // Grab all entities within X units of the view fulstrum.
+    m_camera->m_far = dist;
+    m_drawables = world->getSortedDrawables();
+
+    // If we actually have something to draw, set up the camera according to what's there.
+    if ( m_drawables.size() != 0 ) {
+        m_camera->setRatio( window->getWidth(), window->getHeight() );
+        m_camera->m_near = m_drawables.at(0)->m_depth-m_drawables.back()->m_hullsize;
+        // Clamp m_near plane above 0, GLM throws an assert otherwise.
+        if ( m_camera->m_near <= 0 ) {
+            m_camera->m_near = 0.1;
+        }
+        // +1 just in case m_hullsize is 0, because again GLM will get mad at us.
+        m_camera->m_far = m_drawables.back()->m_depth+m_drawables.back()->m_hullsize+1.f;
+    }
+    // Now update the frustum
+    //m_camera->m_frustum->setCameraInternals( m_camera );
+    m_camera->updateFrustum();
 }

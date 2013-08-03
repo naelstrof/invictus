@@ -46,3 +46,13 @@ void is::Scene::draw() {
 void is::Scene::addNode( is::Node* node ) {
     m_nodes.push_back( node );
 }
+
+void is::Scene::remove( is::Node* node ) {
+    for ( unsigned int i=0;i<m_nodes.size();i++ ) {
+        if ( m_nodes[i] == node ) {
+            m_nodes[i]->remove();
+            m_nodes.erase( m_nodes.begin() + i );
+            return;
+        }
+    }
+}

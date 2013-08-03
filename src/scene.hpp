@@ -22,6 +22,7 @@ public:
     std::vector<is::Node*>  getDrawables();
     void                    addNode( is::Node* );
     void                    draw();
+    void                    remove( is::Node* );
 };
 
 };

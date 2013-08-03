@@ -7,14 +7,15 @@
 
 namespace is {
 
-// Keysyms were put in another file for cleanliness.
-#include "keysym.hpp"
-
 class Keyboard {
 private:
     sf::String      m_input;
 public:
-    bool            isDown( is::Key key );
+
+// Keysyms were put in another file for cleanliness.
+#include "keysym.hpp"
+
+    bool            isDown( is::Keyboard::Key key );
     void            clearInput();
     std::string     getInput();
     void            addInput( sf::String input );

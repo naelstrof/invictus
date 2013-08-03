@@ -31,6 +31,7 @@ public:
     float       m_far;
     float       m_ratio;
     void        setRatio( unsigned int w, unsigned int h );
+    void        updateFrustum();
     // Unfortunately for the frustum to work effeciently, we need it to be inside the camera class. ( Due to transforming angles into a position in space ).
     is::Frustum* m_frustum;
 private:

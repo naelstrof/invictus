@@ -18,8 +18,9 @@ public:
     ~FileSystem();
     int                         init( std::string pwd );
     void                        tick();
-    std::vector<std::string>    getFiles( std::string dir );
+    std::vector<std::string>    getFiles( std::string dir, bool recursive = true);
     bool                        exists( std::string dir );
+    bool                        isDirectory( std::string dir );
 };
 
 };

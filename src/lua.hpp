@@ -1,16 +1,17 @@
 #ifndef IS_LUA_H_
 #define IS_LUA_H_
 
+// Required to use luaL_register, not sure of any alternatives.
+#define LUA_COMPAT_MODULE
+#include <lua.hpp>
+
 #include "os.hpp"
 #include "filesystem.hpp"
 #include "shaderloader.hpp"
 #include "textureloader.hpp"
 #include "font.hpp"
 #include "model.hpp"
-
-// Required to use luaL_register, not sure of any alternatives.
-#define LUA_COMPAT_MODULE
-#include <lua.hpp>
+#include "statemachine.hpp"
 
 // Here we define our own lua dostring function that properly registers file location for error messages.
 #define luaL_isdostring( l, s, n ) \
@@ -19,13 +20,13 @@
 namespace is {
 
 class Lua {
-private:
-    lua_State*      m_l;
 public:
+    lua_State*      m_l;
     Lua();
     ~Lua();
     int             init();
     void            tick();
+    int             call( int nargs, int nresults );
     int             doFile( std::string dir );
     int             doFolder( std::string dir );
     void            addFunction( std::string name, lua_CFunction func );
@@ -38,6 +39,7 @@ public:
 };
 
 int luaL_loadstring( lua_State* l, const char* s, const char* dir );
+int luaOnPanic( lua_State* l );
 
 };
 

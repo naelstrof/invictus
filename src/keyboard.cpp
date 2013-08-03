@@ -2,7 +2,7 @@
 
 is::Keyboard* keyboard = new is::Keyboard();
 
-bool is::Keyboard::isDown( is::Key key ) {
+bool is::Keyboard::isDown( is::Keyboard::Key key ) {
     // Since sfml's keyboard doesn't care if the window is in focus, we manually check if the window is in focus.
     if ( !window->isFocused() ) {
         return false;

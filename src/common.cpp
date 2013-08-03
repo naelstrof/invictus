@@ -111,12 +111,12 @@ int is::Common::init( int argc, char** argv ) {
         return err;
     }
 
-    m_interval = 0;
-    m_text = new is::Text( "THEY COME!" );
-    m_text->setSize(64);
-    m_text->setPos(0,10,0);
-    m_text->setColor(1,0,0,1);
-    gui->addNode( m_text );
+    err = states->init();
+    if ( err ) {
+        os->printf( "ERR Failed to initialize state machine, shutting down...\n" );
+        return err;
+    }
+    states->setState( "intro" );
 
     m_running = true;
     m_time.restart();
@@ -124,7 +124,7 @@ int is::Common::init( int argc, char** argv ) {
 }
 
 void is::Common::tick() {
-    if ( sf::Mouse::isButtonPressed( sf::Mouse::Left ) ) {
+    /*if ( mouse->isDown( is::Mouse::Left ) ) {
         glm::vec3 angle = render->m_camera->getAng();
         glm::vec3 forward = glm::vec3( sin( angle.x ),
                                        cos( angle.x )*cos( angle.y ),
@@ -138,8 +138,8 @@ void is::Common::tick() {
                                      float(rand()%100)/100.f, 1.f ) );
         dothan->m_shader = shaders->get( "unlitGeneric" );
         world->addNode( dothan );
-    }
-    if ( keyboard->isDown( is::Key::Escape ) || keyboard->isDown( is::Key::Q ) ) {
+    }*/
+    if ( keyboard->isDown( is::Keyboard::Escape ) || keyboard->isDown( is::Keyboard::Q ) ) {
         m_running = false;
         return;
     }
@@ -148,21 +148,13 @@ void is::Common::tick() {
         return;
     }
     sf::Time dt = m_time.restart();
-    m_interval += dt.asSeconds();
-    if ( m_interval > 0.1 ) {
-        if ( m_text->getColor().x == 1 ) {
-            m_text->setColor( 0, 0, 0, 1 );
-        } else {
-            m_text->setColor( 1, 0, 0, 1 );
-        }
-        m_interval = 0;
-    }
-    if ( keyboard->isDown( is::Key::A ) ) {
+    if ( keyboard->isDown( is::Keyboard::A ) ) {
         render->m_camera->setAng( render->m_camera->getAng() - glm::vec3( dt.asSeconds(), 0, 0 ) );
     }
-    if ( keyboard->isDown( is::Key::D ) ) {
+    if ( keyboard->isDown( is::Keyboard::D ) ) {
         render->m_camera->setAng( render->m_camera->getAng() + glm::vec3( dt.asSeconds(), 0, 0 ) );
     }
+    states->tick( dt.asSeconds() );
     window->tick();
     world->tick( dt.asSeconds() );
     gui->tick( dt.asSeconds() );

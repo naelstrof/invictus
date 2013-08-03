@@ -1,8 +1,10 @@
 #include "icon.hpp"
 
 is::Icon::Icon( std::string texturename ) {
+    m_luaReference = LUA_NOREF;
     m_changed = true;
     m_texture = textures->get( texturename );
+    setScale( glm::vec3( m_texture->getWidth(), m_texture->getHeight(), 1 ) );
     glGenBuffers( 2, m_buffers);
     m_shader = shaders->get( "gui" );
 }
@@ -51,9 +53,9 @@ void is::Icon::tick( float dt ) {
     // Make sure our texture is animating properly.
     m_texture->tick( dt );
     // SHAKE
-    setPos( getPos() + ( dt*glm::vec3( float( rand()%300 ) - float( rand()%300 ),
-                                  float( rand()%300 ) - float( rand()%300 ),
-                                  float( rand()%300 ) - float( rand()%300 ) ) ) );
+    //setPos( getPos() + ( dt*glm::vec3( float( rand()%300 ) - float( rand()%300 ),
+                                  //float( rand()%300 ) - float( rand()%300 ),
+                                  //float( rand()%300 ) - float( rand()%300 ) ) ) );
 }
 
 void is::Icon::draw() {
