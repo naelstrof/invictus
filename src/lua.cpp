@@ -11,6 +11,7 @@ is::Lua* lua = new is::Lua();
 #include "lua/color.cpp"
 #include "lua/vector.cpp"
 #include "lua/icon.cpp"
+#include "lua/text.cpp"
 #include "lua/getwindow.cpp"
 #include "lua/setstate.cpp"
 
@@ -34,6 +35,7 @@ is::Lua::Lua() {
     luaRegisterVectors( m_l );
     luaRegisterColors( m_l );
     luaRegisterIcons( m_l );
+    luaRegisterTexts( m_l );
 
     addFunction( "getWindowWidth", luaGetWindowWidth );
     addFunction( "getWindowHeight", luaGetWindowHeight );

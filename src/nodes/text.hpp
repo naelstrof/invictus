@@ -14,7 +14,7 @@ namespace is {
 
 class Text : public is::Node {
 public:
-                    Text( sf::String text="", std::string fontname="gui", int size=32 );
+                    Text( sf::String text="", std::string fontname="gui", int size=40 );
                     ~Text();
     void            remove();
     std::string     type();
@@ -27,6 +27,7 @@ public:
     bool            m_changed;
     unsigned int    m_width;
     unsigned int    m_height;
+    int             m_luaReference;
     is::Shader*     m_shader;
     void            setSize( unsigned int size );
     void            setText( sf::String text );
