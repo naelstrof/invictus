@@ -17,6 +17,10 @@ int is::StateMachine::init() {
     return 0;
 }
 
+is::State* is::StateMachine::getCurrentState() {
+    return m_states.at( m_activeState );
+}
+
 void is::StateMachine::setState( std::string statename ) {
     for ( unsigned int i=0; i<m_states.size(); i++ ) {
         if ( m_states[i]->m_name == statename ) {
@@ -56,6 +60,14 @@ is::State::~State() {
     if ( m_luaStateReference != LUA_NOREF ) {
         luaL_unref( lua->m_l, LUA_REGISTRYINDEX, m_luaReference );
     }
+
+    for ( unsigned int i=0; i<m_timers.size(); i++ ) {
+        delete m_timers.at( i );
+    }
+}
+
+void is::State::addTimer( int luaFunction, float timeDiff ) {
+    m_timers.push_back( new is::Timer( luaFunction, timeDiff ) );
 }
 
 void is::State::init() {
@@ -82,6 +94,11 @@ void is::State::deinit() {
         m_luaStateReference = luaL_ref( lua->m_l, LUA_REGISTRYINDEX );
     }
 
+    for ( unsigned int i=0; i<m_timers.size(); i++ ) {
+        delete m_timers.at( i );
+    }
+    m_timers.clear();
+
     lua_rawgeti( lua->m_l, LUA_REGISTRYINDEX, m_luaReference );
     lua_getfield( lua->m_l, -1, "onExit" );
     if ( !lua_isfunction( lua->m_l, -1 ) ) {
@@ -100,6 +117,21 @@ void is::State::tick( float dt ) {
         m_luaStateReference = luaL_ref( lua->m_l, LUA_REGISTRYINDEX );
     }
 
+    float curtime = os->getElapsedTime();
+    for ( unsigned int i=0; i<m_timers.size(); i++ ) {
+        if ( curtime > m_timers.at(i)->m_timeTrigger ) {
+            lua_rawgeti( lua->m_l, LUA_REGISTRYINDEX, m_timers.at(i)->m_luaFunction );
+            if ( !lua_isfunction( lua->m_l, -1 ) ) {
+                lua_pop( lua->m_l, 1 );
+            }
+            lua_rawgeti( lua->m_l, LUA_REGISTRYINDEX, m_luaStateReference );
+            lua->call( 1, 0 );
+            delete m_timers.at(i);
+            m_timers.erase( m_timers.begin() + i );
+            i--;
+        }
+    }
+
     lua_rawgeti( lua->m_l, LUA_REGISTRYINDEX, m_luaReference );
     lua_getfield( lua->m_l, -1, "onTick" );
     if ( !lua_isfunction( lua->m_l, -1 ) ) {
@@ -111,4 +143,13 @@ void is::State::tick( float dt ) {
     lua_pushnumber( lua->m_l, dt );
     lua->call( 2, 0 );
     lua_pop( lua->m_l, 1 );
+}
+
+is::Timer::Timer( int luaFunction, float timeDiff ) {
+    m_luaFunction = luaFunction;
+    m_timeTrigger = os->getElapsedTime()+timeDiff;
+}
+
+is::Timer::~Timer() {
+    luaL_unref( lua->m_l, LUA_REGISTRYINDEX, m_luaFunction );
 }

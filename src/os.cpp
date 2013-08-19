@@ -3,6 +3,7 @@
 is::OS* os = new is::OS();
 
 int is::OS::init( int argc, char** argv ) {
+    m_time.restart();
     boost::nowide::args( argc, argv );
     printf( "Invictus version: %.%.%\n\n", 1, 0, 0 );
     for ( int i=0;i<argc;i++ ) {
@@ -50,6 +51,10 @@ int is::OS::printf( const char* s ) {
 
 void is::OS::flush() {
     boost::nowide::cout.flush();
+}
+
+float is::OS::getElapsedTime() {
+    return m_time.getElapsedTime().asSeconds();
 }
 
 

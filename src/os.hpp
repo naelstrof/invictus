@@ -5,14 +5,17 @@
 
 #include <stdexcept>
 #include <iostream>
+#include <SFML/System/Clock.hpp>
 #include <boost/nowide/args.hpp>
 #include <boost/nowide/iostream.hpp>
 
 namespace is {
 
 class OS {
+    sf::Clock m_time;
 public:
     int             init( int argc, char** argv );
+    float           getElapsedTime();
     int             printf( const char* s );
 template<typename T, typename... Args>
     int             printf( const char* s, T value, Args... args );

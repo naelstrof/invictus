@@ -22,13 +22,15 @@ namespace is {
 
 class Common {
 private:
-    sf::Clock m_time;
+    sf::Clock m_dt;
 public:
     Common();
     ~Common();
     int             init( int argc, char** argv );
     void            tick();
     bool            m_running;
+    float           getGameTime();
+    float           getDeltaTime();
 };
 
 };

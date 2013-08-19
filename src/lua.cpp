@@ -14,6 +14,7 @@ is::Lua* lua = new is::Lua();
 #include "lua/text.cpp"
 #include "lua/getwindow.cpp"
 #include "lua/setstate.cpp"
+#include "lua/addtimer.cpp"
 
 is::Lua::Lua() {
     m_l = luaL_newstate();
@@ -29,6 +30,7 @@ is::Lua::Lua() {
     addFunction( "addShader", luaAddShader );
     addFunction( "addFont", luaAddFont );
     addFunction( "addModel", luaAddModel );
+    addFunction( "addTimer", luaAddTimer );
     luaRegisterAnimations( m_l );
     addFunction( "addTexture", luaAddTexture );
     luaRegisterStates( m_l );

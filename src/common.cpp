@@ -119,26 +119,11 @@ int is::Common::init( int argc, char** argv ) {
     states->setState( "intro" );
 
     m_running = true;
-    m_time.restart();
+    m_dt.restart();
     return 0;
 }
 
 void is::Common::tick() {
-    /*if ( mouse->isDown( is::Mouse::Left ) ) {
-        glm::vec3 angle = render->m_camera->getAng();
-        glm::vec3 forward = glm::vec3( sin( angle.x ),
-                                       cos( angle.x )*cos( angle.y ),
-                                       cos( angle.x )*sin( angle.y ) );
-        is::Icon* dothan = new is::Icon( "dothan" );
-        dothan->setScale( glm::vec3( 64, 64, 1 ) );
-        dothan->setPos( forward*300.f );
-        dothan->setAng( glm::vec3( PI+angle.x, 0, 0 ) );
-        dothan->setColor( glm::vec4( float(rand()%100)/100.f,
-                                     float(rand()%100)/100.f,
-                                     float(rand()%100)/100.f, 1.f ) );
-        dothan->m_shader = shaders->get( "unlitGeneric" );
-        world->addNode( dothan );
-    }*/
     if ( keyboard->isDown( is::Keyboard::Escape ) || keyboard->isDown( is::Keyboard::Q ) ) {
         m_running = false;
         return;
@@ -147,17 +132,15 @@ void is::Common::tick() {
         m_running = false;
         return;
     }
-    sf::Time dt = m_time.restart();
-    if ( keyboard->isDown( is::Keyboard::A ) ) {
-        render->m_camera->setAng( render->m_camera->getAng() - glm::vec3( dt.asSeconds(), 0, 0 ) );
-    }
-    if ( keyboard->isDown( is::Keyboard::D ) ) {
-        render->m_camera->setAng( render->m_camera->getAng() + glm::vec3( dt.asSeconds(), 0, 0 ) );
-    }
-    states->tick( dt.asSeconds() );
+    float dt = getDeltaTime();
+    states->tick( dt );
     window->tick();
-    world->tick( dt.asSeconds() );
-    gui->tick( dt.asSeconds() );
+    world->tick( dt );
+    gui->tick( dt );
     render->tick();
     render->draw();
+}
+
+float is::Common::getDeltaTime() {
+    return (m_dt.restart()).asSeconds();
 }
