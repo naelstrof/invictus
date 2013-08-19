@@ -12,6 +12,7 @@
 #include <SFML/Graphics/RenderTarget.hpp>
 
 #include "os.hpp"
+#include "lua.hpp"
 
 #define PI 3.14159265359
 
@@ -56,6 +57,7 @@ public:
     glm::mat4               getModelMatrix();
     float                   m_depth;
     float                   m_hullsize;
+    int                     m_luaReference;
 private:
     bool                    m_matrixChanged;
     is::Node*               m_parent;

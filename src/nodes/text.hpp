@@ -27,7 +27,6 @@ public:
     bool            m_changed;
     unsigned int    m_width;
     unsigned int    m_height;
-    int             m_luaReference;
     is::Shader*     m_shader;
     void            setSize( unsigned int size );
     void            setText( sf::String text );

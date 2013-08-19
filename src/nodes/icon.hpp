@@ -26,7 +26,6 @@ public:
     is::Texture*    m_texture;
     is::Shader*     m_shader;
     bool            m_changed;
-    int             m_luaReference;
 private:
     unsigned int    m_vertcount;
     unsigned int    m_buffers[2];

@@ -12,6 +12,7 @@ is::Node::Node() {
     m_matrixChanged = false;
     m_depth = 0;
     m_hullsize = 0;
+    m_luaReference = LUA_NOREF;
 }
 
 is::Node::~Node() {

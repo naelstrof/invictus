@@ -10,6 +10,7 @@ is::Lua* lua = new is::Lua();
 #include "lua/states.cpp"
 #include "lua/color.cpp"
 #include "lua/vector.cpp"
+#include "lua/node.cpp"
 #include "lua/icon.cpp"
 #include "lua/text.cpp"
 #include "lua/getwindow.cpp"
@@ -36,6 +37,7 @@ is::Lua::Lua() {
     luaRegisterStates( m_l );
     luaRegisterVectors( m_l );
     luaRegisterColors( m_l );
+    luaRegisterNodes( m_l );
     luaRegisterIcons( m_l );
     luaRegisterTexts( m_l );
 

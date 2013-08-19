@@ -1,7 +1,6 @@
 #include "icon.hpp"
 
 is::Icon::Icon( std::string texturename ) {
-    m_luaReference = LUA_NOREF;
     m_changed = true;
     m_texture = textures->get( texturename );
     setScale( glm::vec3( m_texture->getWidth(), m_texture->getHeight(), 1 ) );
