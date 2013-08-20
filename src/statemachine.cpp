@@ -84,7 +84,7 @@ void is::State::init() {
     }
     //lua_pushstate( lua->m_l, this );
     lua_rawgeti( lua->m_l, LUA_REGISTRYINDEX, m_luaStateReference );
-    lua->call( lua->m_l, 1, 0, "statemachine.cpp:87" );
+    lua->call( lua->m_l, 1, 0 );
     lua_pop( lua->m_l, 1 );
 }
 
@@ -107,7 +107,7 @@ void is::State::deinit() {
     }
     //lua_pushstate( lua->m_l, this );
     lua_rawgeti( lua->m_l, LUA_REGISTRYINDEX, m_luaStateReference );
-    lua->call( lua->m_l, 1, 0, "statemachine.cpp:110" );
+    lua->call( lua->m_l, 1, 0 );
     lua_pop( lua->m_l, 1 );
 }
 
@@ -131,7 +131,7 @@ void is::State::tick( float dt ) {
                 continue;
             }
             lua_rawgeti( lua->m_l, LUA_REGISTRYINDEX, m_luaStateReference );
-            lua->call( lua->m_l, 1, 0, "statemachine.cpp:134" );
+            lua->call( lua->m_l, 1, 0 );
             // This checks to make sure we weren't deinit()'d from a statechange.
             if ( m_timers.size() == 0 ) {
                 return;
@@ -153,7 +153,7 @@ void is::State::tick( float dt ) {
     //lua_pushstate( lua->m_l, this );
     lua_rawgeti( lua->m_l, LUA_REGISTRYINDEX, m_luaStateReference );
     lua_pushnumber( lua->m_l, dt );
-    lua->call( lua->m_l, 2, 0, "statemachine.cpp:156" );
+    lua->call( lua->m_l, 2, 0 );
     lua_pop( lua->m_l, 1 );
 }
 

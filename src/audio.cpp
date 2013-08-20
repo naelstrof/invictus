@@ -19,7 +19,7 @@ int is::Audio::init() {
     if ( !deviceCount ) {
         os->printf( "ERR OpenAL failed to find any usable devices for audio playback!\n" );
         alureFreeDeviceNames( deviceNames );
-        checkError( "audio.cpp:19" );
+        audio->checkErrorSimple();
         return 1;
     }
     os->printf( "INF OpenAL detected the following devices for audio:\n" );
@@ -30,7 +30,7 @@ int is::Audio::init() {
     // Attempt to use any device starting from the first.
     int i = 0;
     while ( alureInitDevice( deviceNames[i], NULL ) == AL_FALSE && i < deviceCount ) {
-        checkError( "audio.cpp:30" );
+        audio->checkErrorSimple();
         i++;
     }
     if ( i == deviceCount ) {
@@ -42,10 +42,13 @@ int is::Audio::init() {
     alureFreeDeviceNames( deviceNames );
 
     // Initialize the listener
-    alListener3f( AL_POSITION, 0, 0, 0 );
-    alListener3f( AL_VELOCITY, 0, 0, 0 );
-    alListener3f( AL_ORIENTATION, 0, 0, -1 );
-    checkError( "audio.cpp:45" );
+    alListener3f( AL_POSITION, 0.f, 0.f, 0.f );
+    alListener3f( AL_VELOCITY, 0.f, 0.f, 0.f );
+    float ori[6] = {
+        0, 0, -1,
+        0, 1, 0 };
+    alListenerfv( AL_ORIENTATION, ori );
+    audio->checkErrorSimple();
 
     lua->doFolder( "data/sounds" );
     return 0;
@@ -82,12 +85,12 @@ void is::Audio::checkError( std::string message ) {
     ALenum error = alGetError();
     while ( error != AL_NO_ERROR ) {
         switch( error ) {
-            case AL_INVALID_NAME:       { os->printf( "ERR Alure %: invalid name parameter.\n", message ); break; }
-            case AL_INVALID_ENUM:       { os->printf( "ERR Alure %: invalid parameter.\n", message ); break; }
-            case AL_INVALID_VALUE:      { os->printf( "ERR Alure %: invalid enum parameter value.\n", message ); break; }
-            case AL_INVALID_OPERATION:  { os->printf( "ERR Alure %: invalid operation.\n", message ); break; }
-            case AL_OUT_OF_MEMORY:      { os->printf( "ERR Alure %: Unable to allocate more memory.\n", message ); break; }
-            default:                    { os->printf( "ERR Alure %: Unkown error.\n", message ); break; }
+            case AL_INVALID_NAME:       { os->printf( "ERR OpenAL %: invalid name parameter.\n", message ); break; }
+            case AL_INVALID_ENUM:       { os->printf( "ERR OpenAL %: invalid parameter.\n", message ); break; }
+            case AL_INVALID_VALUE:      { os->printf( "ERR OpenAL %: invalid enum parameter value.\n", message ); break; }
+            case AL_INVALID_OPERATION:  { os->printf( "ERR OpenAL %: invalid operation.\n", message ); break; }
+            case AL_OUT_OF_MEMORY:      { os->printf( "ERR OpenAL %: Unable to allocate more memory.\n", message ); break; }
+            default:                    { os->printf( "ERR OpenAL %: Unkown error.\n", message ); break; }
         }
         error = alGetError();
     }
@@ -113,7 +116,7 @@ int is::SoundBuffer::load() {
     delete[] data;
     if ( m_id == AL_NONE ) {
         os->printf( "ERR Alure failed to open file % as a sound file!\n", m_dir );
-        audio->checkError( "audio.cpp:85" );
+        audio->checkErrorSimple();
         return 1;
     }
     m_loaded = true;

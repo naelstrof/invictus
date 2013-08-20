@@ -77,6 +77,12 @@ int is::Lua::doFile( std::string dir ) {
     delete[] filedata;
     if ( err ) {
         std::string error = lua_tostring( m_l, -1 );
+        // We got to change the error message to reflect that we're actually getting an error in a file, rather than a string.
+        std::size_t place = error.find( "[string" );
+        while ( place != std::string::npos ) {
+            error.replace( place, 7, "[file" );
+            place = error.find( "[string" );
+        }
         os->printf( "ERR %\n", error );
         return 1;
     }
@@ -166,12 +172,46 @@ void is::Lua::setFloat( std::string name, float foo ) {
     lua_pop( m_l, 1 );
 }
 
-int is::Lua::call( lua_State* l, int nargs, int nresults, std::string errormessage ) {
+int is::Lua::call( lua_State* l, int nargs, int nresults ) {
     if ( lua_pcall( l, nargs, nresults, 0 ) ) {
-        os->printf( "ERR %: %\n", errormessage, lua_tostring( l, -1 ) );
+        std::string error = lua_tostring( l, -1 );
+        std::size_t place = error.find( "[string" );
+        while ( place != std::string::npos ) {
+            error.replace( place, 7, "[file" );
+            place = error.find( "[string" );
+        }
+        traceback( l );
+        os->printf( "ERR: %\n", error );
+        error = lua_tostring( l, -1 );
+        place = error.find( "[string" );
+        while ( place != std::string::npos ) {
+            error.replace( place, 7, "[file" );
+            place = error.find( "[string" );
+        }
+        os->printf( "ERR: %\n", error );
         return 1;
     }
     return 0;
+}
+
+int is::Lua::traceback( lua_State* l ) {
+    if ( !lua_isstring( l, 1 ) ) {
+        return 1;
+    }
+    lua_getglobal( l, "debug" );
+    if ( !lua_istable( l, -1 ) ) {
+        lua_pop( l, 1 );
+        return 1;
+    }
+    lua_getfield( l, -1, "traceback" );
+    if ( !lua_isfunction( l, -1 ) ) {
+        lua_pop( l, 2 );
+        return 1;
+    }
+    lua_pushvalue( l, 1 );
+    lua_pushinteger( l, 2 );
+    lua_call( l, 2, 1 );
+    return 1;
 }
 
 int is::luaOnPanic( lua_State* l ) {

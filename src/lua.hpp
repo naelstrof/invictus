@@ -28,7 +28,8 @@ public:
     ~Lua();
     int             init();
     void            tick();
-    int             call( lua_State* l, int nargs, int nresults, std::string errormessage = "Lua's C API had an error" );
+    int             call( lua_State* l, int nargs, int nresults );
+    int             traceback( lua_State* l );
     int             doFile( std::string dir );
     int             doFolder( std::string dir );
     void            addFunction( std::string name, lua_CFunction func );

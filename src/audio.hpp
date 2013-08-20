@@ -3,6 +3,10 @@
 #ifndef IS_AUDIO_H_
 #define IS_AUDIO_H_
 
+#define STRINGIFY(x) STRINGIFY2(x)
+#define STRINGIFY2(x) #x
+#define checkErrorSimple() checkError( __FILE__ ":" STRINGIFY( __LINE__ ) )
+
 #include <AL/alure.h>
 
 #include "os.hpp"
