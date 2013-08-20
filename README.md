@@ -10,11 +10,12 @@ Features (So far!)
 * **Lua**: Not only does Lua power the game's configuration, but it also powers what resources are loaded and most game content! So now a mature content filter could easily be created without editing any C++ code. Instead of finding a font that encompasses all the languages you wish to support you could have Lua automatically detect and load the specific font that supports the language. Game content will even be capable of updating real-time while the game is running!
 * **Animated Textures**: Easily load in animated textures. Invictus only supports frame by frame and loads via lua. You can set custom FPS as well if it loops or not. In the future I may add the ability to execute code on certain frames.
 * **A fully equipped Renderer**: Comes with built in fustrum culling and transparency depth sorting.
+* **Powerful 3D Sound System**: Using Alure with OpenAL gives Invictus a strong audio engine with proper sound simulation with features like attenuation, doppler, speed of sound, etc.
 
 ### Current State
 This image will update with the current state of the engine.
 
-![Invictus Image](http://farmpolice.com/content/images/BnA6V74FlA2bfDUi.png "Invictus running Astrostruct")
+![Invictus Image](http://farmpolice.com/content/images/Xu2RRHeb0BZXiY5G.png "Invictus running Astrostruct")
 
 Libraries
 ---------
@@ -25,6 +26,8 @@ Invictus was supposed to use as few libraries as possible-- but there's no reaso
 * [Lua 5.2.2](http://www.lua.org/) -- Invictus will use Lua for loading resources and coding gameplay elements. Much like garry's mod.
 * [GLM](http://glm.g-truc.net/) -- Despite SFML providing a few mathimatical resources it is inadequate for 3D. This is where glm comes in. It will not be abstracted in any way, and it will be engrained into the engine.
 * [OpenGL](http://www.opengl.org/) -- Invictus will only use OpenGL for graphics. I have no reason to incorperate DirectX.
+* [OpenAL](http://kcat.strangesoft.net/openal.html) -- The audio counterpart to OpenGL, it's pretty powerful and easy to use in combination with ALURE so be it.
+* [ALURE](http://kcat.strangesoft.net/alure.html) -- The toolkit powering OpenAL, it allows Invictus to load most popular audio formats which is very important to me. For example it supports .WAV, .AIF, .OGG, and .FLAC. MP3 isn't included due to it being proprietary.
 * [AssImp](http://assimp.sourceforge.net/) -- Invictus will load model assets using assimp. This will allow for a huge amount of flexibility for modders at the sacrifice of load speeds.
 * [Freetype](http://freetype.org/) -- Invictus loads font face assets using Freetype. Invictus currently doesn't allow for itallic or bold fonts though.
 * [GLEW](http://glew.sourceforge.net/) -- Since SFML provides no interfaces for checking available extensions glew takes the spotlight.
