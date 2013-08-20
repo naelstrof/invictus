@@ -65,6 +65,8 @@ set( source
      src/texture.cpp
      src/textureloader.cpp
      src/model.cpp
+     src/audio.cpp
+     src/sound.cpp
      src/font.cpp
      src/camera.cpp
      src/frustum.cpp
@@ -84,6 +86,8 @@ set( source
 # Obtain library paths and make sure they exist.
 set( CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmakemodules" )
 find_package( SFML      REQUIRED )
+find_package( OpenAL    REQUIRED )
+find_package( Alure     REQUIRED )
 find_package( PHYSFS    REQUIRED )
 find_package( Lua51     REQUIRED )
 find_package( GLM       REQUIRED )
@@ -99,6 +103,8 @@ include_directories( ${SFML_INCLUDE_DIR}
                      ${GLEW_INCLUDE_PATH}
                      ${ASSIMP_INCLUDE_DIR}
                      ${GLM_INCLUDE_DIR}
+                     ${ALURE_INCLUDE_DIR}
+                     ${OPENAL_INCLUDE_DIR}
                      ${OPENGL_INCLUDE_DIRS}
                      ${PHYSFS_INCLUDE_DIR} )
 
@@ -112,5 +118,7 @@ target_link_libraries( ${BIN_TARGET}
                        ${FREETYPE_LIBRARIES}
                        ${OPENGL_LIBRARIES}
                        ${ASSIMP_LIBRARY}
+                       ${ALURE_LIBRARIES}
+                       ${OPENAL_LIBRARY}
                        ${GLEW_LIBRARY}
                        ${PHYSFS_LIBRARY} )
