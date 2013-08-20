@@ -37,5 +37,5 @@ void main()
     // Now we mix the two together.
     finalColor = textColor*textColor.a;
     finalColor = finalColor + shadowColor*shadowColor.a;
-    finalColor.a = textColor.a+shadowColor.a;
+    finalColor.a = ( textColor.a+shadowColor.a ) * color.a;
 }

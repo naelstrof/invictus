@@ -55,17 +55,31 @@ int luaNode__index( lua_State* l ) {
     } else if ( field == "color" ) {
         lua_pushcolor( l, node->getColor() );
         return 1;
+    } else if ( field == "x" ) {
+        lua_pushnumber( l, node->getPos().x );
+        return 1;
+    } else if ( field == "y" ) {
+        lua_pushnumber( l, node->getPos().y );
+        return 1;
+    } else if ( field == "z" ) {
+        lua_pushnumber( l, node->getPos().z );
+        return 1;
+    } else if ( field == "r" ) {
+        lua_pushnumber( l, node->getColor().x );
+        return 1;
+    } else if ( field == "g" ) {
+        lua_pushnumber( l, node->getColor().y );
+        return 1;
+    } else if ( field == "b" ) {
+        lua_pushnumber( l, node->getColor().z );
+        return 1;
+    } else if ( field == "a" ) {
+        lua_pushnumber( l, node->getColor().w );
+        return 1;
     }
-
-    lua_getmetatable( l, 1 );
+    lua_rawgeti( l, LUA_REGISTRYINDEX, node->m_luaReference );
     lua_pushvalue( l, 2 );
     lua_gettable( l, -2 );
-    if ( lua_isnil( l, -1 ) ) {
-        lua_pop( l, 1 );
-        lua_rawgeti( l, LUA_REGISTRYINDEX, node->m_luaReference );
-        lua_pushvalue( l, 2 );
-        lua_gettable( l, -2 );
-    }
     return 1;
 }
 
@@ -87,6 +101,34 @@ int luaNode__newindex(lua_State* l) {
         node->setAng( *lua_checkvector( l, 3 ) );
     } else if ( field ==  "color" ) {
         node->setColor( *lua_checkcolor( l, 3 ) );
+    } else if ( field ==  "x" ) {
+        glm::vec3 pos = node->getPos();
+        pos.x = luaL_checknumber( l, 3 );
+        node->setPos( pos );
+    } else if ( field ==  "y" ) {
+        glm::vec3 pos = node->getPos();
+        pos.y = luaL_checknumber( l, 3 );
+        node->setPos( pos );
+    } else if ( field ==  "z" ) {
+        glm::vec3 pos = node->getPos();
+        pos.z = luaL_checknumber( l, 3 );
+        node->setPos( pos );
+    } else if ( field ==  "r" ) {
+        glm::vec4 color = node->getColor();
+        color.x = luaL_checknumber( l, 3 );
+        node->setColor( color );
+    } else if ( field ==  "g" ) {
+        glm::vec4 color = node->getColor();
+        color.y = luaL_checknumber( l, 3 );
+        node->setColor( color );
+    } else if ( field ==  "b" ) {
+        glm::vec4 color = node->getColor();
+        color.z = luaL_checknumber( l, 3 );
+        node->setColor( color );
+    } else if ( field ==  "a" ) {
+        glm::vec4 color = node->getColor();
+        color.w = luaL_checknumber( l, 3 );
+        node->setColor( color );
     } else {
         if ( node->m_luaReference == LUA_NOREF ) {
             lua_newtable( l );

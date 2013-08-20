@@ -10,6 +10,9 @@ is::Text::Text( sf::String text, std::string fontname, int size )
     m_textureSize = m_texture->m_size;
     glGenBuffers( 2, m_buffers);
     m_shader = shaders->get( "text" );
+    m_width = 0;
+    m_height = 0;
+    m_renderMode = is::Text::Middle;
 }
 
 is::Text::~Text() {
@@ -24,6 +27,12 @@ void is::Text::setText( sf::String text ) {
     m_changed = true;
 }
 
+std::string is::Text::getText() {
+    std::string text;
+    sf::Utf<32>::toUtf8( m_text.begin(), m_text.end(), text.begin() );
+    return text;
+}
+
 void is::Text::remove() {
     delete (is::Text*)this;
 }
@@ -32,14 +41,38 @@ std::string is::Text::type() {
     return "text";
 }
 
+void is::Text::getDimensions() {
+    if ( !m_changed && ( m_width || m_height ) ) {
+        return;
+    }
+    m_height = 0;
+    float penx = 0;
+    float peny = 0;
+    for ( unsigned int i=0; i<m_text.getSize(); i++ ) {
+        is::Glyph* glyph = glyphs->get( m_text[i], m_font, m_size );
+        if ( !glyph ) {
+            continue;
+        }
+        // The shadow size is a static 5 in the shader as well as here and in glyphs->get()
+        float shadowSize = 5;
+        float h = glyph->m_bitmapHeight+shadowSize;
+        penx += glyph->m_advanceX;
+        peny += glyph->m_advanceY;
+        m_height = std::max( m_height, h );
+    }
+    m_width = penx;
+}
+
 void is::Text::generateBuffers() {
     // We need to check to make sure we actually need to regenerate the buffers.
     if ( !m_changed && m_textureSize == m_texture->m_size ) {
         return;
     }
     m_textureSize = m_texture->m_size;
+    m_height = 0;
     float penx = 0;
     float peny = 0;
+    getDimensions();
     std::vector<glm::vec2>  uvs;
     std::vector<glm::vec2>  verts;
     for ( unsigned int i=0; i<m_text.getSize(); i++ ) {
@@ -52,8 +85,26 @@ void is::Text::generateBuffers() {
         float shadowSize = 5;
         float w = glyph->m_bitmapWidth+shadowSize;
         float h = glyph->m_bitmapHeight+shadowSize;
-        float xoff = glyph->m_bitmapLeft;
-        float yoff = glyph->m_bitmapTop;
+        float xoff = 0;
+        float yoff = 0;
+        switch ( m_renderMode ) {
+            case is::Text::Left: {
+                xoff = glyph->m_bitmapLeft;
+                yoff = glyph->m_bitmapTop;
+                break;
+            }
+            case is::Text::Middle: {
+                xoff = glyph->m_bitmapLeft-float( m_width ) / 2.f;
+                yoff = glyph->m_bitmapTop;
+                break;
+            }
+            case is::Text::Right: {
+                xoff = glyph->m_bitmapLeft-float( m_width );
+                yoff = glyph->m_bitmapTop;
+                break;
+            }
+            default: break;
+        }
         verts.push_back( glm::vec2( penx+xoff,    peny+yoff-h ) );
         verts.push_back( glm::vec2( penx+xoff+w,  peny+yoff-h ) );
         verts.push_back( glm::vec2( penx+xoff+w,  peny+yoff ) );
@@ -65,7 +116,7 @@ void is::Text::generateBuffers() {
         uvs.push_back( glyph->m_uv[3] );
 
         penx += glyph->m_advanceX;
-        //peny += glyph->m_advanceY;
+        peny += glyph->m_advanceY;
     }
     // Send the buffers to opengl and clean up
     glBindBuffer( GL_ARRAY_BUFFER, m_buffers[0] );

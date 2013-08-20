@@ -162,9 +162,9 @@ void is::Lua::setFloat( std::string name, float foo ) {
     lua_pop( m_l, 1 );
 }
 
-int is::Lua::call( int nargs, int nresults ) {
-    if ( lua_pcall( m_l, nargs, nresults, 0 ) ) {
-        os->printf( "ERR %\n", lua_tostring( m_l, -1 ) );
+int is::Lua::call( lua_State* l, int nargs, int nresults, std::string errormessage ) {
+    if ( lua_pcall( l, nargs, nresults, 0 ) ) {
+        os->printf( "ERR %: %\n", errormessage, lua_tostring( l, -1 ) );
         return 1;
     }
     return 0;
@@ -173,4 +173,24 @@ int is::Lua::call( int nargs, int nresults ) {
 int is::luaOnPanic( lua_State* l ) {
     os->printf( "ERR %\n", lua_tostring( l, -1 ) );
     return 0;
+}
+
+void is::Lua::copy( lua_State* l, int index ) {
+    lua_newtable( l );
+    lua_pushnil( l );
+    while ( lua_next( l, index ) != 0 ) {
+        lua_pushvalue( l, -2 );
+        lua_insert( l, -2 );
+        lua_settable( l, -4 );
+    }
+}
+
+void is::Lua::copyMeta( lua_State* l, int index, std::string newname ) {
+    luaL_newmetatable( l, newname.c_str() );
+    lua_pushnil( l );
+    while ( lua_next( l, index ) != 0 ) {
+        lua_pushvalue( l, -2 );
+        lua_insert( l, -2 );
+        lua_settable( l, -4 );
+    }
 }

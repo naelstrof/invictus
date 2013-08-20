@@ -2,26 +2,28 @@
 
 function STATE:onInit()
     self.MyIcon = Icon( "invictus" )
-    self.MyIcon.pos = Vector( getWindowWidth()/2, getWindowHeight()/2, 0 )
-    self.MyIcon.color = Color( 1, 1, 1, 0 )
-    self.Check = false
+    self.MyIcon.pos = Vector( getWindowWidth()/2, getWindowHeight(), 0 )
+    tween( 3, self.MyIcon, { y=getWindowHeight()/2 }, 'outBounce' )
+
+    self.MyText = Text( "Invictus" )
+    self.MyText.pos = Vector( getWindowWidth()/2, getWindowHeight()/2 - 84, 0 )
+    self.MyText.color = Color( 1, 1, 1, 0 )
+    self.MyText.size = 32
+    addTimer( function() tween( 1, self.MyText, { a=1 } ) end, 3 )
+
+    addTimer( function()
+        tween( 1, self.MyText, { a=0 } )
+        tween( 1, self.MyIcon, { a=0 } )
+    end, 5 )
+
+    addTimer( function()
+        setState( "game" )
+    end, 6 )
 end
 
 function STATE:onExit()
-    self.MyIcon:remove()
 end
 
 function STATE:onTick( dt )
-    self.MyIcon.pos = Vector( getWindowWidth()/2, getWindowHeight()/2, 0 )
-    if ( self.Check == false ) then
-        self.MyIcon.color = self.MyIcon.color + Color( 0, 0, 0, dt/3 )
-        if ( self.MyIcon.color.a >= 1 ) then
-            self.Check = true;
-        end
-    else
-        self.MyIcon.color = self.MyIcon.color - Color( 0, 0, 0, dt/3 )
-        if ( self.MyIcon.color.a <= 0 ) then
-            setState( "game" )
-        end
-    end
+    tween.update( dt )
 end

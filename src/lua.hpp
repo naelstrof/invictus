@@ -26,7 +26,7 @@ public:
     ~Lua();
     int             init();
     void            tick();
-    int             call( int nargs, int nresults );
+    int             call( lua_State* l, int nargs, int nresults, std::string errormessage = "Lua's C API had an error" );
     int             doFile( std::string dir );
     int             doFolder( std::string dir );
     void            addFunction( std::string name, lua_CFunction func );
@@ -36,6 +36,8 @@ public:
     void            setFloat( std::string name, float foo );
     void            setString( std::string name, std::string foo );
     void            setBool( std::string name, bool foo );
+    void            copy( lua_State* l, int index );
+    void            copyMeta( lua_State* l, int index, std::string newname );
 };
 
 int luaL_loadstring( lua_State* l, const char* s, const char* dir );

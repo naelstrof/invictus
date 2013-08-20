@@ -23,7 +23,7 @@ is::State* is::StateMachine::getCurrentState() {
 
 void is::StateMachine::setState( std::string statename ) {
     for ( unsigned int i=0; i<m_states.size(); i++ ) {
-        if ( m_states[i]->m_name == statename ) {
+        if ( m_states.at(i)->m_name == statename ) {
             if ( i == ( unsigned int )m_activeState) {
                 return;
             }
@@ -84,7 +84,7 @@ void is::State::init() {
     }
     //lua_pushstate( lua->m_l, this );
     lua_rawgeti( lua->m_l, LUA_REGISTRYINDEX, m_luaStateReference );
-    lua->call( 1, 0 );
+    lua->call( lua->m_l, 1, 0, "statemachine.cpp:87" );
     lua_pop( lua->m_l, 1 );
 }
 
@@ -107,7 +107,7 @@ void is::State::deinit() {
     }
     //lua_pushstate( lua->m_l, this );
     lua_rawgeti( lua->m_l, LUA_REGISTRYINDEX, m_luaStateReference );
-    lua->call( 1, 0 );
+    lua->call( lua->m_l, 1, 0, "statemachine.cpp:110" );
     lua_pop( lua->m_l, 1 );
 }
 
@@ -118,17 +118,29 @@ void is::State::tick( float dt ) {
     }
 
     float curtime = os->getElapsedTime();
-    for ( unsigned int i=0; i<m_timers.size(); i++ ) {
+    for ( int i=0; i<(int)m_timers.size(); i++ ) {
         if ( curtime > m_timers.at(i)->m_timeTrigger ) {
             lua_rawgeti( lua->m_l, LUA_REGISTRYINDEX, m_timers.at(i)->m_luaFunction );
             if ( !lua_isfunction( lua->m_l, -1 ) ) {
                 lua_pop( lua->m_l, 1 );
+                delete m_timers.at(i);
+                m_timers.erase( m_timers.begin() + i );
+                if ( i > 0 ) {
+                    i--;
+                }
+                continue;
             }
             lua_rawgeti( lua->m_l, LUA_REGISTRYINDEX, m_luaStateReference );
-            lua->call( 1, 0 );
+            lua->call( lua->m_l, 1, 0, "statemachine.cpp:134" );
+            // This checks to make sure we weren't deinit()'d from a statechange.
+            if ( m_timers.size() == 0 ) {
+                break;
+            }
             delete m_timers.at(i);
             m_timers.erase( m_timers.begin() + i );
-            i--;
+            if ( i > 0 ) {
+                i--;
+            }
         }
     }
 
@@ -141,7 +153,7 @@ void is::State::tick( float dt ) {
     //lua_pushstate( lua->m_l, this );
     lua_rawgeti( lua->m_l, LUA_REGISTRYINDEX, m_luaStateReference );
     lua_pushnumber( lua->m_l, dt );
-    lua->call( 2, 0 );
+    lua->call( lua->m_l, 2, 0, "statemachine.cpp:156" );
     lua_pop( lua->m_l, 1 );
 }
 
