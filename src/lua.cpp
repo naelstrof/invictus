@@ -6,6 +6,7 @@ is::Lua* lua = new is::Lua();
 #include "lua/addshader.cpp"
 #include "lua/addfont.cpp"
 #include "lua/addmodel.cpp"
+#include "lua/addsound.cpp"
 #include "lua/addtexture.cpp"
 #include "lua/states.cpp"
 #include "lua/color.cpp"
@@ -13,6 +14,7 @@ is::Lua* lua = new is::Lua();
 #include "lua/node.cpp"
 #include "lua/icon.cpp"
 #include "lua/text.cpp"
+#include "lua/sound.cpp"
 #include "lua/getwindow.cpp"
 #include "lua/setstate.cpp"
 #include "lua/addtimer.cpp"
@@ -31,6 +33,7 @@ is::Lua::Lua() {
     addFunction( "addShader", luaAddShader );
     addFunction( "addFont", luaAddFont );
     addFunction( "addModel", luaAddModel );
+    addFunction( "addSound", luaAddSound );
     addFunction( "addTimer", luaAddTimer );
     luaRegisterAnimations( m_l );
     addFunction( "addTexture", luaAddTexture );
@@ -40,6 +43,7 @@ is::Lua::Lua() {
     luaRegisterNodes( m_l );
     luaRegisterIcons( m_l );
     luaRegisterTexts( m_l );
+    luaRegisterSounds( m_l );
 
     addFunction( "getWindowWidth", luaGetWindowWidth );
     addFunction( "getWindowHeight", luaGetWindowHeight );

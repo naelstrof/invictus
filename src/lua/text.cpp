@@ -1,5 +1,3 @@
-#include "../nodes/text.hpp"
-
 // Depends on ../lua/node.cpp
 
 int luaTextSet( lua_State* l ) {
@@ -17,7 +15,7 @@ int luaCreateText( lua_State* l ) {
     return 1;
 }
 
-int luaText__index( lua_State* l ) {
+int luaText__newindex( lua_State* l ) {
     is::Text* text = (is::Text*)lua_tonode( l, 1 );
     if ( text == NULL ) {
         lua_Debug ar1;
@@ -39,7 +37,7 @@ int luaText__index( lua_State* l ) {
     return 0;
 }
 
-int luaText__newindex( lua_State* l ) {
+int luaText__index( lua_State* l ) {
     is::Text* text = (is::Text*)lua_tonode( l, 1 );
     if ( text == NULL ) {
         lua_Debug ar1;
@@ -58,7 +56,16 @@ int luaText__newindex( lua_State* l ) {
         lua_pushstring( l, text->getText().c_str() );
         return 1;
     }
-    return 0;
+    lua_getmetatable( l, 1 );
+    lua_pushvalue( l, 2 );
+    lua_gettable( l, -2 );
+    if ( lua_isnil( l, -1 ) ) {
+        lua_pop( l, 1 );
+        lua_rawgeti( l, LUA_REGISTRYINDEX, text->m_luaReference );
+        lua_pushvalue( l, 2 );
+        lua_gettable( l, -2 );
+    }
+    return 1;
 }
 
 int luaRegisterTexts( lua_State* l ) {

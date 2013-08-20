@@ -1,4 +1,4 @@
-#include "../nodes/icon.hpp"
+#include "../nodes/text.hpp"
 
 is::Node* lua_tonode( lua_State* l, int index ) {
     is::Node** node = (is::Node**)luaL_checkudata( l, index, "NodeBase" );
@@ -25,12 +25,16 @@ void lua_pushnode( lua_State* l, is::Node* node )
 int luaNode__gc( lua_State* l ) {
     is::Node* node = lua_checknode( l, 1 );
     gui->remove( node );
+    is::Node** realnode = (is::Node**)luaL_checkudata( l, 1, "NodeBase" );
+    (*realnode) = NULL;
     return 0;
 }
 
 int luaNodeRemove( lua_State* l ) {
     is::Node* node = lua_checknode( l, 1 );
     gui->remove( node );
+    is::Node** realnode = (is::Node**)luaL_checkudata( l, 1, "NodeBase" );
+    (*realnode) = NULL;
     return 0;
 }
 
@@ -77,9 +81,15 @@ int luaNode__index( lua_State* l ) {
         lua_pushnumber( l, node->getColor().w );
         return 1;
     }
-    lua_rawgeti( l, LUA_REGISTRYINDEX, node->m_luaReference );
+    lua_getmetatable( l, 1 );
     lua_pushvalue( l, 2 );
     lua_gettable( l, -2 );
+    if ( lua_isnil( l, -1 ) ) {
+        lua_pop( l, 1 );
+        lua_rawgeti( l, LUA_REGISTRYINDEX, node->m_luaReference );
+        lua_pushvalue( l, 2 );
+        lua_gettable( l, -2 );
+    }
     return 1;
 }
 

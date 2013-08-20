@@ -105,6 +105,12 @@ int is::Common::init( int argc, char** argv ) {
         return err;
     }
 
+    err = audio->init();
+    if ( err ) {
+        os->printf( "ERR Failed to initialize audio system, shutting down...\n" );
+        return err;
+    }
+
     err = render->init();
     if ( err ) {
         os->printf( "ERR Failed to initialize render engine, shutting down...\n" );

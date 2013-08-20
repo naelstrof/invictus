@@ -134,7 +134,7 @@ void is::State::tick( float dt ) {
             lua->call( lua->m_l, 1, 0, "statemachine.cpp:134" );
             // This checks to make sure we weren't deinit()'d from a statechange.
             if ( m_timers.size() == 0 ) {
-                break;
+                return;
             }
             delete m_timers.at(i);
             m_timers.erase( m_timers.begin() + i );

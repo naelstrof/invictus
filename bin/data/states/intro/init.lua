@@ -11,6 +11,10 @@ function STATE:onInit()
     self.MyText.size = 32
     addTimer( function() tween( 1, self.MyText, { a=1 } ) end, 3 )
 
+    self.MySound = Sound( "scream" )
+    self.MySound.pitch = 0.8
+    addTimer( function() self.MySound:play() end, 3.5 )
+
     addTimer( function()
         tween( 1, self.MyText, { a=0 } )
         tween( 1, self.MyIcon, { a=0 } )
@@ -22,6 +26,9 @@ function STATE:onInit()
 end
 
 function STATE:onExit()
+    self.MyText:remove()
+    self.MyIcon:remove()
+    self.MySound:remove()
 end
 
 function STATE:onTick( dt )

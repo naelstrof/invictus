@@ -8,8 +8,10 @@ is::TextureLoader::TextureLoader() {
 
 is::TextureLoader::~TextureLoader() {
     for ( unsigned int i=0; i<m_textures.size(); i++ ) {
-        delete m_rawTextures[i];
         delete m_textures[i];
+    }
+    for ( unsigned int i=0; i<m_rawTextures.size(); i++ ) {
+        delete m_rawTextures[i];
     }
 }
 

@@ -14,6 +14,7 @@
 #include "textureloader.hpp"
 #include "statemachine.hpp"
 #include "model.hpp"
+#include "audio.hpp"
 #include "font.hpp"
 #include "glyph.hpp"
 #include "nodes/icon.hpp"

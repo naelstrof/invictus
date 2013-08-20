@@ -14,6 +14,7 @@ void is::cleanUp() {
     delete glyphs;
     delete fonts;
     delete models;
+    delete audio;
     delete world;
     delete gui;
     delete render;

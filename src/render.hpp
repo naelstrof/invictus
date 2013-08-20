@@ -13,6 +13,7 @@
 #include "scene.hpp"
 #include "camera.hpp"
 #include "framebuffer.hpp"
+#include "node.hpp"
 
 namespace is {
 

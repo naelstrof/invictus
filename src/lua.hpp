@@ -6,11 +6,13 @@
 #include <lua.hpp>
 
 #include "os.hpp"
+#include "textureloader.hpp"
 #include "filesystem.hpp"
 #include "shaderloader.hpp"
-#include "textureloader.hpp"
 #include "font.hpp"
 #include "model.hpp"
+#include "audio.hpp"
+#include "sound.hpp"
 #include "statemachine.hpp"
 
 // Here we define our own lua dostring function that properly registers file location for error messages.
