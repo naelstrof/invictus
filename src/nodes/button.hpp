@@ -33,6 +33,8 @@ public:
     int             m_luaReleaseFunction;
     bool            intersects( glm::vec3 pos );
 private:
+    bool            m_pressed;
+    bool            m_released;
     float           m_border;
     unsigned int    m_vertcount;
     unsigned int    m_buffers[2];

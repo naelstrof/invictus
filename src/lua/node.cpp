@@ -107,6 +107,9 @@ int luaNode__index( lua_State* l ) {
     if ( luaText__index( l ) ) {
         return 1;
     }
+    if ( luaButton__index( l ) ) {
+        return 1;
+    }
     lua_getmetatable( l, 1 );
     lua_pushvalue( l, 2 );
     lua_gettable( l, -2 );
@@ -181,6 +184,7 @@ int luaNode__newindex(lua_State* l) {
         node->setColor( color );
     } else {
         luaText__newindex( l );
+        luaButton__newindex( l );
         if ( node->m_luaReference == LUA_NOREF ) {
             lua_newtable( l );
             node->m_luaReference = luaL_ref( l, LUA_REGISTRYINDEX );

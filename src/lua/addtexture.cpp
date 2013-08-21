@@ -21,8 +21,10 @@ void lua_pushAnimation( lua_State* l, is::Animation* animation )
 }
 
 int luaAnimation__gc( lua_State* l ) {
-    is::Animation* animation = lua_checkAnimation( l, 1 );
-    delete animation;
+    is::Animation* animation = lua_toAnimation( l, 1 );
+    if ( animation ) {
+        delete animation;
+    }
     return 0;
 }
 
@@ -96,7 +98,13 @@ int luaAddTexture( lua_State* l ) {
     unsigned int argcount = lua_gettop( l );
     is::Texture* texture = new is::Texture( luaL_checkstring( l, 1 ) );
     for ( unsigned int i=2; i<1+argcount; i++ ) {
-        texture->addAnimation( *lua_checkAnimation( l, i ) );
+        is::Animation* animation = lua_checkAnimation( l, i );
+        texture->addAnimation( animation );
+        // After an animation is certainly being used, keep it from being garbage collected.
+        is::Animation** realanimation = (is::Animation**)luaL_checkudata( l, i, "AnimationBase" );
+        *realanimation = NULL;
+        // Set it up to be removed on shutdown though.
+        textures->addAnimation( animation );
     }
     textures->addTexture( texture );
     return 0;

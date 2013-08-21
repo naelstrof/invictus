@@ -1,6 +1,8 @@
 #include "button.hpp"
 
 is::Button::Button( std::string texturename, float borderSize ) {
+    m_pressed = false;
+    m_released = false;
     m_border = borderSize;
     m_changed = true;
     m_texture = textures->get( texturename );
@@ -13,6 +15,7 @@ is::Button::Button( std::string texturename, float borderSize ) {
 
 is::Button::~Button() {
     glDeleteBuffers( 2, m_buffers );
+    delete m_texture;
 }
 
 void is::Button::remove() {
@@ -163,11 +166,37 @@ void is::Button::tick( float dt ) {
 
     if ( intersects( mouse->getPos() ) ) {
         if ( mouse->isDown( is::Mouse::Left ) ) {
-            play( "pressed" );
+            m_released = false;
+            if ( !m_pressed ) {
+                play( "pressed" );
+                m_pressed = true;
+                lua_State* l = lua->m_l;
+                lua_rawgeti( l, LUA_REGISTRYINDEX, m_luaPressFunction );
+                if ( !lua_isnil( l, -1 ) ) {
+                    lua_rawgeti( l, LUA_REGISTRYINDEX, states->getCurrentState()->m_luaStateReference );
+                    lua->call( l, 1, 0 );
+                } else {
+                    lua_pop( l, 1 );
+                }
+            }
         } else {
+            if ( !m_released && m_pressed ) {
+                lua_State* l = lua->m_l;
+                lua_rawgeti( l, LUA_REGISTRYINDEX, m_luaReleaseFunction );
+                if ( !lua_isnil( l, -1 ) ) {
+                    lua_rawgeti( l, LUA_REGISTRYINDEX, states->getCurrentState()->m_luaStateReference );
+                    lua->call( l, 1, 0 );
+                } else {
+                    lua_pop( l, 1 );
+                }
+                m_released = true;
+            }
+            m_pressed = false;
             play( "active" );
         }
     } else {
+        m_released = false;
+        m_pressed = false;
         play( "idle" );
     }
 }

@@ -59,7 +59,7 @@ void is::Text::getDimensions() {
         peny += glyph->m_advanceY;
         m_height = std::max( m_height, h );
     }
-    m_width = penx;
+    m_width = penx+5;
 }
 
 void is::Text::generateBuffers() {

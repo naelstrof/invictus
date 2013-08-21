@@ -13,12 +13,14 @@
 namespace is {
 
 class Texture;
+class Animation;
 
 class TextureLoader {
 private:
-    std::vector<is::Texture*>   m_textures;
-    std::vector<std::string>    m_rawTextureDirs;
-    std::vector<sf::Texture*>   m_rawTextures;
+    std::vector<is::Texture*>     m_textures;
+    std::vector<std::string>      m_rawTextureDirs;
+    std::vector<sf::Texture*>     m_rawTextures;
+    std::vector<is::Animation*>   m_animations;
 public:
     TextureLoader();
     ~TextureLoader();
@@ -27,6 +29,7 @@ public:
     void                        addTexture( is::Texture* texture );
     sf::Texture*                getRaw( std::string dir );
     sf::Texture*                addRawTexture( std::string dir );
+    void                        addAnimation( is::Animation* animation );
     void                        render( sf::Texture* );
 };
 

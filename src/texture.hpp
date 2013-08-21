@@ -18,13 +18,11 @@ class Animation {
 public:
     Animation( std::string name );
     ~Animation();
-    void bind();
-    sf::Texture* currentFrame();
+    void bind( float time );
+    sf::Texture* currentFrame( float time );
     void addFrame( std::string dir );
-    void tick( float dt );
     std::string m_name;
     float m_fps;
-    float m_ct;
     bool m_loop;
     bool m_rendered;
     void renderAll();
@@ -40,13 +38,14 @@ public:
     void            tick( float dt );
     void            bind();
     void            unbind();
-    void            addAnimation( is::Animation animation );
+    void            addAnimation( is::Animation* animation );
     void            play( std::string name );
     unsigned int    getWidth();
     unsigned int    getHeight();
     std::string     m_name;
 private:
-    std::vector<is::Animation> m_animations;
+    float           m_time;
+    std::vector<is::Animation*> m_animations;
     unsigned int m_currentAnimation;
 };
 

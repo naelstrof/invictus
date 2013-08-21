@@ -10,6 +10,7 @@ is::Icon::Icon( std::string texturename, float borderSize ) {
 }
 
 is::Icon::~Icon() {
+    delete m_texture;
     glDeleteBuffers( 2, m_buffers );
 }
 

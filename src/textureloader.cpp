@@ -13,12 +13,19 @@ is::TextureLoader::~TextureLoader() {
     for ( unsigned int i=0; i<m_rawTextures.size(); i++ ) {
         delete m_rawTextures[i];
     }
+    for ( unsigned int i=0; i<m_animations.size(); i++ ) {
+        delete m_animations[i];
+    }
 }
 
 int is::TextureLoader::init() {
     // Not actually used to load actual pixel data, but actual textures with animations.
     lua->doFolder( "data/textures" );
     return 0;
+}
+
+void is::TextureLoader::addAnimation( is::Animation* animation ) {
+    m_animations.push_back( animation );
 }
 
 sf::Texture* is::TextureLoader::getRaw( std::string dir ) {
@@ -69,7 +76,9 @@ sf::Texture* is::TextureLoader::addRawTexture( std::string dir ) {
 is::Texture* is::TextureLoader::get( std::string name ) {
     for ( unsigned int i=0; i<m_textures.size(); i++ ) {
         if ( name == m_textures[i]->m_name ) {
-            return m_textures[i];
+            is::Texture* temp = new is::Texture( name );
+            *temp = *m_textures[i];
+            return temp;
         }
     }
     os->printf( "ERR Couldn't find texture %!\n", name );
