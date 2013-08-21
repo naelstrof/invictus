@@ -104,14 +104,7 @@ int luaNode__index( lua_State* l ) {
         lua_pushnumber( l, node->getColor().w );
         return 1;
     }
-    // Text
-    if ( field == "size" ) {
-        is::Text* text = (is::Text*)node;
-        lua_pushnumber( l, text->m_size );
-        return 1;
-    } else if ( field == "text" ) {
-        is::Text* text = (is::Text*)node;
-        lua_pushstring( l, text->getText().c_str() );
+    if ( luaText__index( l ) ) {
         return 1;
     }
     lua_getmetatable( l, 1 );
@@ -186,13 +179,8 @@ int luaNode__newindex(lua_State* l) {
         glm::vec4 color = node->getColor();
         color.w = luaL_checknumber( l, 3 );
         node->setColor( color );
-    } else if ( field == "size" ) {
-        is::Text* text = (is::Text*)node;
-        text->setSize( luaL_checknumber( l, 3 ) );
-    } else if ( field == "text" ) {
-        is::Text* text = (is::Text*)node;
-        text->setText( luaL_checkstring( l, 3 ) );
     } else {
+        luaText__newindex( l );
         if ( node->m_luaReference == LUA_NOREF ) {
             lua_newtable( l );
             node->m_luaReference = luaL_ref( l, LUA_REGISTRYINDEX );
