@@ -44,6 +44,7 @@ void is::TextureLoader::render( sf::Texture* texture ) {
             file.read( data, file.size() );
 
             bool success = texture->loadFromMemory( data, file.size() );
+            texture->setSmooth( true );
             if ( !success ) {
                 os->printf( "ERR SFML failed to load texture %! It will appear black.\n", m_rawTextureDirs[i]);
             }

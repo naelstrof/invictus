@@ -1,6 +1,10 @@
 -- Intro state
 
 function STATE:onInit()
+    if ( skipIntro == true ) then
+        setState( "game" )
+        return
+    end
     self.MyIcon = Icon( "invictus" )
     self.MyIcon.pos = Vector( getWindowWidth()/2, getWindowHeight(), 0 )
     tween( 3, self.MyIcon, { y=getWindowHeight()/2 }, 'outBounce' )
@@ -26,9 +30,11 @@ function STATE:onInit()
 end
 
 function STATE:onExit()
-    self.MyText:remove()
-    self.MyIcon:remove()
-    self.MySound:remove()
+    if ( skipIntro ~= true ) then
+        self.MyText:remove()
+        self.MyIcon:remove()
+        self.MySound:remove()
+    end
 end
 
 function STATE:onTick( dt )

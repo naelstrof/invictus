@@ -54,8 +54,7 @@ void is::Text::getDimensions() {
             continue;
         }
         // The shadow size is a static 5 in the shader as well as here and in glyphs->get()
-        float shadowSize = 5;
-        float h = glyph->m_bitmapHeight+shadowSize;
+        float h = glyph->m_bitmapHeight-5;
         penx += glyph->m_advanceX;
         peny += glyph->m_advanceY;
         m_height = std::max( m_height, h );
@@ -69,7 +68,6 @@ void is::Text::generateBuffers() {
         return;
     }
     m_textureSize = m_texture->m_size;
-    m_height = 0;
     float penx = 0;
     float peny = 0;
     getDimensions();
@@ -90,17 +88,17 @@ void is::Text::generateBuffers() {
         switch ( m_renderMode ) {
             case is::Text::Left: {
                 xoff = glyph->m_bitmapLeft;
-                yoff = glyph->m_bitmapTop;
+                yoff = glyph->m_bitmapTop-float( m_height ) / 2.f;
                 break;
             }
             case is::Text::Middle: {
                 xoff = glyph->m_bitmapLeft-float( m_width ) / 2.f;
-                yoff = glyph->m_bitmapTop;
+                yoff = glyph->m_bitmapTop-float( m_height ) / 2.f;
                 break;
             }
             case is::Text::Right: {
                 xoff = glyph->m_bitmapLeft-float( m_width );
-                yoff = glyph->m_bitmapTop;
+                yoff = glyph->m_bitmapTop-float( m_height ) / 2.f;
                 break;
             }
             default: break;

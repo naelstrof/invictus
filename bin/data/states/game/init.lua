@@ -1,16 +1,27 @@
 -- Game state
 
 function STATE:onInit()
-    self.MyText = Text( "And this is the game state!" )
-    self.MyText.color = Color( 1, 0, 0, 1 )
-    self.MyText.pos = Vector( getWindowWidth()/2, getWindowHeight()-128, 0 )
+    self.window = Icon( "window", 16 )
+    self.window.pos = Vector( getWindowWidth()/2, getWindowHeight()/2, 0 )
+    self.window.scale = Vector( getWindowWidth()/2, getWindowHeight()/2, 0 )
+
+    self.play = Button( "button", 1 )
+    self.play:setParent( self.window )
+    self.play.scale = Vector( 128, 64, 1 )
+    self.play.pos = Vector( 0, 0, 0 )
+
+    self.playText = Text( "Play" )
+    self.playText.size = 42
+    self.playText:setParent( self.play )
 end
 
 function STATE:onExit()
-    self.MyText:remove()
+    self.window:remove()
+    self.play:remove()
+    self.playText:remove()
 end
 
 function STATE:onTick( dt )
-    self.MyText.pos = self.MyText.pos - Vector( 0, dt*32, 0 )
-    self.MyText.ang = self.MyText.ang + Vector( 0, 0, dt )
+    self.window.pos = Vector( getWindowWidth()/2, getWindowHeight()/2, 0 )
+    self.window.scale = Vector( getWindowWidth()/2, getWindowHeight()/2, 0 )
 end

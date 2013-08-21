@@ -20,11 +20,13 @@ glm::vec3 is::Mouse::getPos() {
         return glm::vec3( m_memory.x, m_memory.y, 0 );
     }
     m_memory = sf::Mouse::getPosition( *window->m_window );
+    m_memory.y = -m_memory.y+window->getHeight();
     return glm::vec3( m_memory.x, m_memory.y, 0 );
 }
 
 void is::Mouse::setPos( glm::vec3 pos ) {
     // We allow the setting of memory, so if the player alt-tabs while turning in-game. The turning will stop and further input will stop.
+    pos.y = -pos.y+window->getHeight();
     m_memory = sf::Vector2i( pos.x, pos.y );
     if ( !window->isFocused() ) {
         return;

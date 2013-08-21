@@ -1,7 +1,7 @@
-// icon.hpp: Icon renderable
+// button.hpp: Button renderable
 
-#ifndef IS_ICON_H_
-#define IS_ICON_H_
+#ifndef IS_BUTTON_H_
+#define IS_BUTTON_H_
 
 #include <GL/glew.h>
 #include <SFML/System/Utf.hpp>
@@ -10,13 +10,14 @@
 #include "../camera.hpp"
 #include "../texture.hpp"
 #include "../node.hpp"
+#include "../mouse.hpp"
 
 namespace is {
 
-class Icon : public is::Node {
+class Button : public is::Node {
 public:
-                    Icon( std::string texturename, float borderSize = 0 );
-                    ~Icon();
+                    Button( std::string texturename, float borderSize = 0 );
+                    ~Button();
     void            remove();
     std::string     type();
     void            tick( float dt );
@@ -28,6 +29,9 @@ public:
     bool            m_changed;
     void            setScale( glm::vec3 scale );
     void            setScale( float w, float h, float d );
+    int             m_luaPressFunction;
+    int             m_luaReleaseFunction;
+    bool            intersects( glm::vec3 pos );
 private:
     float           m_border;
     unsigned int    m_vertcount;

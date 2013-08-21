@@ -36,6 +36,7 @@ public:
 class StateMachine {
 private:
     int m_activeState;
+    int m_nextState;
     std::vector<is::State*> m_states;
 public:
     StateMachine();

@@ -10,6 +10,8 @@ out vec2 uvCoords;
 
 void main()
 {
+    // Lock verticies to nearest pixel
+    //round( vertex );
     uvCoords = uv;
 	//gl_Position = (projection*view*matrix)*vec4(vertex,0,1);
 	gl_Position = (world*model)*vec4(vertex,0,1);

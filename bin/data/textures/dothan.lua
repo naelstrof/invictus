@@ -1,3 +1,3 @@
-local idle = Animation( "idle", "data/textures/dothan.png" );
+local idle = Animation( "idle", "data/textures/dothan.png" )
 
-addTexture( "dothan", idle );
+addTexture( "dothan", idle )

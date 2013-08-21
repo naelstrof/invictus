@@ -5,6 +5,7 @@ is::StateMachine* states = new is::StateMachine();
 is::StateMachine::StateMachine() {
     // Start without an active state.
     m_activeState = -1;
+    m_nextState = -1;
 }
 
 is::StateMachine::~StateMachine() {
@@ -27,16 +28,11 @@ void is::StateMachine::setState( std::string statename ) {
             if ( i == ( unsigned int )m_activeState) {
                 return;
             }
-
-            if ( m_activeState != -1 ) {
-                m_states.at( m_activeState )->deinit();
-            }
-
-            m_activeState = i;
-            m_states.at( m_activeState )->init();
-
+            m_nextState = i;
+            return;
         }
     }
+    os->printf( "ERR Couldn't find state named %!\n", statename );
 }
 
 void is::StateMachine::addState( is::State* state ) {
@@ -44,6 +40,15 @@ void is::StateMachine::addState( is::State* state ) {
 }
 
 void is::StateMachine::tick( float dt ) {
+    if ( m_nextState != -1 ) {
+        if ( m_activeState != -1 ) {
+            m_states.at( m_activeState )->deinit();
+        }
+
+        m_activeState = m_nextState;
+        m_nextState = -1;
+        m_states.at( m_activeState )->init();
+    }
     if ( m_activeState == -1 ) {
         return;
     }
@@ -132,10 +137,6 @@ void is::State::tick( float dt ) {
             }
             lua_rawgeti( lua->m_l, LUA_REGISTRYINDEX, m_luaStateReference );
             lua->call( lua->m_l, 1, 0 );
-            // This checks to make sure we weren't deinit()'d from a statechange.
-            if ( m_timers.size() == 0 ) {
-                return;
-            }
             delete m_timers.at(i);
             m_timers.erase( m_timers.begin() + i );
             if ( i > 0 ) {

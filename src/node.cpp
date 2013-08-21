@@ -2,8 +2,6 @@
 
 is::Node::Node() {
     m_color = glm::vec4( 1 );
-    m_localPosition = glm::vec3( 0 );
-    m_localAngle = glm::vec3( 0 );
     m_position = glm::vec3( 0 );
     m_angle = glm::vec3( 0 );
     m_scale = glm::vec3( 1 );
@@ -36,8 +34,7 @@ void is::Node::setParent( is::Node* node ) {
     if ( node == NULL ) {
         return;
     }
-    m_localPosition = getPos()-node->getPos();
-    m_localAngle = getAng()-node->getAng();
+    m_parent->addChild( this );
     //Make sure to update the matrix on the next update.
     m_matrixChanged = true;
 }
@@ -68,10 +65,9 @@ void is::Node::removeChild( is::Node* node ) {
 
 void is::Node::addChild( is::Node* node ) {
     //Make sure child's parent is this node.
-    if ( node->getParent() != NULL ) {
-        os->printf( "WRN is::Node::addChild( is::Node* ) unexpected result: Child already has a parent! Parent was overridden.\n");
+    if ( node->getParent() == NULL ) {
+        node->setParent( this );
     }
-    node->setParent( this );
     //Make sure the child doesn't already exist.
     for( unsigned int i=0;i<m_children.size();i++ ) {
         if ( m_children[i] == node ) {
@@ -91,86 +87,69 @@ is::Node* is::Node::getRoot() {
 
 glm::vec3 is::Node::getPos() {
     if ( m_parent ) {
-        //If we're hooked to another node, grab our real position from the matrix.
-        return glm::vec3( m_matrix[3][0] * m_matrix[0][0], m_matrix[3][1] * m_matrix[1][1], m_matrix[3][2] * m_matrix[2][2] );
+        return m_parent->getPos()+m_position;
     }
     return m_position;
 }
 
 void is::Node::setPos( glm::vec3 pos ) {
+    if ( m_position == pos ) {
+        return;
+    }
     m_position = pos;
-    if ( m_parent ) {
-        m_localPosition = pos-m_parent->getPos();
-    }
-    for( unsigned int i=0;i<m_children.size();i++ ) {
-        m_children[i]->m_matrixChanged = true;
-    }
-    m_matrixChanged = true;
+    setMatrixChanged( true );
 }
 
 void is::Node::setPos( float x, float y, float z ) {
+    if ( m_position == glm::vec3( x, y, z ) ) {
+        return;
+    }
     m_position = glm::vec3( x, y, z );
-    if ( m_parent ) {
-        m_localPosition = glm::vec3( x, y, z ) - m_parent->getPos();
-    }
-    for( unsigned int i=0;i<m_children.size();i++ ) {
-        m_children[i]->m_matrixChanged = true;
-    }
-    m_matrixChanged = true;
+    setMatrixChanged( true );
 }
 
 glm::vec3 is::Node::getAng() {
     if ( m_parent ) {
-        //TODO
-        //If we're hooked to another node, grab our real angle from the matrix.
+        return m_parent->getAng()+m_angle;
     }
     return m_angle;
 }
 
 void is::Node::setAng( glm::vec3 ang ) {
     m_angle = ang;
-    if ( m_parent ) {
-        m_localAngle = ang - m_parent->getAng();
-    }
-    for( unsigned int i=0;i<m_children.size();i++ ) {
-        m_children[i]->m_matrixChanged = true;
-    }
-    m_matrixChanged = true;
+    setMatrixChanged( true );
 }
 
 void is::Node::setAng( float y, float p, float r ) {
     m_angle = glm::vec3( y, p, r );
-    if ( m_parent ) {
-        m_localAngle = glm::vec3( y, p, r ) - m_parent->getAng();
-    }
-    for( unsigned int i=0;i<m_children.size();i++ ) {
-        m_children[i]->m_matrixChanged = true;
-    }
-    m_matrixChanged = true;
+    setMatrixChanged( true );
 }
 
 glm::vec3 is::Node::getScale() {
-    if ( m_parent ) {
-        //TODO
-        //If we're hooked to another node, grab our real angle from the matrix.
-    }
     return m_scale;
 }
 
 void is::Node::setScale(glm::vec3 scale) {
-    m_scale = scale;
-    for( unsigned int i=0;i<m_children.size();i++ ) {
-        m_children[i]->m_matrixChanged = true;
+    if ( m_scale == scale ) {
+        return;
     }
-    m_matrixChanged = true;
+    m_scale = scale;
+    setMatrixChanged( true );
 }
 
 void is::Node::setScale( float w, float h, float d ) {
-    m_scale = glm::vec3( w, h, d );
-    for( unsigned int i=0;i<m_children.size();i++ ) {
-        m_children[i]->m_matrixChanged = true;
+    if ( m_scale == glm::vec3( w, h ,d ) ) {
+        return;
     }
-    m_matrixChanged = true;
+    m_scale = glm::vec3( w, h, d );
+    setMatrixChanged( true );
+}
+
+void is::Node::setMatrixChanged( bool changed ) {
+    for( unsigned int i=0;i<m_children.size();i++ ) {
+        m_children[i]->setMatrixChanged( changed );
+    }
+    m_matrixChanged = changed;
 }
 
 glm::vec4 is::Node::getColor() {
@@ -185,6 +164,12 @@ void is::Node::setColor( float r, float g, float b, float a ) {
     m_color = glm::vec4( r, g, b, a );
 }
 
+glm::mat4 is::Node::getScalelessMatrix() {
+    // Make sure we have the matrix generated.
+    getModelMatrix();
+    return m_noscaleMatrix;
+}
+
 glm::mat4 is::Node::getModelMatrix() {
     //If we have a cached matrix, then just return that.
     if ( !m_matrixChanged ) {
@@ -193,15 +178,17 @@ glm::mat4 is::Node::getModelMatrix() {
     m_matrixChanged = false;
     //If we have a parent, use their matrix offset by our local values.
     if ( m_parent ) {
-        m_matrix = m_parent->getModelMatrix();
-        m_matrix = glm::translate( m_matrix, m_localPosition );
-        m_matrix = glm::eulerAngleYXZ( m_localAngle.x, m_localAngle.y, m_localAngle.z ) * m_matrix;
+        m_matrix = m_parent->getScalelessMatrix();
+        m_matrix = glm::translate( m_matrix, m_position );
+        m_matrix = m_matrix * glm::eulerAngleYXZ( m_angle.x, m_angle.y, m_angle.z );
+        m_noscaleMatrix = m_matrix;
         m_matrix = glm::scale( m_matrix, m_scale );
         return m_matrix;
     }
     //Otherwise just generate a new matrix.
     m_matrix = glm::translate( glm::mat4(1), m_position );
-    m_matrix = m_matrix*glm::eulerAngleYXZ( m_angle.x, m_angle.y, m_angle.z );
+    m_matrix = m_matrix * glm::eulerAngleYXZ( m_angle.x, m_angle.y, m_angle.z );
+    m_noscaleMatrix = m_matrix;
     m_matrix = glm::scale( m_matrix, m_scale );
     return m_matrix;
 }

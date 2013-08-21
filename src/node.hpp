@@ -43,8 +43,8 @@ public:
     void                    setAng( float y, float p, float r );
 
     glm::vec3               getScale();
-    void                    setScale( glm::vec3 scale );
-    void                    setScale( float w, float h, float d );
+    virtual void            setScale( glm::vec3 scale );
+    virtual void            setScale( float w, float h, float d );
 
     is::Node*               getRoot();
     is::Node*               getParent();
@@ -54,16 +54,17 @@ public:
     void                    removeChild( is::Node* node );
     void                    addChild( is::Node* node );
 
+    void                    setMatrixChanged( bool changed );
+
     glm::mat4               getModelMatrix();
+    glm::mat4               getScalelessMatrix();
     float                   m_depth;
     float                   m_hullsize;
     int                     m_luaReference;
-private:
     bool                    m_matrixChanged;
     is::Node*               m_parent;
     glm::mat4               m_matrix;
-    glm::vec3               m_localPosition;
-    glm::vec3               m_localAngle;
+    glm::mat4               m_noscaleMatrix;
     glm::vec3               m_position;
     glm::vec3               m_angle;
     glm::vec3               m_scale;

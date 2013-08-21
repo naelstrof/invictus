@@ -15,6 +15,7 @@ is::Lua* lua = new is::Lua();
 #include "lua/icon.cpp"
 #include "lua/text.cpp"
 #include "lua/sound.cpp"
+#include "lua/button.cpp"
 #include "lua/getwindow.cpp"
 #include "lua/setstate.cpp"
 #include "lua/addtimer.cpp"
@@ -44,6 +45,7 @@ is::Lua::Lua() {
     luaRegisterIcons( m_l );
     luaRegisterTexts( m_l );
     luaRegisterSounds( m_l );
+    luaRegisterButtons( m_l );
 
     addFunction( "getWindowWidth", luaGetWindowWidth );
     addFunction( "getWindowHeight", luaGetWindowHeight );
@@ -180,15 +182,18 @@ int is::Lua::call( lua_State* l, int nargs, int nresults ) {
             error.replace( place, 7, "[file" );
             place = error.find( "[string" );
         }
+        os->printf( "ERR Lua: %\n", error );
+
         traceback( l );
-        os->printf( "ERR: %\n", error );
-        error = lua_tostring( l, -1 );
-        place = error.find( "[string" );
-        while ( place != std::string::npos ) {
-            error.replace( place, 7, "[file" );
+        if ( error != lua_tostring( l, -1 ) ) {
+            error = lua_tostring( l, -1 );
             place = error.find( "[string" );
+            while ( place != std::string::npos ) {
+                error.replace( place, 7, "[file" );
+                place = error.find( "[string" );
+            }
+            os->printf( "ERR Lua: %\n", error );
         }
-        os->printf( "ERR: %\n", error );
         return 1;
     }
     return 0;
@@ -215,7 +220,13 @@ int is::Lua::traceback( lua_State* l ) {
 }
 
 int is::luaOnPanic( lua_State* l ) {
-    os->printf( "ERR %\n", lua_tostring( l, -1 ) );
+    std::string error = lua_tostring( l, -1 );
+    os->printf( "ERR %\n", error );
+    lua->traceback( l );
+    if ( error != lua_tostring( l, -1 ) ) {
+        error = lua_tostring( l, -1 );
+        os->printf( "ERR %\n", error );
+    }
     return 0;
 }
 

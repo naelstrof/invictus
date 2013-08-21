@@ -1,27 +1,29 @@
-#include "icon.hpp"
+#include "button.hpp"
 
-is::Icon::Icon( std::string texturename, float borderSize ) {
+is::Button::Button( std::string texturename, float borderSize ) {
     m_border = borderSize;
     m_changed = true;
     m_texture = textures->get( texturename );
     setScale( glm::vec3( m_texture->getWidth(), m_texture->getHeight(), 1 ) );
     glGenBuffers( 2, m_buffers);
     m_shader = shaders->get( "gui" );
+    m_luaPressFunction = LUA_NOREF;
+    m_luaReleaseFunction = LUA_NOREF;
 }
 
-is::Icon::~Icon() {
+is::Button::~Button() {
     glDeleteBuffers( 2, m_buffers );
 }
 
-void is::Icon::remove() {
-    delete (is::Icon*)this;
+void is::Button::remove() {
+    delete (is::Button*)this;
 }
 
-std::string is::Icon::type() {
-    return "icon";
+std::string is::Button::type() {
+    return "button";
 }
 
-void is::Icon::generateBuffers() {
+void is::Button::generateBuffers() {
     // We need to check to make sure we actually need to regenerate the buffers.
     if ( !m_changed ) {
         return;
@@ -137,16 +139,40 @@ void is::Icon::generateBuffers() {
     m_changed = false;
 }
 
-void is::Icon::tick( float dt ) {
-    // Make sure our texture is animating properly.
-    m_texture->tick( dt );
-    // SHAKE
-    //setPos( getPos() + ( dt*glm::vec3( float( rand()%300 ) - float( rand()%300 ),
-                                  //float( rand()%300 ) - float( rand()%300 ),
-                                  //float( rand()%300 ) - float( rand()%300 ) ) ) );
+bool is::Button::intersects( glm::vec3 pos ) {
+    glm::vec3 p = getPos();
+    glm::vec3 s = getScale()/2.f;
+    if ( pos.x < p.x-s.x ) {
+        return false;
+    }
+    if ( pos.x > p.x+s.x ) {
+        return false;
+    }
+    if ( pos.y < p.y-s.y ) {
+        return false;
+    }
+    if ( pos.y > p.y+s.y ) {
+        return false;
+    }
+    return true;
 }
 
-void is::Icon::draw() {
+void is::Button::tick( float dt ) {
+    // Make sure our texture is animating properly.
+    m_texture->tick( dt );
+
+    if ( intersects( mouse->getPos() ) ) {
+        if ( mouse->isDown( is::Mouse::Left ) ) {
+            play( "pressed" );
+        } else {
+            play( "active" );
+        }
+    } else {
+        play( "idle" );
+    }
+}
+
+void is::Button::draw() {
     // Here we'll make sure we have a properly generated buffer.
     generateBuffers();
 
@@ -168,11 +194,11 @@ void is::Icon::draw() {
     m_shader->unbind();
 }
 
-void is::Icon::play( std::string name ) {
+void is::Button::play( std::string name ) {
     m_texture->play( name );
 }
 
-bool is::Icon::visible() {
+bool is::Button::visible() {
     // Always draw if part of the gui (due to the view frustum culling only working on orthographic objects)
     if ( m_shader->m_name == "gui" ) {
         return true;
@@ -189,7 +215,7 @@ bool is::Icon::visible() {
     return true;
 }
 
-void is::Icon::setScale( glm::vec3 scale ) {
+void is::Button::setScale( glm::vec3 scale ) {
     if ( m_scale == scale ) {
         return;
     }
@@ -207,7 +233,7 @@ void is::Icon::setScale( glm::vec3 scale ) {
     m_changed = true;
 }
 
-void is::Icon::setScale( float w, float h, float d ) {
+void is::Button::setScale( float w, float h, float d ) {
     if ( m_scale == glm::vec3( w, h, d ) ) {
         return;
     }

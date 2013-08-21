@@ -28,3 +28,5 @@ verticalSync = false
 -- This should only be changed if you have stuttering from too many texture atlas resizes or if you really like filling your GPU memory.
 -- Safe values are 256, 512, and 1024.
 textureAtlasStartSize = 512;
+
+skipIntro = false

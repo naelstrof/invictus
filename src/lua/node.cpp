@@ -38,6 +38,17 @@ int luaNodeRemove( lua_State* l ) {
     return 0;
 }
 
+int luaNodeSetParent( lua_State* l ) {
+    is::Node* node = lua_checknode( l, 1 );
+    if ( lua_isnil( l, 2 ) ) {
+        node->setParent( NULL );
+        return 0;
+    }
+    is::Node* parent = lua_checknode( l, 2 );
+    node->setParent( parent );
+    return 0;
+}
+
 int luaNode__index( lua_State* l ) {
     is::Node* node = lua_tonode(l,1);
     if ( node == NULL ) {
@@ -56,6 +67,9 @@ int luaNode__index( lua_State* l ) {
     } else if ( field == "ang" ) {
         lua_pushvector( l, node->getAng() );
         return 1;
+    } else if ( field == "scale" ) {
+        lua_pushvector( l, node->getScale() );
+        return 1;
     } else if ( field == "color" ) {
         lua_pushcolor( l, node->getColor() );
         return 1;
@@ -68,6 +82,15 @@ int luaNode__index( lua_State* l ) {
     } else if ( field == "z" ) {
         lua_pushnumber( l, node->getPos().z );
         return 1;
+    } else if ( field == "sx" ) {
+        lua_pushnumber( l, node->getScale().x );
+        return 1;
+    } else if ( field == "sy" ) {
+        lua_pushnumber( l, node->getScale().y );
+        return 1;
+    } else if ( field == "sz" ) {
+        lua_pushnumber( l, node->getScale().z );
+        return 1;
     } else if ( field == "r" ) {
         lua_pushnumber( l, node->getColor().x );
         return 1;
@@ -79,6 +102,16 @@ int luaNode__index( lua_State* l ) {
         return 1;
     } else if ( field == "a" ) {
         lua_pushnumber( l, node->getColor().w );
+        return 1;
+    }
+    // Text
+    if ( field == "size" ) {
+        is::Text* text = (is::Text*)node;
+        lua_pushnumber( l, text->m_size );
+        return 1;
+    } else if ( field == "text" ) {
+        is::Text* text = (is::Text*)node;
+        lua_pushstring( l, text->getText().c_str() );
         return 1;
     }
     lua_getmetatable( l, 1 );
@@ -107,38 +140,58 @@ int luaNode__newindex(lua_State* l) {
     std::string field = luaL_checkstring(l,2);
     if ( field == "pos" ) {
         node->setPos( *lua_checkvector( l, 3 ) );
-    } else if ( field ==  "ang" ) {
+    } else if ( field == "ang" ) {
         node->setAng( *lua_checkvector( l, 3 ) );
-    } else if ( field ==  "color" ) {
+    } else if ( field == "scale" ) {
+        node->setScale( *lua_checkvector( l, 3 ) );
+    } else if ( field == "color" ) {
         node->setColor( *lua_checkcolor( l, 3 ) );
-    } else if ( field ==  "x" ) {
+    } else if ( field == "x" ) {
         glm::vec3 pos = node->getPos();
         pos.x = luaL_checknumber( l, 3 );
         node->setPos( pos );
-    } else if ( field ==  "y" ) {
+    } else if ( field == "y" ) {
         glm::vec3 pos = node->getPos();
         pos.y = luaL_checknumber( l, 3 );
         node->setPos( pos );
-    } else if ( field ==  "z" ) {
+    } else if ( field == "z" ) {
         glm::vec3 pos = node->getPos();
         pos.z = luaL_checknumber( l, 3 );
         node->setPos( pos );
-    } else if ( field ==  "r" ) {
+    } else if ( field == "sx" ) {
+        glm::vec3 scale = node->getScale();
+        scale.x = luaL_checknumber( l, 3 );
+        node->setScale( scale );
+    } else if ( field == "sy" ) {
+        glm::vec3 scale = node->getScale();
+        scale.y = luaL_checknumber( l, 3 );
+        node->setScale( scale );
+    } else if ( field == "sz" ) {
+        glm::vec3 scale = node->getScale();
+        scale.z = luaL_checknumber( l, 3 );
+        node->setScale( scale );
+    } else if ( field == "r" ) {
         glm::vec4 color = node->getColor();
         color.x = luaL_checknumber( l, 3 );
         node->setColor( color );
-    } else if ( field ==  "g" ) {
+    } else if ( field == "g" ) {
         glm::vec4 color = node->getColor();
         color.y = luaL_checknumber( l, 3 );
         node->setColor( color );
-    } else if ( field ==  "b" ) {
+    } else if ( field == "b" ) {
         glm::vec4 color = node->getColor();
         color.z = luaL_checknumber( l, 3 );
         node->setColor( color );
-    } else if ( field ==  "a" ) {
+    } else if ( field == "a" ) {
         glm::vec4 color = node->getColor();
         color.w = luaL_checknumber( l, 3 );
         node->setColor( color );
+    } else if ( field == "size" ) {
+        is::Text* text = (is::Text*)node;
+        text->setSize( luaL_checknumber( l, 3 ) );
+    } else if ( field == "text" ) {
+        is::Text* text = (is::Text*)node;
+        text->setText( luaL_checkstring( l, 3 ) );
     } else {
         if ( node->m_luaReference == LUA_NOREF ) {
             lua_newtable( l );
@@ -157,6 +210,7 @@ int luaRegisterNodes( lua_State* l ) {
     luaL_newmetatable( l, "NodeBase" );
     // Register its new index function and garbage collection function
     static const luaL_Reg nodeLib[] {
+        { "setParent", luaNodeSetParent },
         { "remove", luaNodeRemove },
         { "__index", luaNode__index },
         { "__newindex", luaNode__newindex },
