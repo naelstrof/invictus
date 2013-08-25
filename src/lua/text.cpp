@@ -14,7 +14,16 @@ int luaText__index( lua_State* l ) {
     } else if ( field == "text" ) {
         lua_pushstring( l, text->getText().c_str() );
         return 1;
+    } else if ( field == "width" ) {
+        text->getDimensions();
+        lua_pushnumber( l, text->m_width );
+        return 1;
+    } else if ( field == "height" ) {
+        text->getDimensions();
+        lua_pushnumber( l, text->m_height );
+        return 1;
     }
+
     return 0;
 }
 

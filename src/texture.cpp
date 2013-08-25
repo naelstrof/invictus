@@ -11,11 +11,11 @@ is::Animation::~Animation() {
 sf::Texture* is::Animation::currentFrame( float time ) {
     renderAll();
     if ( m_loop ) {
-        return m_frames[ fmod( time*m_fps, m_frames.size() ) ];
+        return m_frames.at( fmod( time * m_fps, m_frames.size() ) );
     }
-    unsigned int location = abs( time*m_fps );
+    unsigned int location = abs( time * m_fps );
     if ( location < m_frames.size() ) {
-        return m_frames[ abs( time*m_fps ) ];
+        return m_frames.at( location );
     }
     return m_frames.back();
 }
@@ -49,14 +49,14 @@ void is::Animation::addFrame( std::string dir ) {
 }
 
 is::Texture::Texture( std::string name, std::string dir )
-    : m_name( name ), m_currentAnimation( 0 ) {
+    : m_name( name ), m_currentAnimation( 0 ), m_time( 0 ) {
     is::Animation* idle = new is::Animation( "idle" );
     idle->addFrame( dir );
     m_animations.push_back( idle );
 }
 
 is::Texture::Texture( std::string name )
-    : m_name( name ), m_currentAnimation( 0 ) {
+    : m_name( name ), m_currentAnimation( 0 ), m_time( 0 ) {
 }
 
 is::Texture::~Texture() {
@@ -93,5 +93,5 @@ unsigned int is::Texture::getWidth() {
 }
 
 unsigned int is::Texture::getHeight() {
-    return m_animations[ m_currentAnimation ]->currentFrame( m_time )->getSize().y;
+    return m_animations.at( m_currentAnimation )->currentFrame( m_time )->getSize().y;
 }

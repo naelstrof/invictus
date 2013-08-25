@@ -24,6 +24,7 @@ void is::Text::setText( sf::String text ) {
         return;
     }
     m_text = text;
+    getDimensions();
     m_changed = true;
 }
 
@@ -45,21 +46,25 @@ void is::Text::getDimensions() {
     if ( !m_changed && ( m_width || m_height ) ) {
         return;
     }
+    m_width = 0;
     m_height = 0;
     float penx = 0;
-    float peny = 0;
     for ( unsigned int i=0; i<m_text.getSize(); i++ ) {
         is::Glyph* glyph = glyphs->get( m_text[i], m_font, m_size );
         if ( !glyph ) {
             continue;
         }
+        if ( m_text[i] == (unsigned int)'\n' ) {
+            m_width = std::max( m_width, penx+5 );
+            penx = 0;
+            continue;
+        }
         // The shadow size is a static 5 in the shader as well as here and in glyphs->get()
         float h = glyph->m_bitmapHeight-5;
         penx += glyph->m_advanceX;
-        peny += glyph->m_advanceY;
         m_height = std::max( m_height, h );
     }
-    m_width = penx+5;
+    m_width = std::max( m_width, penx+5 );
 }
 
 void is::Text::generateBuffers() {
@@ -77,6 +82,11 @@ void is::Text::generateBuffers() {
         // Generate glyph information and render it to a texture atlas.
         is::Glyph* glyph = glyphs->get( m_text[i], m_font, m_size );
         if ( !glyph ) {
+            continue;
+        }
+        if ( m_text[i] == (unsigned int)'\n' ) {
+            penx = 0;
+            peny -= m_size;
             continue;
         }
         // The shadow size is a static 5 in the shader as well as here and in glyphs->get()

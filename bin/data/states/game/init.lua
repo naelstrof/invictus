@@ -5,7 +5,7 @@ function STATE:onInit()
     self.window.pos = Vector( getWindowWidth()/2, getWindowHeight()/2, 0 )
     self.window.scale = Vector( getWindowWidth()/2, getWindowHeight()/2, 0 )
     self.window.color = Color( 1, 1, 1, 0 )
-    tween( 1, self.window, { a=1 } )
+    tween( 0.5, self.window, { a=1 } )
 
     self.play = Button( "button", 1 )
     self.play:setParent( self.window )
@@ -16,8 +16,8 @@ function STATE:onInit()
     self.playText.color = Color( 1, 1, 1, 0 )
     self.playText.size = 42
     self.playText:setParent( self.play )
-    addTimer( function() tween( 1, self.play, { a=1 } ) end, 1 )
-    addTimer( function() tween( 1, self.playText, { a=1 } ) end, 1 )
+    addTimer( function() tween( 0.5, self.play, { a=1 } ) end, 0.5 )
+    addTimer( function() tween( 0.5, self.playText, { a=1 } ) end, 0.5 )
 
     self.options = Button( "button", 1 )
     self.options:setParent( self.window )
@@ -28,15 +28,15 @@ function STATE:onInit()
     self.optionsText.color = Color( 1, 1, 1, 0 )
     self.optionsText.size = 42
     self.optionsText:setParent( self.options )
-    addTimer( function() tween( 1, self.options, { a=1 } ) end, 1 )
-    addTimer( function() tween( 1, self.optionsText, { a=1 } ) end, 1 )
+    addTimer( function() tween( 0.5, self.options, { a=1 } ) end, 0.5 )
+    addTimer( function() tween( 0.5, self.optionsText, { a=1 } ) end, 0.5 )
 
     self.exiting = false
 
     self.options.onRelease = function()
         self.exiting = true
-        tween( 1, self.window, { x=-getWindowWidth()/2 }, "inQuad" )
-        addTimer( function() setState( "options" ) end, 1 )
+        tween( 0.5, self.window, { x=-getWindowWidth()/2 }, "inQuad" )
+        addTimer( function() setState( "options" ) end, 0.5 )
     end
 
 end

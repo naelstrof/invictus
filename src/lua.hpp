@@ -4,6 +4,7 @@
 // Required to use luaL_register, not sure of any alternatives.
 #define LUA_COMPAT_MODULE
 #include <lua.hpp>
+#include <sstream>
 
 #include "os.hpp"
 #include "textureloader.hpp"

@@ -44,9 +44,9 @@ public:
     unsigned int    getHeight();
     std::string     m_name;
 private:
-    float           m_time;
     std::vector<is::Animation*> m_animations;
     unsigned int m_currentAnimation;
+    float           m_time;
 };
 
 };

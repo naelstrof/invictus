@@ -38,12 +38,12 @@ public:
     void            setText( sf::String text );
     std::string     getText();
     RenderMode      m_renderMode;
+    void            getDimensions();
 private:
     is::TextureAtlas*       m_texture;
     unsigned int            m_vertcount;
     unsigned int            m_buffers[2];
     void                    generateBuffers();
-    void                    getDimensions();
     unsigned int            m_textureSize;
 };
 

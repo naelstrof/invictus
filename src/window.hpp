@@ -26,8 +26,9 @@ private:
     unsigned int        m_height;
     std::string         m_name;
     bool                m_printed;
-    bool                m_changed;
 public:
+    sf::VideoMode       m_mode;
+    bool                m_changed;
     sf::RenderWindow*   m_window;
     Window();
     ~Window();

@@ -4,6 +4,7 @@ is::Lua* lua = new is::Lua();
 
 #include "lua/print.cpp"
 #include "lua/addshader.cpp"
+#include "lua/updatewindow.cpp"
 #include "lua/addfont.cpp"
 #include "lua/addmodel.cpp"
 #include "lua/addsound.cpp"
@@ -13,7 +14,9 @@ is::Lua* lua = new is::Lua();
 #include "lua/vector.cpp"
 #include "lua/text.cpp"
 #include "lua/icon.cpp"
+#include "lua/dropdown.cpp"
 #include "lua/button.cpp"
+#include "lua/checkbox.cpp"
 #include "lua/node.cpp"
 #include "lua/sound.cpp"
 #include "lua/getwindow.cpp"
@@ -46,10 +49,14 @@ is::Lua::Lua() {
     luaRegisterTexts( m_l );
     luaRegisterSounds( m_l );
     luaRegisterButtons( m_l );
+    luaRegisterCheckboxs( m_l );
+    luaRegisterDropdowns( m_l );
 
     addFunction( "getWindowWidth", luaGetWindowWidth );
     addFunction( "getWindowHeight", luaGetWindowHeight );
+    addFunction( "getWindowModes", luaGetWindowModes );
     addFunction( "setState", luaSetState );
+    addFunction( "updateWindow", luaUpdateWindow );
 }
 
 is::Lua::~Lua() {

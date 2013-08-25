@@ -23,10 +23,12 @@ void lua_pushnode( lua_State* l, is::Node* node )
 }
 
 int luaNode__gc( lua_State* l ) {
-    is::Node* node = lua_checknode( l, 1 );
-    gui->remove( node );
-    is::Node** realnode = (is::Node**)luaL_checkudata( l, 1, "NodeBase" );
-    (*realnode) = NULL;
+    is::Node* node = lua_tonode( l, 1 );
+    if ( node != NULL ) {
+        gui->remove( node );
+        is::Node** realnode = (is::Node**)luaL_checkudata( l, 1, "NodeBase" );
+        (*realnode) = NULL;
+    }
     return 0;
 }
 
@@ -110,6 +112,12 @@ int luaNode__index( lua_State* l ) {
     if ( luaButton__index( l ) ) {
         return 1;
     }
+    if ( luaCheckbox__index( l ) ) {
+        return 1;
+    }
+    if ( luaDropdown__index( l ) ) {
+        return 1;
+    }
     lua_getmetatable( l, 1 );
     lua_pushvalue( l, 2 );
     lua_gettable( l, -2 );
@@ -185,6 +193,8 @@ int luaNode__newindex(lua_State* l) {
     } else {
         luaText__newindex( l );
         luaButton__newindex( l );
+        luaCheckbox__newindex( l );
+        luaDropdown__newindex( l );
         if ( node->m_luaReference == LUA_NOREF ) {
             lua_newtable( l );
             node->m_luaReference = luaL_ref( l, LUA_REGISTRYINDEX );

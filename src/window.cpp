@@ -34,16 +34,28 @@ int is::Window::init() {
     m_height = int( lua->getFloat( "height" ) );
     m_name = lua->getString( "windowName" );
     m_maxfps = int( lua->getFloat( "maxFPS" ) );
+    int mode = int( lua->getFloat( "videoMode" ) );
+    if ( mode < 0 ) {
+        m_mode = sf::VideoMode( m_width, m_height );
+    } else if ( mode == 0 ) {
+        m_mode = sf::VideoMode::getDesktopMode();
+    } else {
+        mode--;
+        std::vector<sf::VideoMode> modes = sf::VideoMode::getFullscreenModes();
+        if ( mode < (int)modes.size() ) {
+            m_mode = modes.at( mode );
+        } else {
+            m_mode = modes.back();
+        }
+    }
 
     printModes();
 
-    sf::VideoMode custom = sf::VideoMode( m_width, m_height );
-
     if ( !m_fullscreen ) {
         if ( m_noborder ) {
-            m_window->create( custom, m_name, sf::Style::None );
+            m_window->create( m_mode, m_name, sf::Style::None );
         } else {
-            m_window->create( custom, m_name );
+            m_window->create( m_mode, m_name );
         }
         m_window->setFramerateLimit( m_maxfps );
         m_window->setVerticalSyncEnabled( m_vsync );
@@ -59,7 +71,7 @@ int is::Window::init() {
     }
 
     // If we're fullscreen, check if we have a valid video mode. Otherwise just use the desktop res.
-    if ( !custom.isValid() ) {
+    if ( !m_mode.isValid() ) {
         m_window->create( sf::VideoMode::getDesktopMode(), m_name, sf::Style::Fullscreen );
         os->printf( "WRN %x% is an invalid video mode!\n", m_width, m_height );
         os->printf( "INF Using desktop resolution instead.\n" );
@@ -68,7 +80,7 @@ int is::Window::init() {
         return 0;
     }
 
-    m_window->create( custom, m_name, sf::Style::Fullscreen );
+    m_window->create( m_mode, m_name, sf::Style::Fullscreen );
     m_window->setFramerateLimit( m_maxfps );
     m_window->setVerticalSyncEnabled( m_vsync );
     return 0;

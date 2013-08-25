@@ -5,13 +5,15 @@ print( "Lua powered config: data/config/init.lua" );
 -- If the specified video mode is not supported by your monitor it will use your desktop resolution.
 fullscreen = false
 
--- Only used in fullscreen mode. It removes window decorations from the client.
+-- Only used in fullscreen mode. It removes window decorations from the client. HIGHLY RECOMMENDED. Until SFML is kept from stealing all keyboard input, this is the only solution for Linux users.
 noBorder = false
 
 -- Sets the width and height of the window in windowed mode or fullscreen.
 -- In windowed mode these numbers can be anything, but in fullscreen mode the width and height must match one of the available video modes printed to console at run. Otherwise it will use desktop resolution.
 width = 512
 height = 512
+
+videoMode = 0
 
 -- Sets the name of the window on boot, can be anything you want.
 windowName = "Astrostruct"
@@ -29,4 +31,4 @@ verticalSync = false
 -- Safe values are 256, 512, and 1024.
 textureAtlasStartSize = 512;
 
-skipIntro = false
+skipIntro = true
