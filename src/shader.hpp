@@ -23,6 +23,7 @@ public:
     void            setParameter( std::string name, float foo );
     void            setParameter( std::string name, glm::mat4 foo );
     void            setParameter( std::string name, glm::vec4 foo );
+    void            setParameter( std::string name, glm::vec2 foo );
     void            setAttribute( std::string name, unsigned int buffer, unsigned int stepsize );
     int             m_type;
     std::string     m_name;

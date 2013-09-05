@@ -26,6 +26,7 @@ is::Window::~Window() {
 
 // This completely handles window creation and updates.
 int is::Window::init() {
+    setIcon( "invictus.png" );
     // Get the configuration options for the window.
     m_fullscreen = lua->getBool( "fullscreen" );
     m_noborder = lua->getBool( "noBorder" );
@@ -224,4 +225,16 @@ void is::Window::setFullscreen( bool foo ) {
 
 void is::Window::clear() {
     m_window->clear();
+}
+
+void is::Window::setIcon( std::string dir ) {
+    is::File::Read file( dir );
+    unsigned char* data = new unsigned char[ file.size() ];
+    file.read( data, file.size() );
+
+    sf::Image image;
+    image.loadFromMemory( data, file.size() );
+    delete data;
+
+    m_window->setIcon( image.getSize().x, image.getSize().y, image.getPixelsPtr() );
 }

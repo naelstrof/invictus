@@ -27,6 +27,7 @@ private:
     std::string         m_name;
     bool                m_printed;
 public:
+    void                setIcon( std::string dir );
     sf::VideoMode       m_mode;
     bool                m_changed;
     sf::RenderWindow*   m_window;

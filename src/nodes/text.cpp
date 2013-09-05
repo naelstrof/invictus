@@ -153,6 +153,7 @@ void is::Text::draw() {
     m_shader->bind();
     m_shader->setParameter( "texture", 0 );
     m_shader->setParameter( "color", getColor() );
+    m_shader->setParameter( "textureSize", glm::vec2( (float)m_texture->m_size ) );
     m_shader->setParameter( "model", getModelMatrix() );
     m_shader->setAttribute( "vertex", m_buffers[0], 2 );
     m_shader->setAttribute( "uv", m_buffers[1], 2 );

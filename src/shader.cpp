@@ -134,6 +134,13 @@ void is::Shader::setParameter( std::string name, glm::vec4 foo ) {
     glUniform4f( getUniformLocation( name ), foo.x, foo.y, foo.z, foo.w );
 }
 
+void is::Shader::setParameter( std::string name, glm::vec2 foo ) {
+    if ( !m_good ) {
+        return;
+    }
+    glUniform2f( getUniformLocation( name ), foo.x, foo.y );
+}
+
 void is::Shader::setAttribute( std::string name, unsigned int buffer, unsigned int stepsize ) {
     unsigned int a = glGetAttribLocation( m_program, name.c_str() );
     glEnableVertexAttribArray( a );

@@ -1,12 +1,12 @@
-#version 130
+#version 120
 
-in vec2 vertex;
-in vec2 uv;
+attribute vec2 vertex;
+attribute vec2 uv;
 
-out vec2 uvCoords;
+varying vec2 uvCoord;
 
 void main()
 {
-    uvCoords = uv;
+    uvCoord = uv;
 	gl_Position = vec4(vertex,0,1);
 }
