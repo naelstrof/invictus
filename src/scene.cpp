@@ -7,6 +7,13 @@ bool is::nodeCompareDepth( is::Node* a, is::Node* b ) {
     return ( a->m_depth < b->m_depth );
 }
 
+is::Scene::Scene() {
+    if ( m_luaReference == LUA_NOREF ) {
+        lua_pushscene( lua->m_l, this );
+        m_luaReference = luaL_ref( lua->m_l, LUA_REGISTRYINDEX );
+    }
+}
+
 is::Scene::~Scene() {
     for ( unsigned int i=0;i<m_nodes.size();i++ ) {
         m_nodes[i]->remove();

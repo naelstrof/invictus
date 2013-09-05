@@ -16,6 +16,7 @@ bool nodeCompareDepth( is::Node* a, is::Node* b );
 class Scene {
     std::vector<is::Node*> m_nodes;
 public:
+    Scene();
     ~Scene();
     void                    tick( float dt );
     std::vector<is::Node*>  getSortedDrawables();
@@ -23,9 +24,12 @@ public:
     void                    addNode( is::Node* );
     void                    draw();
     void                    remove( is::Node* );
+    int                     m_luaReference;
 };
 
 };
+
+void lua_pushscene( lua_State* l, is::Scene* scene );
 
 extern is::Scene* world;
 extern is::Scene* gui;

@@ -19,6 +19,7 @@ is::Lua* lua = new is::Lua();
 #include "lua/checkbox.cpp"
 #include "lua/node.cpp"
 #include "lua/sound.cpp"
+#include "lua/scene.cpp"
 #include "lua/getwindow.cpp"
 #include "lua/setstate.cpp"
 #include "lua/addtimer.cpp"
@@ -51,6 +52,7 @@ is::Lua::Lua() {
     luaRegisterButtons( m_l );
     luaRegisterCheckboxs( m_l );
     luaRegisterDropdowns( m_l );
+    luaRegisterScenes( m_l );
 
     addFunction( "getWindowWidth", luaGetWindowWidth );
     addFunction( "getWindowHeight", luaGetWindowHeight );
