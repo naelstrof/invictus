@@ -39,7 +39,7 @@ function STATE:onInit()
         addTimer( function() setState( "options" ) end, 0.5 )
     end
 
-    self.options.onPress = function()
+    self.play.onPress = function()
         self.exiting = true
         tween( 0.5, self.window, { x=-getWindowWidth()/2 }, "inQuad" )
         addTimer( function() setState( "playing" ) end, 0.5 )
